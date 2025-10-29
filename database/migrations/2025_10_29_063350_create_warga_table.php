@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string("pekerjaan");
             $table->string("foto");
             $table->string("foto_ktp");
-            $table->foreignId('id_rumah')->constrained('rumah')->onDelete('cascade');
+            $table->integer('id_rumah');
             $table->timestamps();
         });
     }
