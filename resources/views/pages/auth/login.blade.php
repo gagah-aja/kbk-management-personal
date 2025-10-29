@@ -23,14 +23,13 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="/login">
+                    <form method="POST" action="{{route('auth_login')}}">
                         @csrf
-
                         {{-- Email Field --}}
                         <div class="mb-3">
                             <label for="email" class="form-label visually-hidden">Alamat Email</label>
                             <input type="email" id="email" name="email"
-                                class="form-control form-control-lg @error('email') is-invalid @enderror" {{-- form-control-lg untuk input yang lebih besar --}}
+                                class="form-control  @error('email') is-invalid @enderror" {{-- form-control-lg untuk input yang lebih besar --}}
                                 value="{{ old('email') }}" required autofocus placeholder="Alamat Email">
 
                             @error('email')
@@ -44,7 +43,7 @@
                         <div class="mb-3">
                             <label for="password" class="form-label visually-hidden">Password</label>
                             <input type="password" id="password" name="password"
-                                class="form-control form-control-lg @error('password') is-invalid @enderror"
+                                class="form-control @error('password') is-invalid @enderror"
                                 required placeholder="Password">
 
                             @error('password')
@@ -54,26 +53,12 @@
                             @enderror
                         </div>
 
-                        {{-- Remember Me Checkbox dan Link Lupa Password (Opsional) --}}
-                        <div class="mb-4 d-flex justify-content-between align-items-center">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" name="remember" id="remember">
-                                <label class="form-check-label small" for="remember">Ingat Saya</label>
-                            </div>
-                            {{-- Jika Anda memiliki fitur lupa password: --}}
-                            {{-- <a href="{{ route('password.request') }}" class="small text-decoration-none">Lupa Password?</a> --}}
-                        </div>
-
                         {{-- Submit Button --}}
                         <div class="d-grid mb-3">
                             <button type="submit" class="btn btn-primary btn-lg fw-bold"> {{-- btn-lg dan fw-bold untuk penekanan --}}
                                 MASUK
                             </button>
                         </div>
-
-                        {{-- Opsi Register (Opsional) --}}
-                        <p class="text-center small text-muted">Belum punya akun? <a href="#" class="text-decoration-none">Daftar Sekarang</a></p>
-
                     </form>
                 </div>
             </div>
