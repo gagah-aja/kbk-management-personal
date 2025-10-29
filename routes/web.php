@@ -45,5 +45,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('rw', RwController::class);
 
     // Manajemen Nama Cluster
-    Route::resource('nama-cluster', NamaClusterController::class);
+    Route::resource('nama_cluster', NamaClusterController::class);
 });

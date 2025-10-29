@@ -9,11 +9,21 @@ class NamaCluster extends Model
 {
     use HasFactory;
 
-    // Nama tabel (opsional, Laravel otomatis mendeteksi plural "nama_clusters")
+    // Nama tabel
     protected $table = 'nama_cluster';
 
-    // Kolom yang bisa diisi secara mass assignment
+    // Primary key
+    protected $primaryKey = 'id';
+
+    // Jika kolom id auto increment
+    public $incrementing = true;
+
+    // Tipe data primary key
+    protected $keyType = 'int';
+
+    // Kolom yang dapat diisi
     protected $fillable = [
+        'id',
         'nama_cluster',
     ];
 
