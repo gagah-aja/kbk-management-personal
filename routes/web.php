@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\RumahController;
 use App\Http\Controllers\Admin\RtController;
 use App\Http\Controllers\Admin\RwController;
 use App\Http\Controllers\Admin\NamaClusterController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,14 +20,13 @@ use App\Http\Controllers\Admin\NamaClusterController;
 |
 */
 
-// Rute untuk menampilkan formulir login
 Route::get('/', [AuthController::class, 'login'])->name('login');
-
-// Rute untuk memproses data login (POST)
+Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 Route::post('/auth_login', [AuthController::class, 'authenticate'])->name('auth_login');
-
-// Rute untuk logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+
 
 // =====================================================
 // 🔹 ROUTE UNTUK ADMIN PANEL
