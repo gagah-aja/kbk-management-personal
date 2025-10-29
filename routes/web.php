@@ -19,10 +19,14 @@ use App\Http\Controllers\Admin\NamaClusterController;
 |
 */
 
-// 🔹 Halaman utama (landing page)
-Route::get('/', function () {
-    return view('welcome');
-});
+// Rute untuk menampilkan formulir login
+Route::get('/', [AuthController::class, 'login'])->name('login');
+
+// Rute untuk memproses data login (POST)
+Route::post('/auth_login', [AuthController::class, 'authenticate'])->name('auth_login');
+
+// Rute untuk logout
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // =====================================================
 // 🔹 ROUTE UNTUK ADMIN PANEL

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('rw', function (Blueprint $table) {
             $table->id();
             $table->integer("nomor_rw");
-            $table->foreignId('id_warga')->constrained('id_warga')->onDelete('cascade');
+            $table->foreignId('id_warga')->constrained('warga')->onDelete('cascade');
             $table->timestamps();
         });
     }

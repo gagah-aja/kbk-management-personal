@@ -15,14 +15,13 @@ class AuthController extends Controller
     {
         // 1. Validasi Data
         $credentials = $request->validate([
-            'username'=>['required'],
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();  
-            return redirect()->intended('/dashboard')->with('success', 'Anda berhasil login!');
+            $request->session()->regenerate();
+            return redirect('/dashboard')->with('success', 'Anda berhasil login!');
         }
         return back()->withErrors([
             'email' => 'Email atau Password yang Anda masukkan salah.',
