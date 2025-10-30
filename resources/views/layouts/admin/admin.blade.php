@@ -66,6 +66,9 @@
                     <a class="nav-link text-dark" href="/admin/nama-cluster"><i
                             class="bi bi-person-lines-fill me-2"></i> Nama
                         Cluster</a>
+                    <a class="nav-link text-dark" href="/admin/data-rw"><i 
+                        class="bi bi-geo-alt-fill me-2"></i> Data RW
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="/admin/nama-blok"><i class="bi bi-megaphone-fill me-2"></i> Blok</a>

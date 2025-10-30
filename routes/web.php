@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ClusterController;
 use App\Http\Controllers\Admin\RumahController;
-use App\Http\Controllers\Admin\RtController;
+use App\Http\Controllers\Admin\RwController;
 use App\Http\Controllers\Admin\BlokController;
 use App\Http\Controllers\Admin\NamaClusterController;
 use App\Http\Controllers\Admin\WargaController;
@@ -49,8 +49,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // // Manajemen Rumah
     // Route::resource('rumah', RumahController::class);
 
-    // // Manajemen RT
-    // Route::resource('rt', RtController::class);
+    Route::get('/data-rw', [RwController::class, 'index'])->name('rw.index');
+    Route::post('/data-rw', [RwController::class, 'store'])->name('rw.store');
+    Route::post('/data-rw/{id}', [RwController::class, 'update'])->name('rw.update');
+    Route::delete('/data-rw/{id}', [RwController::class, 'destroy'])->name('rw.destroy');
 
     // 🧱 Manajemen Blok
     // =====================================================
