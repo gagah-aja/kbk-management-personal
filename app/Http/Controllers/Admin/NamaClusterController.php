@@ -13,8 +13,8 @@ class NamaClusterController extends Controller
      */
     public function index()
     {
-        $namaClusters = NamaCluster::latest()->get();
-        return view('pages.admin.nama_cluster', compact('namaClusters'));
+        $namaClusters = NamaCluster::orderBy('id', 'asc')->get();
+        return view('pages.admin.nama-cluster', compact('namaClusters'));
     }
 
     /**
@@ -22,27 +22,36 @@ class NamaClusterController extends Controller
      */
     public function create()
     {
-        return view('admin.nama_cluster.create');
+        return view('admin.nama-cluster.create');
     }
 
     /**
      * Simpan Nama Cluster baru ke database
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'id' => 'nullable|integer|unique:nama_cluster,id',
-            'nama_cluster' => 'required|string|max:100|unique:nama_cluster,nama_cluster',
-        ]);
+{
+    // Ambil semua ID yang sudah ada
+    $usedIds = \App\Models\NamaCluster::pluck('id')->toArray();
 
-        // Jika ID dikirim manual, pakai. Kalau tidak, biarkan auto increment.
-        NamaCluster::create([
-            'id' => $request->id,
-            'nama_cluster' => $request->nama_cluster,
-        ]);
-
-        return redirect()->route('admin.nama-cluster.index')->with('success', 'Nama Cluster berhasil ditambahkan.');
+    // Cari ID terkecil yang belum digunakan (mulai dari 1)
+    $newId = 1;
+    while (in_array($newId, $usedIds)) {
+        $newId++;
     }
+
+    // Kalau user isi ID manual, pakai itu, kalau tidak, pakai $newId
+    $id = $request->id ?: $newId;
+
+    // Simpan data baru
+    \App\Models\NamaCluster::create([
+        'id' => $id,
+        'nama_cluster' => $request->nama_cluster,
+    ]);
+
+    return redirect()->back()->with('success', 'Cluster berhasil ditambahkan!');
+}
+
+
 
     /**
      * Tampilkan detail Nama Cluster
