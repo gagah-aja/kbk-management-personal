@@ -56,14 +56,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Route::resource('rw', RwController::class);
 
     // Manajemen Nama Cluster
-<<<<<<< HEAD
     Route::resource('nama_cluster', NamaClusterController::class);
 
 
     Route::get('/warga', [WargaController::class, 'index'])->name('warga.index');
     Route::get('/warga/tambah/halaman', [WargaController::class, 'tambah_halaman'])->name('warga.tambah.halaman');
     Route::post('/warga/tambah', [WargaController::class, 'tambah'])->name('warga.tambah');
-=======
     Route::get('/nama-cluster', [NamaClusterController::class, 'index'])->name('nama-cluster.index');
     Route::get('/nama-cluster/create', [NamaClusterController::class, 'create'])->name('nama-cluster.create');
     Route::post('/nama-cluster', [NamaClusterController::class, 'store'])->name('nama-cluster.store');
@@ -71,5 +69,4 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/nama-cluster/{id}/edit', [NamaClusterController::class, 'edit'])->name('nama-cluster.edit');
     Route::put('/nama-cluster/{id}', [NamaClusterController::class, 'update'])->name('nama-cluster.update');
     Route::delete('/nama-cluster/{id}', [NamaClusterController::class, 'destroy'])->name('nama-cluster.destroy');
->>>>>>> fbbd77649f31389f85ccf5b6cb02a47c5d3f1d4a
 });
