@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard dengan Fixed Sidebar</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* CSS Khusus untuk Sidebar Fixed */
@@ -59,6 +60,9 @@
                         rt</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link text-dark" href="{{ route('admin.warga.index') }}"><i
+                            class="bi bi-person-lines-fill me-2"></i> Data
+                        Warga</a>
                     <a class="nav-link text-dark" href="/admin/nama-cluster"><i
                             class="bi bi-person-lines-fill me-2"></i> Nama
                         Cluster</a>
@@ -72,8 +76,6 @@
                 </li>
             </ul>
 
-            <link rel="stylesheet"
-                href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         </div>
 
         <div id="main-content" class="flex-grow-1">

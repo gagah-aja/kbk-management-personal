@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\RumahController;
 use App\Http\Controllers\Admin\RtController;
 use App\Http\Controllers\Admin\BlokController;
 use App\Http\Controllers\Admin\NamaClusterController;
+use App\Http\Controllers\Admin\WargaController;
 use App\Http\Controllers\AdminController;
 
 /*
@@ -20,8 +21,14 @@ use App\Http\Controllers\AdminController;
 |
 */
 
+// Rute untuk pengguna yang sudah login
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+
+});
+
+// Rute yang tidak memerlukan login (atau rute "guest")
 Route::get('/', [AuthController::class, 'login'])->name('login');
-Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 Route::post('/auth_login', [AuthController::class, 'authenticate'])->name('auth_login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -53,6 +60,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('/nama-blok/{id}', [BlokController::class, 'destroy'])->name('blok.destroy');
 
     // Manajemen Nama Cluster
+    Route::resource('nama_cluster', NamaClusterController::class);
+
+
+    Route::get('/warga', [WargaController::class, 'index'])->name('warga.index');
+    Route::get('/warga/tambah/halaman', [WargaController::class, 'tambah_halaman'])->name('warga.tambah.halaman');
+    Route::post('/warga/tambah', [WargaController::class, 'tambah'])->name('warga.tambah');
     Route::get('/nama-cluster', [NamaClusterController::class, 'index'])->name('nama-cluster.index');
     Route::get('/nama-cluster/create', [NamaClusterController::class, 'create'])->name('nama-cluster.create');
     Route::post('/nama-cluster', [NamaClusterController::class, 'store'])->name('nama-cluster.store');
