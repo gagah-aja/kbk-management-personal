@@ -59,8 +59,9 @@
                         rt</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="#"><i class="bi bi-person-lines-fill me-2"></i> Data
-                        Warga</a>
+                    <a class="nav-link text-dark" href="/admin/nama-cluster"><i
+                            class="bi bi-person-lines-fill me-2"></i> Nama
+                        Cluster</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="#"><i class="bi bi-megaphone-fill me-2"></i> Kejadian</a>

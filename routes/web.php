@@ -36,18 +36,24 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Dashboard Admin
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Manajemen Cluster
-    Route::resource('cluster', ClusterController::class);
+    // // Manajemen Cluster
+    // Route::resource('cluster', ClusterController::class);
 
-    // Manajemen Rumah
-    Route::resource('rumah', RumahController::class);
+    // // Manajemen Rumah
+    // Route::resource('rumah', RumahController::class);
 
-    // Manajemen RT
-    Route::resource('rt', RtController::class);
+    // // Manajemen RT
+    // Route::resource('rt', RtController::class);
 
-    // Manajemen RW
-    Route::resource('rw', RwController::class);
+    // // Manajemen RW
+    // Route::resource('rw', RwController::class);
 
     // Manajemen Nama Cluster
-    Route::resource('nama_cluster', NamaClusterController::class);
+    Route::get('/nama-cluster', [NamaClusterController::class, 'index'])->name('nama-cluster.index');
+    Route::get('/nama-cluster/create', [NamaClusterController::class, 'create'])->name('nama-cluster.create');
+    Route::post('/nama-cluster', [NamaClusterController::class, 'store'])->name('nama-cluster.store');
+    Route::get('/nama-cluster/{id}', [NamaClusterController::class, 'show'])->name('nama-cluster.show');
+    Route::get('/nama-cluster/{id}/edit', [NamaClusterController::class, 'edit'])->name('nama-cluster.edit');
+    Route::put('/nama-cluster/{id}', [NamaClusterController::class, 'update'])->name('nama-cluster.update');
+    Route::delete('/nama-cluster/{id}', [NamaClusterController::class, 'destroy'])->name('nama-cluster.destroy');
 });
