@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class blok extends Model
+class Blok extends Model
 {
     use HasFactory;
-    protected $table = 'blok';
-    protected $fillable = [
-        'nama_blok',
-    ];
-}
 
+    protected $table = 'blok';
+    protected $fillable = ['nama_blok'];
+}

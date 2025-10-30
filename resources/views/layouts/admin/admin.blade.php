@@ -64,7 +64,7 @@
                         Cluster</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="#"><i class="bi bi-megaphone-fill me-2"></i> Kejadian</a>
+                    <a class="nav-link text-dark" href="/admin/nama-blok"><i class="bi bi-megaphone-fill me-2"></i> Blok</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="#"><i class="bi bi-file-earmark-bar-graph-fill me-2"></i>

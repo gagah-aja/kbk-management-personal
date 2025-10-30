@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ClusterController;
 use App\Http\Controllers\Admin\RumahController;
 use App\Http\Controllers\Admin\RtController;
-use App\Http\Controllers\Admin\RwController;
+use App\Http\Controllers\Admin\BlokController;
 use App\Http\Controllers\Admin\NamaClusterController;
 use App\Http\Controllers\AdminController;
 
@@ -45,8 +45,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // // Manajemen RT
     // Route::resource('rt', RtController::class);
 
-    // // Manajemen RW
-    // Route::resource('rw', RwController::class);
+    // 🧱 Manajemen Blok
+    // =====================================================
+    Route::get('/nama-blok', [BlokController::class, 'index'])->name('blok.index');
+    Route::post('/nama-blok', [BlokController::class, 'store'])->name('blok.store');
+    Route::put('/nama-blok/{id}', [BlokController::class, 'update'])->name('blok.update');
+    Route::delete('/nama-blok/{id}', [BlokController::class, 'destroy'])->name('blok.destroy');
 
     // Manajemen Nama Cluster
     Route::get('/nama-cluster', [NamaClusterController::class, 'index'])->name('nama-cluster.index');
