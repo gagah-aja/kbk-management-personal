@@ -3,7 +3,7 @@
     <nav>
         <ul>
             <li class="mb-2">
-                <a href="{{ url('/') }}" class="block py-2 px-3 rounded hover:bg-gray-200 {{ request()->is('/') ? 'bg-gray-200 font-semibold' : '' }}">Dashboard</a>
+                <a href="{{ url('/') }}" class="block py-2 px-3 rounded hover:bg-gray-200 text-bold {{ request()->is('/') ? 'bg-gray-200 font-semibold' : '' }}">Dashboard</a>
             </li>
             <li class="mb-2">
                 <a href="{{ route('cluster.index') }}" class="block py-2 px-3 rounded hover:bg-gray-200 {{ request()->is('cluster*') ? 'bg-gray-200 font-semibold' : '' }}">Cluster</a>
@@ -26,7 +26,7 @@
 
         @foreach($namaClusters as $nc)
             <li class="mb-2">
-                <a href="{{ route('cluster.index', ['nama_cluster' => $nc->id]) }}" 
+                <a href="{{ route('cluster.index', ['nama_cluster' => $nc->id]) }}"
                    class="block py-2 px-3 rounded hover:bg-gray-200">
                     {{ $nc->nama_cluster }}
                 </a>
