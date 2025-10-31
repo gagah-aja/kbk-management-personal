@@ -43,8 +43,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Dashboard Admin
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // // Manajemen Cluster
-    // Route::resource('cluster', ClusterController::class);
+    Route::get('/data-cluster', [ClusterController::class, 'index'])->name('data-cluster.index');
+    Route::post('/data-cluster', [ClusterController::class, 'store'])->name('data-cluster.store');
+    Route::put('/data-cluster/{id}', [ClusterController::class, 'update'])->name('data-cluster.update');
+    Route::delete('/data-cluster/{id}', [ClusterController::class, 'destroy'])->name('data-cluster.destroy');
 
     // 🔹 Data RT
     Route::get('/data-rt', [RtController::class, 'index'])->name('data-rt.index');

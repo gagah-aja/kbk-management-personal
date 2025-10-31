@@ -7,21 +7,34 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Jalankan migrasi.
      */
     public function up(): void
     {
         Schema::create('cluster', function (Blueprint $table) {
-            $table->id(); // id otomatis
-            $table->string('id_nama_cluster')->unique(); // nama atau kode cluster
-            $table->foreignId('id_rt')->constrained('rt')->onDelete('cascade'); // relasi ke tabel RT
-            $table->foreignId('id_blok')->constrained('blok')->onDelete('cascade'); // relasi ke tabel Blok
+            $table->id(); // id utama
+
+            // Relasi ke tabel nama_cluster
+            $table->foreignId('id_nama_cluster')
+                  ->constrained('nama_cluster')
+                  ->onDelete('cascade');
+
+            // Relasi ke tabel rt
+            $table->foreignId('id_rt')
+                  ->constrained('rt')
+                  ->onDelete('cascade');
+
+            // Relasi ke tabel blok
+            $table->foreignId('id_blok')
+                  ->constrained('blok')
+                  ->onDelete('cascade');
+
             $table->timestamps();
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Rollback migrasi.
      */
     public function down(): void
     {

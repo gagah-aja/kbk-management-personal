@@ -52,6 +52,11 @@
                 </li>
 
                 <li class="nav-item">
+                    <a class="nav-link text-dark" href="/admin/data-cluster">
+                        <i class="bi bi-diagram-3-fill me-2"></i> Data Cluster
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link text-dark" href="{{ route('admin.warga.index') }}">
                         <i class="bi bi-person-lines-fill me-2"></i> Data Warga
                     </a>
