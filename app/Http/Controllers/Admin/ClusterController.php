@@ -32,6 +32,16 @@ class ClusterController extends Controller
             'id_blok' => 'required|exists:blok,id',
         ]);
 
+        // 🔎 Cek kombinasi sudah ada
+        $exists = Cluster::where('id_nama_cluster', $request->id_nama_cluster)
+                        ->where('id_rt', $request->id_rt)
+                        ->where('id_blok', $request->id_blok)
+                        ->first();
+
+        if ($exists) {
+            return redirect()->back()->with('info', 'Cluster dengan kombinasi ini sudah ada.');
+        }
+
         Cluster::create([
             'id_nama_cluster' => $request->id_nama_cluster,
             'id_rt' => $request->id_rt,
@@ -59,6 +69,18 @@ class ClusterController extends Controller
         ]);
 
         $cluster = Cluster::findOrFail($id);
+
+        // 🔎 Cek kombinasi unik saat update
+        $exists = Cluster::where('id_nama_cluster', $request->id_nama_cluster)
+                        ->where('id_rt', $request->id_rt)
+                        ->where('id_blok', $request->id_blok)
+                        ->where('id', '<>', $id)
+                        ->first();
+
+        if ($exists) {
+            return redirect()->back()->with('info', 'Cluster dengan kombinasi ini sudah ada.');
+        }
+
         $cluster->update([
             'id_nama_cluster' => $request->id_nama_cluster,
             'id_rt' => $request->id_rt,

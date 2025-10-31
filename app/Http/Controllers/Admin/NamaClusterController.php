@@ -18,48 +18,43 @@ class NamaClusterController extends Controller
     }
 
     /**
-     * Tampilkan form tambah Nama Cluster
-     */
-    public function create()
-    {
-        return view('admin.nama-cluster.create');
-    }
-
-    /**
      * Simpan Nama Cluster baru ke database
+     * Jika sudah ada, tidak membuat duplikat dan beri notifikasi info
      */
     public function store(Request $request)
-{
-    // Ambil semua ID yang sudah ada
-    $usedIds = \App\Models\NamaCluster::pluck('id')->toArray();
+    {
+        $request->validate([
+            'nama_cluster' => 'required|string|max:100',
+        ]);
 
-    // Cari ID terkecil yang belum digunakan (mulai dari 1)
-    $newId = 1;
-    while (in_array($newId, $usedIds)) {
-        $newId++;
+        // Cek apakah cluster sudah ada
+        $existing = NamaCluster::where('nama_cluster', $request->nama_cluster)->first();
+
+        if ($existing) {
+            // Redirect dengan notifikasi info
+            return redirect()->back()->with('info', 'Cluster sudah ada dan akan digunakan data yang ada.');
+        }
+
+        // Buat cluster baru dengan ID unik otomatis
+        NamaCluster::create([
+            'id' => $this->getNextId(),
+            'nama_cluster' => $request->nama_cluster,
+        ]);
+
+        return redirect()->back()->with('success', 'Cluster berhasil ditambahkan!');
     }
 
-    // Kalau user isi ID manual, pakai itu, kalau tidak, pakai $newId
-    $id = $request->id ?: $newId;
-
-    // Simpan data baru
-    \App\Models\NamaCluster::create([
-        'id' => $id,
-        'nama_cluster' => $request->nama_cluster,
-    ]);
-
-    return redirect()->back()->with('success', 'Cluster berhasil ditambahkan!');
-}
-
-
-
     /**
-     * Tampilkan detail Nama Cluster
+     * Hitung ID terkecil yang belum dipakai
      */
-    public function show($id)
+    private function getNextId()
     {
-        $namaCluster = NamaCluster::findOrFail($id);
-        return view('admin.nama_cluster.show', compact('namaCluster'));
+        $usedIds = NamaCluster::pluck('id')->toArray();
+        $newId = 1;
+        while (in_array($newId, $usedIds)) {
+            $newId++;
+        }
+        return $newId;
     }
 
     /**
@@ -88,7 +83,8 @@ class NamaClusterController extends Controller
             'nama_cluster' => $request->nama_cluster,
         ]);
 
-        return redirect()->route('admin.nama-cluster.index')->with('success', 'Nama Cluster berhasil diperbarui.');
+        return redirect()->route('admin.nama-cluster.index')
+            ->with('success', 'Nama Cluster berhasil diperbarui.');
     }
 
     /**
@@ -99,6 +95,7 @@ class NamaClusterController extends Controller
         $namaCluster = NamaCluster::findOrFail($id);
         $namaCluster->delete();
 
-        return redirect()->route('admin.nama-cluster.index')->with('success', 'Nama Cluster berhasil dihapus.');
+        return redirect()->route('admin.nama-cluster.index')
+            ->with('success', 'Nama Cluster berhasil dihapus.');
     }
 }
