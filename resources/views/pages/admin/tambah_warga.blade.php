@@ -152,7 +152,7 @@
                             @foreach ($tingkatPendidikan as $pendidikan)
                                 <option value="{{ $pendidikan }}"
                                     {{ old('pendidikan_terakhir') == $pendidikan ? 'selected' : '' }}>
-                                    {{ $pendidikan_terakhir }}
+                                    {{ $pendidikan}}
                                 </option>
                             @endforeach
                         </select>

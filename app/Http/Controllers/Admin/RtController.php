@@ -15,20 +15,23 @@ class RtController extends Controller
      */
     public function index()
     {
-        // Ambil data RT beserta relasi warga & RW
+        // Ambil data RT beserta relasi Warga dan RW
         $dataRT = Rt::with(['warga', 'rw'])->get();
 
-        // Ambil semua warga untuk dropdown Nama RT
-        $warga = Warga::all();
-
-        // Ambil semua RW untuk dropdown RW
+        // Ambil daftar RW untuk dropdown
         $rwList = Rw::all();
 
-        return view('pages.admin.data-rt', compact('dataRT', 'warga', 'rwList'));
+        // Ambil ID warga yang sudah menjadi RT
+        $idWargaSudahRT = Rt::pluck('id_warga')->toArray();
+
+        // Ambil semua data warga untuk dropdown
+        $warga = Warga::all();
+
+        return view('pages.admin.data-rt', compact('dataRT', 'warga', 'rwList', 'idWargaSudahRT'));
     }
 
     /**
-     * Simpan data RT baru
+     * Menyimpan data RT baru
      */
     public function store(Request $request)
     {
@@ -44,12 +47,13 @@ class RtController extends Controller
             'nomor_rt' => $request->nomor_rt,
         ]);
 
-        return redirect()->route('admin.data-rt.index')
-                         ->with('success', '✅ Data RT berhasil ditambahkan!');
+        return redirect()
+            ->route('admin.data-rt.index')
+            ->with('success', '✅ Data RT berhasil ditambahkan!');
     }
 
     /**
-     * Update data RT
+     * Memperbarui data RT
      */
     public function update(Request $request, $id)
     {
@@ -60,25 +64,28 @@ class RtController extends Controller
         ]);
 
         $rt = Rt::findOrFail($id);
+
         $rt->update([
             'id_warga' => $request->id_warga,
             'id_rw'    => $request->id_rw,
             'nomor_rt' => $request->nomor_rt,
         ]);
 
-        return redirect()->route('admin.data-rt.index')
-                         ->with('success', '✅ Data RT berhasil diperbarui!');
+        return redirect()
+            ->route('admin.data-rt.index')
+            ->with('success', '✅ Data RT berhasil diperbarui!');
     }
 
     /**
-     * Hapus data RT
+     * Menghapus data RT
      */
     public function destroy($id)
     {
         $rt = Rt::findOrFail($id);
         $rt->delete();
 
-        return redirect()->route('admin.data-rt.index')
-                         ->with('success', '✅ Data RT berhasil dihapus!');
+        return redirect()
+            ->route('admin.data-rt.index')
+            ->with('success', '✅ Data RT berhasil dihapus!');
     }
 }
