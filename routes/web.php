@@ -4,9 +4,9 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ClusterController;
-use App\Http\Controllers\Admin\RumahController;
 use App\Http\Controllers\Admin\RtController;
 use App\Http\Controllers\Admin\RwController;
+use App\Http\Controllers\Admin\BlokController;
 use App\Http\Controllers\Admin\NamaClusterController;
 use App\Http\Controllers\Admin\WargaController;
 use App\Http\Controllers\AdminController;
@@ -46,14 +46,23 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // // Manajemen Cluster
     // Route::resource('cluster', ClusterController::class);
 
-    // // Manajemen Rumah
-    // Route::resource('rumah', RumahController::class);
+    // 🔹 Data RT
+    Route::get('/data-rt', [RtController::class, 'index'])->name('data-rt.index');
+    Route::post('/data-rt', [RtController::class, 'store'])->name('data-rt.store');
+    Route::put('/data-rt/{id}', [RtController::class, 'update'])->name('data-rt.update');
+    Route::delete('/data-rt/{id}', [RtController::class, 'destroy'])->name('data-rt.destroy');
 
-    // // Manajemen RT
-    // Route::resource('rt', RtController::class);
+    Route::get('/data-rw', [RwController::class, 'index'])->name('rw.index');
+    Route::post('/data-rw', [RwController::class, 'store'])->name('rw.store');
+    Route::post('/data-rw/{id}', [RwController::class, 'update'])->name('rw.update');
+    Route::delete('/admin/data-rw/{id}', [RwController::class, 'destroy'])->name('rw.destroy');
 
-    // // Manajemen RW
-    // Route::resource('rw', RwController::class);
+    // 🧱 Manajemen Blok
+    // =====================================================
+    Route::get('/nama-blok', [BlokController::class, 'index'])->name('blok.index');
+    Route::post('/nama-blok', [BlokController::class, 'store'])->name('blok.store');
+    Route::put('/nama-blok/{id}', [BlokController::class, 'update'])->name('blok.update');
+    Route::delete('/nama-blok/{id}', [BlokController::class, 'destroy'])->name('blok.destroy');
 
     // Manajemen Nama Cluster
     Route::resource('nama_cluster', NamaClusterController::class);

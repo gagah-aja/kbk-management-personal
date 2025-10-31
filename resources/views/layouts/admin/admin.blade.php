@@ -12,29 +12,20 @@
         /* CSS Khusus untuk Sidebar Fixed */
         #sidebar {
             width: 250px;
-            /* Lebar Sidebar */
             height: 100vh;
-            /* Tinggi penuh viewport */
-            /* Gunakan bg-light atau warna lain dari Bootstrap */
-            /* Tambahkan border atau shadow jika perlu */
             z-index: 1000;
-            /* Pastikan sidebar di atas konten lain */
         }
 
         /* Margin untuk konten utama agar tidak tertutup sidebar */
         #main-content {
             margin-left: 250px;
-            /* Harus sama dengan lebar sidebar */
             padding: 20px;
-            /* Padding untuk konten */
         }
 
         /* Contoh untuk membuat konten utama bisa di-scroll */
         .scrollable-content {
             height: 200vh;
-            /* Contoh tinggi agar bisa di-scroll */
             background-color: #f8f9fa;
-            /* Warna latar belakang kontras */
         }
     </style>
 </head>
@@ -50,31 +41,43 @@
 
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link active bg-light text-dark rounded" href="/cluster"><i
-                            class="bi bi-grid-fill me-2"></i> Dashboard</a>
+                    <a class="nav-link active bg-light text-dark rounded" href="/cluster">
+                        <i class="bi bi-grid-fill me-2"></i> Dashboard
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="/"><i class="bi bi-house-door-fill me-2"></i> Data
-                        Rumah</a>
+                    <a class="nav-link text-dark" href="/">
+                        <i class="bi bi-house-door-fill me-2"></i> Data Rumah
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="/rt"><i class="bi bi-people-fill me-2"></i> Data
-                        rt</a>
+                    <a class="nav-link text-dark" href="/Bencana">
+                        <i class="bi bi-people-fill me-2"></i> Data Bencana
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="{{ route('admin.warga.index') }}"><i
-                            class="bi bi-person-lines-fill me-2"></i> Data
-                        Warga</a>
-                    <a class="nav-link text-dark" href="/admin/nama-cluster"><i
-                            class="bi bi-person-lines-fill me-2"></i> Nama
-                        Cluster</a>
+                    <a class="nav-link text-dark" href="{{ route('admin.warga.index') }}">
+                        <i class="bi bi-person-lines-fill me-2"></i> Data Warga
+                    </a>
+                    <a class="nav-link text-dark" href="/admin/nama-cluster">
+                        <i class="bi bi-person-lines-fill me-2"></i> Nama Cluster
+                    </a>
+                    <a class="nav-link text-dark" href="/admin/data-rw">
+                        <i class="bi bi-geo-alt-fill me-2"></i> Data RW
+                    </a>
+                    <a class="nav-link text-dark" href="/admin/data-rt">
+                        <i class="bi bi-geo-fill me-2"></i> Data RT
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="#"><i class="bi bi-megaphone-fill me-2"></i> Kejadian</a>
+                    <a class="nav-link text-dark" href="/admin/nama-blok">
+                        <i class="bi bi-megaphone-fill me-2"></i> Blok
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="#"><i class="bi bi-file-earmark-bar-graph-fill me-2"></i>
-                        Laporan</a>
+                    <a class="nav-link text-dark" href="#">
+                        <i class="bi bi-file-earmark-bar-graph-fill me-2"></i> Laporan
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="{{route('logout')}}"><i class="bi bi-box-arrow-left"></i>
@@ -86,8 +89,8 @@
 
         <div id="main-content" class="flex-grow-1">
             @yield('content')
-
         </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
