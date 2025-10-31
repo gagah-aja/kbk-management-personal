@@ -83,7 +83,7 @@
                         <th>Nomor RW</th>
                         <th>NIK Ketua RW</th>
                         <th>Nama Ketua RW</th>
-                        <th width="180px">Aksi</th>
+                        <th width="150px">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -94,6 +94,7 @@
                             <td class="nik-rw">{{ $rw->warga->nik ?? '-' }}</td>
                             <td class="nama-rw">{{ $rw->warga->nama_lengkap ?? '-' }}</td>
                             <td>
+                                {{-- Tombol Edit --}}
                                 <button type="button" 
                                         class="btn btn-sm btn-warning btn-edit"
                                         data-id="{{ $rw->id }}"
@@ -102,9 +103,12 @@
                                     Edit
                                 </button>
 
-                                <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="{{ $rw->id }}">
-                                    Hapus
-                                </button>
+                                {{-- Tombol Hapus --}}
+                                <form action="{{ route('admin.rw.destroy', $rw->id) }}" method="POST" class="d-inline delete-form">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger btn-delete">Hapus</button>
+                                </form>
                             </td>
                         </tr>
                     @empty
@@ -118,43 +122,10 @@
     </div>
 </div>
 
-{{-- SweetAlert & AJAX --}}
+{{-- SweetAlert --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-
-    // Hapus Data RW
-    document.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const id = this.dataset.id;
-            Swal.fire({
-                title: 'Yakin ingin menghapus?',
-                text: "Data RW akan dihapus permanen.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal'
-            }).then(result => {
-                if (result.isConfirmed) {
-                    fetch(`/admin/rw/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json'
-                        }
-                    }).then(res => res.json())
-                    .then(data => {
-                        if(data.success){
-                            document.querySelector(`tr[data-id="${id}"]`).remove();
-                            Swal.fire('Terhapus!', 'Data RW berhasil dihapus.', 'success');
-                        }
-                    });
-                }
-            });
-        });
-    });
 
     // Edit Data RW
     document.querySelectorAll('.btn-edit').forEach(btn => {
@@ -210,6 +181,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
+        });
+    });
+
+    // Hapus Data RW (tanpa AJAX)
+    document.querySelectorAll('.delete-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Yakin ingin menghapus?',
+                text: "Data RW yang dihapus tidak bisa dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if(result.isConfirmed){
+                    form.submit();
+                }
+            });
         });
     });
 

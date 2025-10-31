@@ -102,6 +102,7 @@ class RwController extends Controller
         $rw = Rw::findOrFail($id);
         $rw->delete();
 
-        return redirect()->back()->with('success', 'Data RW berhasil dihapus!');
+        return redirect()->route('admin.rw.index')->with('success', 'Data RW berhasil dihapus.');
     }
+
 }
