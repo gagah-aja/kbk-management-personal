@@ -24,7 +24,7 @@ class Warga extends Model
         'pekerjaan',
         'foto',
         'foto_ktp',
-        'id_rumah', 
+        'id_rumah',
     ];
 
     public function rumah()
@@ -35,5 +35,9 @@ class Warga extends Model
     public function rw()
     {
         return $this->hasMany(Rw::class, 'id_warga', 'id');
+    }
+    public function rt()
+    {
+        return $this->hasMany(Rt::class, 'id_warga', 'id');
     }
 }

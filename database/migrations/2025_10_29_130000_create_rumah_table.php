@@ -17,8 +17,8 @@ return new class extends Migration
             $table->text('alamat_lengkap'); // alamat lengkap
             $table->enum('status', ['tersedia', 'terisi', 'rusak'])->default('tersedia'); // status rumah
             $table->string('gambar')->nullable(); // path gambar rumah
-            $table->decimal('latitude', 10, 7)->nullable(); // latitude
-            $table->decimal('longitude', 10, 7)->nullable(); // longitude, biasanya berpasangan dengan latitude
+            $table->string('latitude')->nullable(); // latitude
+            $table->string('longitude')->nullable(); // longitude, biasanya berpasangan dengan latitude
             $table->foreignId('id_cluster')->constrained('clusters')->onDelete('cascade'); // relasi ke tabel clusters
             $table->foreignId('id_warga')->nullable()->constrained('warga')->onDelete('set null'); // relasi ke warga
             $table->timestamps(); // created_at dan updated_at

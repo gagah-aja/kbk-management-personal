@@ -107,12 +107,12 @@ Route::middleware('auth')->group(function () {
 
         // Route::post('/warga/update/{id}', [WargaController::class, 'update'])->name('warga.update');
         Route::post('/rumah/update/{id}', [RumahController::class, 'update'])->name('rumah.update');
+        // Route::get('/warga', [WargaController::class, 'index'])->name('warga.index');
+        Route::get('/rumah', [RumahController::class, 'index'])->name('rumah.index');
+        Route::get('/rumah/create', [RumahController::class, 'create'])->name('rumah.create');
+        Route::post('/rumah', [RumahController::class, 'store'])->name('rumah.store');
+        Route::get('/rumah/{id}/edit', [RumahController::class, 'edit'])->name('rumah.edit');
+        Route::put('/rumah/{id}', [RumahController::class, 'update'])->name('rumah.update');
+        Route::delete('/rumah/{id}', [RumahController::class, 'destroy'])->name('rumah.destroy');
     });
-    // Route::get('/warga', [WargaController::class, 'index'])->name('warga.index');
-    Route::get('/rumah', [RumahController::class, 'index'])->name('rumah.index');
-    Route::get('/rumah/create', [RumahController::class, 'create'])->name('rumah.create');
-    Route::post('/rumah', [RumahController::class, 'store'])->name('rumah.store');
-    Route::get('/rumah/{id}/edit', [RumahController::class, 'edit'])->name('rumah.edit');
-    Route::put('/rumah/{id}', [RumahController::class, 'update'])->name('rumah.update');
-    Route::delete('/rumah/{id}', [RumahController::class, 'destroy'])->name('rumah.destroy');
 });

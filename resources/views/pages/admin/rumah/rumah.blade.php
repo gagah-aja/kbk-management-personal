@@ -28,8 +28,6 @@
                             <th class="px-4 py-3 text-uppercase small text-secondary">No. Rumah</th>
                             <th class="px-4 py-3 text-uppercase small text-secondary">Alamat Lengkap</th>
                             <th class="px-4 py-3 text-uppercase small text-secondary">Status</th>
-                            <th class="px-4 py-3 text-uppercase small text-secondary">Latitude</th>
-                            <th class="px-4 py-3 text-uppercase small text-secondary">Longitude</th>
                             <th class="px-4 py-3 text-uppercase small text-secondary">Cluster</th>
                             <th class="px-4 py-3 text-uppercase small text-secondary">Warga</th>
                             <th class="py-3 text-uppercase small text-secondary text-center">Aksi</th>
@@ -45,9 +43,9 @@
                                 {{-- Gambar Rumah --}}
                                 <td class="px-4">
                                     @if($rumahs->gambar)
-                                        <img src="{{ asset('storage/' . $rumahs->gambar) }}" 
-                                            alt="Gambar Rumah" 
-                                            width="70" height="50" 
+                                        <img src="{{ asset('storage/' . $rumahs->gambar) }}"
+                                            alt="Gambar Rumah"
+                                            width="70" height="50"
                                             class="rounded-3 shadow-sm">
                                     @else
                                         <span class="text-muted">-</span>
@@ -72,9 +70,7 @@
                                     </span>
                                 </td>
 
-                                {{-- Lokasi --}}
-                                <td class="px-4">{{ $rumahs->latitude ?? '-' }}</td>
-                                <td class="px-4">{{ $rumahs->longitude ?? '-' }}</td>
+                        
 
                                 {{-- Relasi Cluster --}}
                                 <td class="px-4">
@@ -90,18 +86,18 @@
                                 <td class="text-center px-2">
                                     <div class="d-inline-flex gap-2">
                                         {{-- Tombol Edit --}}
-                                        <a href="{{ route('admin.rumah.edit', $rumahs->id) }}" 
+                                        <a href="{{ route('admin.rumah.edit', $rumahs->id) }}"
                                            class="btn btn-sm btn-outline-primary rounded-pill px-3">
                                             <i class="fas fa-edit me-1"></i> Edit
                                         </a>
 
                                         {{-- Tombol Hapus --}}
-                                        <form action="{{ route('admin.rumah.destroy', $rumahs->id) }}" 
-                                              method="POST" 
+                                        <form action="{{ route('admin.rumah.destroy', $rumahs->id) }}"
+                                              method="POST"
                                               onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" 
+                                            <button type="submit"
                                                     class="btn btn-sm btn-outline-danger rounded-pill px-3">
                                                 <i class="fas fa-trash-alt me-1"></i> Hapus
                                             </button>

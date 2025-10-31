@@ -221,7 +221,7 @@
                         <label for="pekerjaan" class="form-label fw-semibold">Pekerjaan</label>
                         <input type="text"
                             class="form-control py-2 rounded-3 shadow-sm  @error('pekerjaan') is-invalid @enderror"
-                            id="pekerjaan" value="{{ old('agama') }}" name="pekerjaan"
+                            id="pekerjaan" value="{{ old('pekerjaan') }}" name="pekerjaan"
                             placeholder="e.g. Pegawai Swasta, Ibu Rumah Tangga">
                         @error('pekerjaan')
                             <div class="invalid-feedback">{{ $message }}</div>

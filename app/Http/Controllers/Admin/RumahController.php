@@ -34,8 +34,8 @@ class RumahController extends Controller
             'alamat_lengkap' => 'required',
             'status' => 'required|in:tersedia,terisi,rusak',
             'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
+            'latitude' => 'nullable',   
+            'longitude' => 'nullable',
             'id_cluster' => 'required|exists:cluster,id',
             'id_warga' => 'nullable|exists:warga,id',
         ]);
