@@ -49,8 +49,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="/Bencana">
-                        <i class="bi bi-people-fill me-2"></i> Data Bencana
+                    <a class="nav-link text-dark" href="/admin/data-cluster">
+                        <i class="bi bi-diagram-3-fill me-2"></i> Data Cluster
                     </a>
                 </li>
                 <li class="nav-item">

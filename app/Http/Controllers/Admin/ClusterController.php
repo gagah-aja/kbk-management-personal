@@ -5,40 +5,29 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Cluster;
+use App\Models\NamaCluster;
 use App\Models\Rt;
 use App\Models\Blok;
-use App\Models\NamaCluster;
+use Illuminate\Support\Facades\DB;
 
 class ClusterController extends Controller
 {
-    /**
-     * Tampilkan semua data cluster
-     */
+    // 🟢 Tampilkan semua data Cluster
     public function index()
     {
-        $clusters = Cluster::with(['rt', 'blok', 'namaCluster'])->latest()->get();
-        return view('admin.cluster.index', compact('clusters'));
-    }
-
-    /**
-     * Tampilkan form tambah data cluster
-     */
-    public function create()
-    {
+        $clusters = Cluster::with(['namaCluster', 'rt', 'blok'])->get();
+        $nama_clusters = NamaCluster::all();
         $rts = Rt::all();
         $bloks = Blok::all();
-        $namaClusters = NamaCluster::all();
 
-        return view('admin.cluster.create', compact('rts', 'bloks', 'namaClusters'));
+        return view('pages.admin.data-cluster', compact('clusters', 'nama_clusters', 'rts', 'bloks'));
     }
 
-    /**
-     * Simpan data cluster baru
-     */
+    // 🟢 Simpan Data Baru
     public function store(Request $request)
     {
         $request->validate([
-            'id_nama_cluster' => 'required|string|unique:cluster,id_nama_cluster',
+            'id_nama_cluster' => 'required|exists:nama_cluster,id',
             'id_rt' => 'required|exists:rt,id',
             'id_blok' => 'required|exists:blok,id',
         ]);
@@ -49,61 +38,49 @@ class ClusterController extends Controller
             'id_blok' => $request->id_blok,
         ]);
 
-        return redirect()->route('cluster.index')->with('success', 'Cluster berhasil ditambahkan.');
+        return redirect()->route('admin.data-cluster.index')
+            ->with('success', 'Cluster berhasil ditambahkan.');
     }
 
-    /**
-     * Tampilkan detail cluster
-     */
-    public function show($id)
-    {
-        $cluster = Cluster::with(['rt', 'blok', 'namaCluster'])->findOrFail($id);
-        return view('admin.cluster.show', compact('cluster'));
-    }
-
-    /**
-     * Tampilkan form edit cluster
-     */
+    // 🟡 Tampilkan data untuk diedit (AJAX)
     public function edit($id)
     {
         $cluster = Cluster::findOrFail($id);
-        $rts = Rt::all();
-        $bloks = Blok::all();
-        $namaClusters = NamaCluster::all();
-
-        return view('admin.cluster.edit', compact('cluster', 'rts', 'bloks', 'namaClusters'));
+        return response()->json($cluster);
     }
 
-    /**
-     * Update data cluster
-     */
+    // 🟠 Update Data Cluster
     public function update(Request $request, $id)
     {
-        $cluster = Cluster::findOrFail($id);
-
         $request->validate([
-            'id_nama_cluster' => 'required|string|unique:cluster,id_nama_cluster,' . $id,
+            'id_nama_cluster' => 'required|exists:nama_cluster,id',
             'id_rt' => 'required|exists:rt,id',
             'id_blok' => 'required|exists:blok,id',
         ]);
 
+        $cluster = Cluster::findOrFail($id);
         $cluster->update([
             'id_nama_cluster' => $request->id_nama_cluster,
             'id_rt' => $request->id_rt,
             'id_blok' => $request->id_blok,
         ]);
 
-        return redirect()->route('cluster.index')->with('success', 'Cluster berhasil diperbarui.');
+        return redirect()->route('admin.data-cluster.index')
+            ->with('success', 'Data cluster berhasil diperbarui.');
     }
 
-    /**
-     * Hapus data cluster
-     */
+    // 🔴 Hapus Data Cluster
     public function destroy($id)
     {
         $cluster = Cluster::findOrFail($id);
         $cluster->delete();
 
-        return redirect()->route('cluster.index')->with('success', 'Cluster berhasil dihapus.');
+        // 🔁 Reset auto increment jika tabel kosong
+        if (Cluster::count() === 0) {
+            DB::statement('ALTER TABLE cluster AUTO_INCREMENT = 1;');
+        }
+
+        return redirect()->route('admin.data-cluster.index')
+            ->with('success', 'Cluster berhasil dihapus.');
     }
 }
