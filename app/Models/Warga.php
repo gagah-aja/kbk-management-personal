@@ -12,12 +12,19 @@ class Warga extends Model
     protected $fillable = [
         'nik',
         'nama_lengkap',
+        'email',
+        'no_telp',
+        'gol_darah',
+        'agama',
+        'pendidikan_terakhir',
+        'gaji',
+        'tanggal_lahir',
         'jenis_kelamin',
         'hubungan',
         'pekerjaan',
         'foto',
         'foto_ktp',
-        'id_rumah', // Kolom foreign key
+        'id_rumah', 
     ];
 
     public function rumah()

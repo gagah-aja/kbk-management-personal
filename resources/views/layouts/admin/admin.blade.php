@@ -7,6 +7,7 @@
     <title>Dashboard dengan Fixed Sidebar</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         /* CSS Khusus untuk Sidebar Fixed */
         #sidebar {
@@ -30,6 +31,7 @@
 </head>
 
 <body>
+    <x-alert></x-alert>
 
     <div class="d-flex">
 
@@ -76,6 +78,10 @@
                     <a class="nav-link text-dark" href="#">
                         <i class="bi bi-file-earmark-bar-graph-fill me-2"></i> Laporan
                     </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="{{route('logout')}}"><i class="bi bi-box-arrow-left"></i>
+                        Logout</a>
                 </li>
             </ul>
 

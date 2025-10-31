@@ -35,7 +35,7 @@
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead class="border-bottom">
-                        <tr>
+                        <tr class="text-center">
                             <th scope="col" class="text-start text-muted fw-semibold">NIK</th>
                             <th scope="col" class="text-start text-muted fw-semibold">NAMA LENGKAP</th>
                             <th scope="col" class="text-start text-muted fw-semibold">JENIS KELAMIN</th>
@@ -50,7 +50,7 @@
                     </thead>
                     <tbody>
                         @forelse ($warga as $data)
-                            <tr class="border-bottom">
+                            <tr class="border-bottom text-center">
                                 {{-- 1. NIK (fw-semibold untuk bold) --}}
                                 <td class="fw-semibold">{{ $data->nik }}</td>
 
@@ -69,7 +69,7 @@
                                 {{-- 6. FOTO (Tampilkan ikon jika ada data, atau biarkan kosong jika null/kosong) --}}
                                 <td>
                                     @if ($data->foto)
-                                        <i class="fas fa-image text-primary" title="Foto Tersedia"></i>
+                                        <i class="bi bi-file-earmark-image"></i>
                                     @else
                                         <i class="fas fa-image text-secondary opacity-50" title="Tidak Ada Foto"></i>
                                     @endif
@@ -78,7 +78,7 @@
                                 {{-- 7. FOTO KTP (Tampilkan ikon jika ada data, atau biarkan kosong jika null/kosong) --}}
                                 <td>
                                     @if ($data->foto_ktp)
-                                        <i class="fas fa-id-card text-success" title="Foto KTP Tersedia"></i>
+                                        <i class="bi bi-file-earmark-image"></i>
                                     @else
                                         <i class="fas fa-id-card text-secondary opacity-50" title="Tidak Ada Foto KTP"></i>
                                     @endif
@@ -89,10 +89,13 @@
 
                                 {{-- 9. Aksi (Edit dan Hapus) --}}
                                 <td class="text-center">
-                                    <a href="#" class="text-secondary me-3" title="Edit Data"><i
-                                            class="fas fa-pencil-alt"></i></a>
-                                    <a href="#" class="text-danger" title="Hapus Data"><i
-                                            class="fas fa-trash-alt"></i></a>
+                                    <a href="{{route('admin.warga.edit.halaman',$data->id)}}" class="text-secondary me-3" title="Edit Data"><i
+                                            class="bi bi-pencil-square"></i></a>
+                                    <a href="#" class="text-danger btn-delete" title="Hapus Data"
+                                        data-id="{{ $data->id }}" data-nama="{{ $data->nama_lengkap }}"
+                                        onclick="confirmDelete(event, '{{ $data->id }}', '{{ $data->nama_lengkap }}')">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
                                 </td>
                             </tr>
                         @empty
@@ -103,7 +106,9 @@
                                 </td>
                             </tr>
                         @endforelse
-
+                        <form id="delete-form" method="POST" style="display: none;">
+                            @csrf
+                        </form>
                         {{-- Paginasi hanya ditampilkan jika ada data --}}
                         @if ($warga->hasPages())
                             <tr>
@@ -117,8 +122,43 @@
                     </tbody>
                 </table>
             </div>
-        
+
         </div>
 
     </div>
+    <script>
+        const DELETE_URL_BASE = '{{ route('admin.warga.hapus', ['id' => ':id']) }}';
+
+        /**
+         * Menampilkan konfirmasi SweetAlert2 sebelum menghapus data.
+         */
+        function confirmDelete(event, id, nama) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                html: `Anda akan menghapus data warga <strong>${nama}</strong>. Data yang dihapus tidak dapat dikembalikan.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // 1. Ambil form tersembunyi
+                    const form = document.getElementById('delete-form');
+
+                    // 2. GANTI PLACEHOLDER dengan ID yang sebenarnya
+                    const finalUrl = DELETE_URL_BASE.replace(':id', id);
+
+                    // 3. Set action form ke URL final
+                    form.action = finalUrl;
+
+                    // 4. Kirimkan form DELETE
+                    form.submit();
+                }
+            });
+        }
+    </script>
 @endsection
