@@ -46,15 +46,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="/">
+                    <a class="nav-link text-dark" href="{{route('admin.rumah.index')}}">
                         <i class="bi bi-house-door-fill me-2"></i> Data Rumah
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" href="/Bencana">
-                        <i class="bi bi-people-fill me-2"></i> Data Bencana
-                    </a>
-                </li>
+
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="{{ route('admin.warga.index') }}">
                         <i class="bi bi-person-lines-fill me-2"></i> Data Warga
@@ -72,11 +68,6 @@
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="/admin/nama-blok">
                         <i class="bi bi-megaphone-fill me-2"></i> Blok
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" href="#">
-                        <i class="bi bi-file-earmark-bar-graph-fill me-2"></i> Laporan
                     </a>
                 </li>
                 <li class="nav-item">

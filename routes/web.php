@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\RtController;
 use App\Http\Controllers\Admin\RwController;
 use App\Http\Controllers\Admin\BlokController;
 use App\Http\Controllers\Admin\NamaClusterController;
+use App\Http\Controllers\Admin\RumahController;
 use App\Http\Controllers\Admin\WargaController;
 use App\Http\Controllers\AdminController;
 
@@ -24,7 +25,6 @@ use App\Http\Controllers\AdminController;
 // Rute untuk pengguna yang sudah login
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-
 });
 
 // Rute yang tidak memerlukan login (atau rute "guest")
@@ -82,4 +82,23 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/nama-cluster/{id}/edit', [NamaClusterController::class, 'edit'])->name('nama-cluster.edit');
     Route::put('/nama-cluster/{id}', [NamaClusterController::class, 'update'])->name('nama-cluster.update');
     Route::delete('/nama-cluster/{id}', [NamaClusterController::class, 'destroy'])->name('nama-cluster.destroy');
+
+
+    // Route::get('/warga', [WargaController::class, 'index'])->name('warga.index');
+    Route::get('/rumah', [RumahController::class, 'index'])->name('rumah.index');
+
+    // Route::get('/warga/tambah/halaman', [WargaController::class, 'tambah_halaman'])->name('warga.tambah.halaman');
+    Route::get('/rumah/tambah/halaman', [RumahController::class, 'tambah_halaman'])->name('rumah.tambah.halaman');
+
+    // Route::get('/warga/edit/halaman/{id}', [WargaController::class, 'edit_halaman'])->name('warga.edit.halaman');
+    Route::get('/rumah/edit/halaman/{id}', [RumahController::class, 'edit_halaman'])->name('rumah.edit.halaman');
+
+    // Route::post('/warga/tambah', [WargaController::class, 'tambah'])->name('warga.tambah');
+    Route::post('/rumah/tambah', [RumahController::class, 'tambah'])->name('rumah.tambah');
+
+    // Route::post('/warga/hapus/{id}', [WargaController::class, 'hapus'])->name('warga.hapus');
+    Route::post('/rumah/hapus/{id}', [RumahController::class, 'hapus'])->name('rumah.hapus');
+
+    // Route::post('/warga/update/{id}', [WargaController::class, 'update'])->name('warga.update');
+    Route::post('/rumah/update/{id}', [RumahController::class, 'update'])->name('rumah.update');
 });

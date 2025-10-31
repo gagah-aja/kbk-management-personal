@@ -20,16 +20,38 @@
         <!-- KARTU UTAMA (CONTAINER UNTUK SEARCH DAN TABEL) -->
         <div class="card border-0 rounded-4 shadow-lg p-4">
             <!-- BAR PENCARIAN -->
-            <div class="mb-4">
-                <div class="input-group w-100 w-md-50">
-                    <!-- Menggunakan input-group untuk meletakkan ikon di dalam input -->
-                    <span class="input-group-text bg-white border-end-0 text-muted rounded-start-3" id="search-addon">
-                        <i class="fas fa-search"></i>
-                    </span>
-                    <input type="text" class="form-control border-start-0 rounded-end-3 py-2"
-                        placeholder="Cari berdasarkan nama atau NIK..." aria-label="Search" aria-describedby="search-addon">
-                </div>
-            </div>
+          <div class="mb-4">
+    <form method="GET" action="{{ route('admin.warga.index') }}" class="d-flex w-100 w-md-50">
+        <div class="input-group flex-grow-1">
+            {{-- Ikon Search di Depan --}}
+            <span class="input-group-text bg-white border-end-0 text-muted rounded-start-3" id="search-addon">
+                <i class="fas fa-search"></i>
+            </span>
+
+            {{-- Input Pencarian --}}
+            <input
+                type="text"
+                name="search"
+                value="{{ request('search') }}"
+                class="form-control border-start-0 py-2"
+                placeholder="Cari berdasarkan nama atau NIK..."
+                aria-label="Search"
+                aria-describedby="search-addon">
+
+            {{-- Tombol Search --}}
+            <button type="submit" class="btn btn-primary px-4">
+                Cari
+            </button>
+
+            {{-- Tombol Refresh (reset pencarian) --}}
+            <a href="{{ route('admin.warga.index') }}" class="btn btn-outline-secondary px-4">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </a>
+        </div>
+    </form>
+</div>
+
+
 
             <!-- TABEL DATA WARGA -->
             <div class="table-responsive">
@@ -89,8 +111,8 @@
 
                                 {{-- 9. Aksi (Edit dan Hapus) --}}
                                 <td class="text-center">
-                                    <a href="{{route('admin.warga.edit.halaman',$data->id)}}" class="text-secondary me-3" title="Edit Data"><i
-                                            class="bi bi-pencil-square"></i></a>
+                                    <a href="{{ route('admin.warga.edit.halaman', $data->id) }}" class="text-secondary me-3"
+                                        title="Edit Data"><i class="bi bi-pencil-square"></i></a>
                                     <a href="#" class="text-danger btn-delete" title="Hapus Data"
                                         data-id="{{ $data->id }}" data-nama="{{ $data->nama_lengkap }}"
                                         onclick="confirmDelete(event, '{{ $data->id }}', '{{ $data->nama_lengkap }}')">

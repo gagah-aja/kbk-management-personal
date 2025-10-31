@@ -10,11 +10,20 @@ use Illuminate\Support\Facades\Storage;
 
 class WargaController extends Controller
 {
-    public function index()
-    {
-        $warga = Warga::paginate(10);
-        return view('pages.admin.warga', compact('warga'));
-    }
+    public function index(Request $request)
+{
+    $search = $request->input('search');
+
+    $warga = Warga::when($search, function ($query, $search) {
+        $query->where('nama_lengkap', 'like', "%{$search}%")
+              ->orWhere('nik', 'like', "%{$search}%");
+    })->paginate(10);
+
+    $warga->appends(['search' => $search]);
+
+    return view('pages.admin.warga', compact('warga', 'search'));
+}
+
     public function tambah_halaman()
     {
         return view('pages.admin.tambah_warga');
