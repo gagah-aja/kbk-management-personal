@@ -13,14 +13,21 @@ return new class extends Migration
     {
         Schema::create('warga', function (Blueprint $table) {
             $table->id();
-            $table->integer("nik");
+            $table->string("nik");
             $table->string("nama_lengkap");
+            $table->string("email")->nullable();
+            $table->string("no_telp")->nullable();
+            $table->string("gol_darah")->nullable();
+            $table->string("agama");
+            $table->string("pendidikan_terakhir")->nullable();
+            $table->string("gaji")->nullable();
+            $table->date("tanggal_lahir");
             $table->string("jenis_kelamin");
             $table->string("hubungan");
-            $table->string("pekerjaan");
+            $table->string("pekerjaan")->nullable();
             $table->string("foto");
             $table->string("foto_ktp");
-            $table->integer('id_rumah');
+            $table->integer('id_rumah')->nullable();
             $table->timestamps();
         });
     }

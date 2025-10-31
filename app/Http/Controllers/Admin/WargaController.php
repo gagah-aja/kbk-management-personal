@@ -19,72 +19,235 @@ class WargaController extends Controller
     {
         return view('pages.admin.tambah_warga');
     }
-      public function tambah(Request $request)
+    public function tambah(Request $request)
     {
+        try {
+            // dd($request);
+            // ✅ VALIDASI DATA
+            $validatedData = $request->validate([
+                'nik' => 'required|numeric|digits:16|unique:warga,nik', // pastikan nama tabel sesuai
+                'nama_lengkap' => 'required|string|max:255',
+                'agama' => 'required|string|max:100',
+                'tanggal_lahir' => 'required|date',
+                'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+                'hubungan' => 'required|string|max:255',
+                'id_rumah' => 'nullable',
+                'foto' => 'required|image|mimes:jpeg,png,jpg',
+                'foto_ktp' => 'required|image|mimes:jpeg,png,jpg',
+
+                // Opsional
+                'email' => 'nullable|email|max:255',
+                'no_telp' => 'nullable|digits_between:8,15',
+                'gol_darah' => 'nullable|in:A,B,AB,O',
+                'pendidikan_terakhir' => 'nullable|string|max:255',
+                'gaji' => 'nullable|numeric|min:0',
+                'pekerjaan' => 'nullable|string|max:255',
+            ]);
+
+            DB::beginTransaction();
+
+            // ✅ UPLOAD FOTO
+            $fotoPath = $request->file('foto')->store('warga/foto', 'public');
+            $fotoKtpPath = $request->file('foto_ktp')->store('warga/ktp', 'public');
+
+            // ✅ SIMPAN KE DATABASE
+            Warga::create([
+                'nik' => $validatedData['nik'],
+                'nama_lengkap' => $validatedData['nama_lengkap'],
+                'agama' => $validatedData['agama'],
+                'tanggal_lahir' => $validatedData['tanggal_lahir'],
+                'jenis_kelamin' => $validatedData['jenis_kelamin'],
+                'hubungan' => $validatedData['hubungan'],
+                'id_rumah' => $validatedData['id_rumah'],
+
+                'email' => $validatedData['email'] ?? null,
+                'no_telp' => $validatedData['no_telp'] ?? null,
+                'gol_darah' => $validatedData['gol_darah'] ?? null,
+                'pendidikan_terakhir' => $validatedData['pendidikan_terakhir'] ?? null,
+                'gaji' => $validatedData['gaji'] ?? null,
+                'pekerjaan' => $validatedData['pekerjaan'] ?? null,
+
+                'foto' => $fotoPath,
+                'foto_ktp' => $fotoKtpPath,
+            ]);
+
+            DB::commit();
+
+            return redirect()
+                ->route('admin.warga.tambah.halaman')
+                ->with('success', 'Data warga berhasil ditambahkan!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // ✅ Jika validasi gagal
+            // dd($e->validator);
+            return redirect()
+                ->back()
+                ->withErrors($e->validator)
+                ->withInput();
+        } catch (\Exception $e) {
+            // dd($e);
+            DB::rollBack();
+            // dd($e->getMessage());
+
+            // ✅ Hapus file yang terlanjur terupload jika gagal
+            if (!empty($fotoPath) && Storage::disk('public')->exists($fotoPath)) {
+                Storage::disk('public')->delete($fotoPath);
+            }
+            if (!empty($fotoKtpPath) && Storage::disk('public')->exists($fotoKtpPath)) {
+                Storage::disk('public')->delete($fotoKtpPath);
+            }
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+
+    public function edit_halaman($id)
+    {
+        $warga = Warga::find($id);
+        return view('pages.admin.edit_warga', compact('warga'));
+    }
+    public function update(Request $request, $id)
+    {
+        // Cari data warga yang akan diupdate
+        $warga = Warga::findOrFail($id);
+
+        // Variabel untuk menyimpan path file lama
+        $oldFotoPath = $warga->foto;
+        $oldFotoKtpPath = $warga->foto_ktp;
 
         try {
+            // ✅ VALIDASI DATA
+            // PENTING: Untuk 'nik', rule 'unique' harus diabaikan untuk NIK milik warga yang sedang diedit ($id)
             $validatedData = $request->validate([
-                'nik' => 'required|string|unique:warga,nik|max:16',
+                'nik' => 'required|numeric|digits:16|unique:warga,nik,' . $id,
                 'nama_lengkap' => 'required|string|max:255',
-                'jenis_kelamin' => 'required|string|in:Laki-laki,Perempuan',
+                'agama' => 'required|string|max:100',
+                'tanggal_lahir' => 'required|date',
+                'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
                 'hubungan' => 'required|string|max:255',
-                'pekerjaan' => 'required|string|max:255',
-                'tanggal_lahir' => 'nullable|date',
-                'pendidikan' => 'nullable|string|max:255',
-                'id_rumah' => 'nullable|integer',
+                'id_rumah' => 'nullable',
+                // 'foto' dan 'foto_ktp' dibuat 'nullable' karena file lama bisa dipertahankan
+                'foto' => 'nullable|image|mimes:jpeg,png,jpg',
+                'foto_ktp' => 'nullable|image|mimes:jpeg,png,jpg',
 
-                'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-                'foto_ktp' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                // Opsional
+                'email' => 'nullable|email|max:255',
+                'no_telp' => 'nullable|digits_between:8,15',
+                'gol_darah' => 'nullable|in:A,B,AB,O',
+                'pendidikan_terakhir' => 'nullable|string|max:255',
+                'gaji' => 'nullable|numeric|min:0',
+                'pekerjaan' => 'nullable|string|max:255',
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Tangani error validasi dan kembali dengan pesan error
-            return redirect()->back()->withErrors($e->errors())->withInput();
-        }
 
-        $fotoPath = null;
-        $fotoKtpPath = null;
+            DB::beginTransaction();
+
+            // 🖼️ PENANGANAN UPLOAD FOTO BARU
+
+            // Inisialisasi path baru dengan path lama (jika tidak ada upload baru)
+            $fotoPath = $oldFotoPath;
+            $fotoKtpPath = $oldFotoKtpPath;
+
+            if ($request->hasFile('foto')) {
+                // Upload foto baru
+                $fotoPath = $request->file('foto')->store('warga/foto', 'public');
+                // Hapus foto lama jika ada
+                if ($oldFotoPath && Storage::disk('public')->exists($oldFotoPath)) {
+                    Storage::disk('public')->delete($oldFotoPath);
+                }
+            }
+
+            if ($request->hasFile('foto_ktp')) {
+                // Upload foto KTP baru
+                $fotoKtpPath = $request->file('foto_ktp')->store('warga/ktp', 'public');
+                // Hapus foto KTP lama jika ada
+                if ($oldFotoKtpPath && Storage::disk('public')->exists($oldFotoKtpPath)) {
+                    Storage::disk('public')->delete($oldFotoKtpPath);
+                }
+            }
+
+            // ✅ PERBARUI DATA DI DATABASE
+            $warga->update([
+                'nik' => $validatedData['nik'],
+                'nama_lengkap' => $validatedData['nama_lengkap'],
+                'agama' => $validatedData['agama'],
+                'tanggal_lahir' => $validatedData['tanggal_lahir'],
+                'jenis_kelamin' => $validatedData['jenis_kelamin'],
+                'hubungan' => $validatedData['hubungan'],
+                'id_rumah' => $validatedData['id_rumah'],
+
+                'email' => $validatedData['email'] ?? null,
+                'no_telp' => $validatedData['no_telp'] ?? null,
+                'gol_darah' => $validatedData['gol_darah'] ?? null,
+                'pendidikan_terakhir' => $validatedData['pendidikan_terakhir'] ?? null,
+                'gaji' => $validatedData['gaji'] ?? null,
+                'pekerjaan' => $validatedData['pekerjaan'] ?? null,
+
+                'foto' => $fotoPath, // Menggunakan path baru atau lama
+                'foto_ktp' => $fotoKtpPath, // Menggunakan path baru atau lama
+            ]);
+
+            DB::commit();
+
+            return redirect()
+                ->route('admin.warga.index') // Biasanya redirect ke halaman list/index setelah update
+                ->with('success', 'Data warga berhasil diperbarui!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // ✅ Jika validasi gagal
+            return redirect()
+                ->back()
+                ->withErrors($e->validator)
+                ->withInput();
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            // Hapus file baru yang terlanjur terupload jika terjadi kegagalan DB setelah upload
+            if ($request->hasFile('foto') && Storage::disk('public')->exists($fotoPath) && $fotoPath != $oldFotoPath) {
+                Storage::disk('public')->delete($fotoPath);
+            }
+            if ($request->hasFile('foto_ktp') && Storage::disk('public')->exists($fotoKtpPath) && $fotoKtpPath != $oldFotoKtpPath) {
+                Storage::disk('public')->delete($fotoKtpPath);
+            }
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage());
+        }
+    }
+
+    public function hapus($id)
+    {
+        // Cari data warga, atau tampilkan 404 jika tidak ditemukan
+        $warga = Warga::findOrFail($id);
 
         try {
             // Memulai transaksi database
             DB::beginTransaction();
 
-            // 2. UNGGAH FOTO WARGA & KTP
-            // File dipastikan ada setelah lolos validasi 'required'.
-            $fotoPath = $this->uploadFile($request->file('foto'), 'warga/foto');
-            $fotoKtpPath = $this->uploadFile($request->file('foto_ktp'), 'warga/ktp');
+            // 1. HAPUS FILE FOTO DARI STORAGE
+            if ($warga->foto) {
+                // Hapus foto warga dari disk 'public'
+                Storage::disk('public')->delete($warga->foto);
+            }
+            if ($warga->foto_ktp) {
+                // Hapus foto KTP dari disk 'public'
+                Storage::disk('public')->delete($warga->foto_ktp);
+            }
 
-            // 3. SIMPAN DATA KE DATABASE (Kode Warga::create diaktifkan)
-            Warga::create([
-                'nik' => $validatedData['nik'],
-                'nama_lengkap' => $validatedData['nama_lengkap'],
-                'jenis_kelamin' => $validatedData['jenis_kelamin'],
-                'hubungan' => $validatedData['hubungan'],
-                'pekerjaan' => $validatedData['pekerjaan'],
-                // Gunakan null-coalescing untuk menangani 'tanggal_lahir' yang mungkin null karena dibuat 'nullable' di validasi
-                'tanggal_lahir' => $validatedData['tanggal_lahir'] ?? null,
-                'pendidikan' => $validatedData['pendidikan'],
-                'id_rumah' => $validatedData['id_rumah'] ?? null,
-                'foto' => $fotoPath, // Path file foto
-                'foto_ktp' => $fotoKtpPath, // Path file foto KTP
-            ]);
+            // 2. HAPUS RECORD DARI DATABASE
+            $warga->delete();
 
-            DB::commit(); // Komit transaksi jika berhasil
+            DB::commit();
 
             // Redirect dengan pesan sukses
-            return redirect()->route('admin.warga.tambah.halaman')->with('success', 'Data Warga berhasil ditambahkan!');
+            return redirect()->route('admin.warga.index')->with('success', 'Data Warga ' . $warga->nama_lengkap . ' berhasil dihapus.');
         } catch (\Exception $e) {
-            DB::rollBack(); // Rollback transaksi jika terjadi kesalahan
-
-            // Hapus file yang sudah terlanjur terupload jika terjadi kegagalan DB
-            if ($fotoPath && Storage::disk('public')->exists($fotoPath)) {
-                Storage::disk('public')->delete($fotoPath);
-            }
-            if ($fotoKtpPath && Storage::disk('public')->exists($fotoKtpPath)) {
-                Storage::disk('public')->delete($fotoKtpPath);
-            }
-
-            // Redirect dengan pesan error dan tampilkan error detail untuk debugging
-            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data warga: ' . $e->getMessage());
+            DB::rollBack();
+            // Redirect dengan pesan error
+            return redirect()->back()->with('error', 'Gagal menghapus data warga: ' . $e->getMessage());
         }
     }
 

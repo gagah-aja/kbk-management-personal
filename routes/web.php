@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
 // Rute yang tidak memerlukan login (atau rute "guest")
 Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::post('/auth_login', [AuthController::class, 'authenticate'])->name('auth_login');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 
@@ -61,7 +61,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/warga', [WargaController::class, 'index'])->name('warga.index');
     Route::get('/warga/tambah/halaman', [WargaController::class, 'tambah_halaman'])->name('warga.tambah.halaman');
+    Route::get('/warga/edit/halaman/{id}', [WargaController::class, 'edit_halaman'])->name('warga.edit.halaman');
     Route::post('/warga/tambah', [WargaController::class, 'tambah'])->name('warga.tambah');
+    Route::post('/warga/hapus/{id}', [WargaController::class, 'hapus'])->name('warga.hapus');
+    Route::post('/warga/update/{id}', [WargaController::class, 'update'])->name('warga.update');
+
     Route::get('/nama-cluster', [NamaClusterController::class, 'index'])->name('nama-cluster.index');
     Route::get('/nama-cluster/create', [NamaClusterController::class, 'create'])->name('nama-cluster.create');
     Route::post('/nama-cluster', [NamaClusterController::class, 'store'])->name('nama-cluster.store');
