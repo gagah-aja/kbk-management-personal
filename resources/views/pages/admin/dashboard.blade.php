@@ -10,11 +10,11 @@
                 <div class="card shadow border-0 h-100 p-3">
                     <div class="d-flex align-items-start">
                         <div class="card-icon-wrapper bg-blue-light me-3">
-                            <i class="fas fa-house-chimney"></i>
+                            <i class="bi bi-houses"></i>
                         </div>
                         <div>
                             <small class="text-secondary d-block">Total Rumah</small>
-                            <h4 class="fw-bold mb-0">5</h4>
+                            <h4 class="bi-bold mb-0">{{ $totalRumah }}</h4>
                         </div>
                     </div>
                 </div>
@@ -24,11 +24,11 @@
                 <div class="card shadow border-0 h-100 p-3">
                     <div class="d-flex align-items-start">
                         <div class="card-icon-wrapper bg-green-light me-3">
-                            <i class="fas fa-user-group"></i>
+                            <i class="bi bi-person"></i>
                         </div>
                         <div>
-                            <small class="text-secondary d-block">Total Keluarga</small>
-                            <h4 class="fw-bold mb-0">5</h4>
+                            <small class="text-secondary d-block">Total Rt & Rw</small>
+                            <h4 class="bi-bold mb-0">{{ $totalRt }} & {{ $totalRw }}</h4>
                         </div>
                     </div>
                 </div>
@@ -38,11 +38,24 @@
                 <div class="card shadow border-0 h-100 p-3">
                     <div class="d-flex align-items-start">
                         <div class="card-icon-wrapper bg-purple-light me-3">
-                            <i class="fas fa-users"></i>
+                            <i class="bi bi-house"></i>
                         </div>
                         <div>
-                            <small class="text-secondary d-block">Total Warga</small>
-                            <h4 class="fw-bold mb-0">17</h4>
+                            <small class="text-secondary d-block">Total cluster</small>
+                            <h4 class="fw-bold mb-0">{{ $totalCluster }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card shadow border-0 h-100 p-3">
+                    <div class="d-flex align-items-start">
+                        <div class="card-icon-wrapper bg-purple-light me-3">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div>
+                            <small class="text-secondary d-block">Total warga</small>
+                            <h4 class="fw-bold mb-0">{{ $totalWarga }}</h4>
                         </div>
                     </div>
                 </div>
@@ -71,14 +84,6 @@
                 </div>
             </div>
 
-            <div class="col-lg-6 mb-4">
-                <div class="card shadow border-0 h-100 p-4">
-                    <div class="chart-title">Distribusi Kelompok Umur</div>
-
-                    <div class="chart-placeholder">
-                    </div>
-                </div>
-            </div>
 
         </div> --}}
 
