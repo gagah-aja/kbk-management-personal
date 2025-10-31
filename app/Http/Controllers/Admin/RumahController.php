@@ -3,34 +3,22 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Cluster;
-use App\Models\Rumah;
-use App\Models\Warga;
 use Illuminate\Http\Request;
+use App\Models\Rumah;
+use App\Models\Cluster;
+use App\Models\Warga;
 use Illuminate\Support\Facades\Storage;
 
 class RumahController extends Controller
 {
-     public function index(Request $request)
+    // 🟢 Tampilkan semua data rumah
+    public function index()
     {
-        $search = $request->input('search');
-
-        $rumah = Rumah::with(['cluster', 'warga'])
-            ->when($search, function ($query, $search) {
-                $query->where('nomor_rumah', 'like', "%{$search}%")
-                      ->orWhere('alamat_lengkap', 'like', "%{$search}%")
-                      ->orWhere('status', 'like', "%{$search}%");
-            })
-            ->paginate(10);
-
-        $rumah->appends(['search' => $search]);
-
-        return view('pages.admin.rumah', compact('rumah', 'search'));
+        $rumah = Rumah::with(['cluster', 'warga'])->get();
+        return view('pages.admin.rumah.rumah', compact('rumah'));
     }
 
-    /**
-     * Form tambah rumah baru.
-     */
+    // 🟡 Tampilkan form tambah rumah
     public function create()
     {
         $clusters = Cluster::all();
@@ -38,9 +26,7 @@ class RumahController extends Controller
         return view('pages.admin.rumah.create', compact('clusters', 'warga'));
     }
 
-    /**
-     * Simpan data rumah baru.
-     */
+    // 🟠 Simpan data rumah baru
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -54,35 +40,35 @@ class RumahController extends Controller
             'id_warga' => 'nullable|exists:warga,id',
         ]);
 
-        // Upload gambar kalau ada
         if ($request->hasFile('gambar')) {
             $validated['gambar'] = $request->file('gambar')->store('rumah', 'public');
         }
 
         Rumah::create($validated);
 
-        return redirect()->route('admin.rumah.index')->with('success', 'Data rumah berhasil ditambahkan.');
+        return redirect()->route('admin.rumah.index')
+            ->with('success', 'Data rumah berhasil ditambahkan!');
     }
 
-    /**
-     * Form edit rumah.
-     */
-    public function edit(Rumah $rumah)
+    // 🟣 Tampilkan form edit rumah
+    public function edit($id)
     {
+        $rumah = Rumah::findOrFail($id);
         $clusters = Cluster::all();
         $warga = Warga::all();
+
         return view('pages.admin.rumah.edit', compact('rumah', 'clusters', 'warga'));
     }
 
-    /**
-     * Update data rumah.
-     */
-    public function update(Request $request, Rumah $rumah)
+    // 🟡 Update data rumah
+    public function update(Request $request, $id)
     {
+        $rumah = Rumah::findOrFail($id);
+
         $validated = $request->validate([
             'nomor_rumah' => 'required|unique:rumah,nomor_rumah,' . $rumah->id,
             'alamat_lengkap' => 'required',
-            'status' => 'required|in:tersedia,terisi,rusak',
+            'status' => 'required|in:Tersedia,Terisi,Rusak',
             'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
@@ -90,32 +76,30 @@ class RumahController extends Controller
             'id_warga' => 'nullable|exists:warga,id',
         ]);
 
-        // Ganti gambar kalau ada upload baru
+        // Ganti gambar jika diunggah baru
         if ($request->hasFile('gambar')) {
-            // Hapus gambar lama
-            if ($rumah->gambar && Storage::disk('public')->exists($rumah->gambar)) {
+            if ($rumah->gambar) {
                 Storage::disk('public')->delete($rumah->gambar);
             }
-
             $validated['gambar'] = $request->file('gambar')->store('rumah', 'public');
         }
 
         $rumah->update($validated);
 
-        return redirect()->route('admin.rumah.index')->with('success', 'Data rumah berhasil diperbarui.');
+        return redirect()->route('admin.rumah.index')
+            ->with('success', 'Data rumah berhasil diperbarui!');
     }
 
-    /**
-     * Hapus data rumah.
-     */
-    public function destroy(Rumah $rumah)
+    // 🔴 Hapus data rumah
+    public function destroy($id)
     {
-        if ($rumah->gambar && Storage::disk('public')->exists($rumah->gambar)) {
+        $rumah = Rumah::findOrFail($id);
+        if ($rumah->gambar) {
             Storage::disk('public')->delete($rumah->gambar);
         }
-
         $rumah->delete();
 
-        return redirect()->route('admin.rumah.index')->with('success', 'Data rumah berhasil dihapus.');
+        return redirect()->route('admin.rumah.index')
+            ->with('success', 'Data rumah berhasil dihapus!');
     }
 }

@@ -32,7 +32,7 @@ class Rumah extends Model
         return $this->belongsTo(Cluster::class, 'id_cluster');
     }
 
-    /**
+    /** 
      * Relasi ke Warga
      */
     public function warga()
