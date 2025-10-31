@@ -60,7 +60,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/data-rw', [RwController::class, 'index'])->name('rw.index');
         Route::post('/data-rw', [RwController::class, 'store'])->name('rw.store');
-        Route::post('/data-rw/{id}', [RwController::class, 'update'])->name('rw.update');
+        Route::put('/data-rw/{id}', [RwController::class, 'update'])->name('rw.update');
         Route::delete('/admin/data-rw/{id}', [RwController::class, 'destroy'])->name('rw.destroy');
 
         // 🧱 Manajemen Blok

@@ -64,19 +64,7 @@ class RwController extends Controller
             $rw->load('warga');
 
             // Kembalikan response JSON
-            return response()->json([
-                'success' => true,
-                'message' => 'Data RW berhasil diperbarui!',
-                'rw' => [
-                    'id' => $rw->id,
-                    'nomor_rw' => $rw->nomor_rw,
-                    'warga' => [
-                        'id' => $rw->warga->id ?? null,
-                        'nama_lengkap' => $rw->warga->nama_lengkap ?? '-',
-                        'nik' => $rw->warga->nik ?? '-',
-                    ]
-                ]
-            ]);
+          return redirect()->back()->with('success', 'Data RW berhasil diperbarui!');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Jika validasi gagal, kirim error JSON juga
