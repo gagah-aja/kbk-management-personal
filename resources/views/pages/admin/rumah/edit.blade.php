@@ -1,9 +1,9 @@
 @extends('layouts.admin.admin')
 
 @section('content')
-    <div class="container py-4">
-        <h2 class="fw-bold mb-3">✏️ Edit Data Rumah</h2>
-        <p class="text-muted mb-4">Perbarui informasi rumah berikut.</p>
+<div class="container py-4">
+    <h2 class="fw-bold mb-3">Edit Data Rumah</h2>
+    <p class="text-muted mb-4">Perbarui informasi rumah berikut.</p>
 
         {{-- Pesan Feedback dan Error Validation --}}
         @if (session('success'))
@@ -24,7 +24,7 @@
             <form action="{{ route('admin.rumah.update', $rumah->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 {{-- WAJIB: Gunakan PUT method untuk update di Laravel --}}
-                    
+
                 {{-- Nomor Rumah --}}
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Nomor Rumah</label>

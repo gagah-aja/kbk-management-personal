@@ -4,73 +4,87 @@
 <div class="container py-4">
     <h2 class="mb-4 fw-bold">📋 Data RW</h2>
 
-    {{-- ✅ SweetAlert Notifikasi Sukses --}}
-    @if (session('success'))
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: '{{ session('success') }}',
-                    showConfirmButton: false,
-                    timer: 2000
-                });
-            });
-        </script>
-    @endif
+    {{-- Tombol Tambah RW --}}
+    <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#tambahRwModal">
+        + Tambah Data RW
+    </button>
 
-    {{-- ⚠️ SweetAlert untuk Error Validasi --}}
-    @if ($errors->any())
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal Menyimpan!',
-                    html: `{!! implode('<br>', $errors->all()) !!}`,
-                });
-            });
-        </script>
-    @endif
-
-    {{-- 🔹 Form Tambah RW --}}
-    <div class="card shadow-sm mb-4 border-0">
-        <div class="card-header bg-primary text-white fw-semibold">
-            Tambah Data RW
-        </div>
-        <div class="card-body">
-            <form id="form-tambah-rw" method="POST" action="{{ route('admin.rw.store') }}">
-                @csrf
-                <div class="row g-3 align-items-end">
-                    <div class="col-md-4">
-                        <label for="nomor_rw" class="form-label">Nomor RW</label>
-                        <input type="number" name="nomor_rw" id="nomor_rw" class="form-control" required>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="id_warga" class="form-label">Pilih Ketua RW (Warga)</label>
-                        <select name="id_warga" id="id_warga" class="form-select" required>
-                            <option value="">-- Pilih Warga --</option>
-                            @foreach($wargas as $warga)
-                                @php
-                                    $sudahKetua = $rws->contains('id_warga', $warga->id);
-                                @endphp
-                                <option value="{{ $warga->id }}" {{ $sudahKetua ? 'disabled' : '' }}>
-                                    {{ $warga->nama_lengkap }} ({{ $warga->nik }})
-                                    {{ $sudahKetua ? '— Sudah jadi Ketua RW' : '' }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-success w-100">Simpan</button>
-                    </div>
+    {{-- Modal Tambah RW --}}
+    <div class="modal fade" id="tambahRwModal" tabindex="-1" aria-labelledby="tambahRwLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tambahRwLabel">Tambah Data RW</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-            </form>
+                <form method="POST" action="{{ route('admin.rw.store') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nomor_rw" class="form-label">Nomor RW</label>
+                            <input type="number" name="nomor_rw" id="nomor_rw" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_warga" class="form-label">Pilih Ketua RW (Warga)</label>
+                            <select name="id_warga" id="id_warga" class="form-select" required>
+                                <option value="">-- Pilih Warga --</option>
+                                @foreach($wargas as $warga)
+                                    @php
+                                        $sudahKetua = $rws->contains('id_warga', $warga->id);
+                                    @endphp
+                                    <option value="{{ $warga->id }}" {{ $sudahKetua ? 'disabled' : '' }}>
+                                        {{ $warga->nama_lengkap }} ({{ $warga->nik }})
+                                        {{ $sudahKetua ? '— Sudah jadi Ketua RW' : '' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-success">Simpan</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
-    {{-- 📊 Tabel Data RW --}}
+    {{-- Modal Edit RW --}}
+    <div class="modal fade" id="editRwModal" tabindex="-1" aria-labelledby="editRwLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editRwLabel">Edit Data RW</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" id="form-edit-rw">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="edit_nomor_rw" class="form-label">Nomor RW</label>
+                            <input type="number" name="nomor_rw" id="edit_nomor_rw" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_id_warga" class="form-label">Pilih Ketua RW (Warga)</label>
+                            <select name="id_warga" id="edit_id_warga" class="form-select" required>
+                                <option value="">-- Pilih Warga --</option>
+                                @foreach($wargas as $warga)
+                                    <option value="{{ $warga->id }}">{{ $warga->nama_lengkap }} ({{ $warga->nik }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-warning">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- Tabel Daftar RW --}}
     <div class="card shadow-sm border-0">
         <div class="card-header bg-secondary text-white fw-semibold">
             Daftar RW
@@ -122,87 +136,73 @@
     </div>
 </div>
 
-{{-- SweetAlert --}}
+{{-- SweetAlert2 --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{{-- Notifikasi Sukses --}}
+@if (session('success'))
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: '{{ session('success') }}',
+        showConfirmButton: false,
+        timer: 2000
+    });
+});
+</script>
+@endif
 
-    // Edit Data RW
-    document.querySelectorAll('.btn-edit').forEach(btn => {
-        btn.addEventListener('click', async function() {
-            const id = this.dataset.id;
-            const nomor = this.dataset.nomor;
-            const idWarga = this.dataset.warga;
+{{-- Notifikasi Error Validasi --}}
+@if ($errors->any())
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal Menyimpan!',
+        html: `{!! implode('<br>', $errors->all()) !!}`,
+    });
+});
+</script>
+@endif
 
-            const { value: formValues } = await Swal.fire({
-                title: 'Edit Data RW',
-                html: `
-                    <label>Nomor RW</label>
-                    <input id="swal-nomor" class="form-control mb-2" type="number" value="${nomor}" required>
-                    <label>Pilih Ketua RW (Warga)</label>
-                    <select id="swal-warga" class="form-select">
-                        @foreach($wargas as $w)
-                            <option value="{{ $w->id }}">{{ $w->nama_lengkap }} ({{ $w->nik }})</option>
-                        @endforeach
-                    </select>
-                `,
-                didOpen: () => {
-                    document.getElementById('swal-warga').value = idWarga;
-                },
-                confirmButtonText: 'Simpan Perubahan',
-                showCancelButton: true,
-                cancelButtonText: 'Batal',
-                preConfirm: () => ({
-                    nomor_rw: document.getElementById('swal-nomor').value,
-                    id_warga: document.getElementById('swal-warga').value
-                })
-            });
-
-            if(formValues){
-                fetch(`/admin/data-rw/${id}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(formValues)
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if(data.success){
-                        const tr = document.querySelector(`tr[data-id="${id}"]`);
-                        tr.querySelector('.nomor-rw').textContent = formValues.nomor_rw;
-                        tr.querySelector('.nik-rw').textContent = data.rw.warga.nik;
-                        tr.querySelector('.nama-rw').textContent = data.rw.warga.nama_lengkap;
-                        Swal.fire('Berhasil!', 'Data RW berhasil diperbarui.', 'success');
-                    } else {
-                        Swal.fire('Gagal!', 'Gagal memperbarui data.', 'error');
-                    }
-                });
+{{-- Konfirmasi Hapus --}}
+<script>
+document.querySelectorAll('.delete-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: "Data RW yang dihapus tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if(result.isConfirmed){
+                form.submit();
             }
         });
     });
+});
 
-    // Hapus Data RW (tanpa AJAX)
-    document.querySelectorAll('.delete-form').forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            Swal.fire({
-                title: 'Yakin ingin menghapus?',
-                text: "Data RW yang dihapus tidak bisa dikembalikan!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if(result.isConfirmed){
-                    form.submit();
-                }
-            });
-        });
+// Tombol Edit RW
+document.querySelectorAll('.btn-edit').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const id = this.dataset.id;
+        const nomor = this.dataset.nomor;
+        const wargaId = this.dataset.warga;
+
+        document.getElementById('edit_nomor_rw').value = nomor;
+        document.getElementById('edit_id_warga').value = wargaId;
+
+        // Set action form edit
+        document.getElementById('form-edit-rw').action = `/admin/data-rw/${id}`;
+        
+        // Tampilkan modal edit
+        new bootstrap.Modal(document.getElementById('editRwModal')).show();
     });
-
 });
 </script>
 @endsection
