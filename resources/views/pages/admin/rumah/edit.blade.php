@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container py-4">
-    <h2 class="fw-bold mb-3">✏️ Edit Data Rumah</h2>
+    <h2 class="fw-bold mb-3">Edit Data Rumah</h2>
     <p class="text-muted mb-4">Perbarui informasi rumah berikut.</p>
 
     <div class="card border-0 shadow-sm rounded-4 p-4">
