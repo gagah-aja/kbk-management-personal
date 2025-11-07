@@ -23,96 +23,101 @@ use App\Http\Controllers\UserController;
 |
 */
 
-// Rute untuk pengguna yang sudah login
+// =====================================================
+// 🔹 ROUTE PUBLIC (Guest)
+// =====================================================
+Route::get('/', [UserController::class, 'index'])->name('dashboard');
 
+Route::prefix('user')->name('user.')->group(function () {
+    // Tambahkan route user di sini jika ada
+});
 
-
-// Rute yang tidak memerlukan login (atau rute "guest")
+// =====================================================
+// 🔹 ROUTE AUTHENTICATION
+// =====================================================
 Route::get('/login_admin', [AuthController::class, 'login'])->name('login');
 Route::post('/auth_login', [AuthController::class, 'authenticate'])->name('auth_login');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/', [UserController::class, 'index'])->name('dashboard');
-Route::prefix('user')->name('user.')->group(function () {
-});
-
-
 // =====================================================
-// 🔹 ROUTE UNTUK ADMIN PANEL
+// 🔹 ROUTE ADMIN PANEL (Memerlukan Authentication)
 // =====================================================
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
-    Route::prefix('admin')->name('admin.')->group(function () {
+    // =====================================================
+    // 📊 Dashboard Admin
+    // =====================================================
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        // Dashboard Admin
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // =====================================================
+    // 🏘️ Manajemen Cluster
+    // =====================================================
+    Route::get('/cluster', [ClusterController::class, 'index'])->name('cluster.index');
+    Route::get('/cluster/create', [ClusterController::class, 'create'])->name('cluster.create');
+    Route::post('/cluster', [ClusterController::class, 'store'])->name('cluster.store');
+    Route::get('/cluster/{id}/edit', [ClusterController::class, 'edit'])->name('cluster.edit');
+    Route::put('/cluster/{id}', [ClusterController::class, 'update'])->name('cluster.update');
+    Route::delete('/cluster/{id}', [ClusterController::class, 'destroy'])->name('cluster.destroy');
 
-        Route::get('/data-cluster', [ClusterController::class, 'index'])->name('data-cluster.index');
-        Route::post('/data-cluster', [ClusterController::class, 'store'])->name('data-cluster.store');
-        Route::put('/data-cluster/{id}', [ClusterController::class, 'update'])->name('data-cluster.update');
-        Route::delete('/data-cluster/{id}', [ClusterController::class, 'destroy'])->name('data-cluster.destroy');
+    // =====================================================
+    // 🏘️ Manajemen Nama Cluster
+    // =====================================================
+    Route::get('/nama-cluster', [NamaClusterController::class, 'index'])->name('nama-cluster.index');
+    Route::get('/nama-cluster/create', [NamaClusterController::class, 'create'])->name('nama-cluster.create');
+    Route::post('/nama-cluster', [NamaClusterController::class, 'store'])->name('nama-cluster.store');
+    Route::get('/nama-cluster/{id}', [NamaClusterController::class, 'show'])->name('nama-cluster.show');
+    Route::get('/nama-cluster/{id}/edit', [NamaClusterController::class, 'edit'])->name('nama-cluster.edit');
+    Route::put('/nama-cluster/{id}', [NamaClusterController::class, 'update'])->name('nama-cluster.update');
+    Route::delete('/nama-cluster/{id}', [NamaClusterController::class, 'destroy'])->name('nama-cluster.destroy');
 
-        // 🔹 Data RT
-        Route::get('/data-rt', [RtController::class, 'index'])->name('data-rt.index');
-        Route::post('/data-rt', [RtController::class, 'store'])->name('data-rt.store');
-        Route::put('/data-rt/{id}', [RtController::class, 'update'])->name('data-rt.update');
-        Route::delete('/data-rt/{id}', [RtController::class, 'destroy'])->name('data-rt.destroy');
+    // =====================================================
+    // 🧱 Manajemen Blok
+    // =====================================================
+    Route::get('/blok', [BlokController::class, 'index'])->name('blok.index');
+    Route::get('/blok/create', [BlokController::class, 'create'])->name('blok.create');
+    Route::post('/blok', [BlokController::class, 'store'])->name('blok.store');
+    Route::get('/blok/{id}/edit', [BlokController::class, 'edit'])->name('blok.edit');
+    Route::put('/blok/{id}', [BlokController::class, 'update'])->name('blok.update');
+    Route::delete('/blok/{id}', [BlokController::class, 'destroy'])->name('blok.destroy');
 
-        Route::get('/data-rw', [RwController::class, 'index'])->name('rw.index');
-        Route::post('/data-rw', [RwController::class, 'store'])->name('rw.store');
-        Route::put('/data-rw/{id}', [RwController::class, 'update'])->name('rw.update');
-        Route::delete('/admin/data-rw/{id}', [RwController::class, 'destroy'])->name('rw.destroy');
+    // =====================================================
+    // 👥 Manajemen RW (Rukun Warga)
+    // =====================================================
+    Route::get('/rw', [RwController::class, 'index'])->name('rw.index');
+    Route::get('/rw/create', [RwController::class, 'create'])->name('rw.create');
+    Route::post('/rw', [RwController::class, 'store'])->name('rw.store');
+    Route::get('/rw/{id}/edit', [RwController::class, 'edit'])->name('rw.edit');
+    Route::put('/rw/{id}', [RwController::class, 'update'])->name('rw.update');
+    Route::delete('/rw/{id}', [RwController::class, 'destroy'])->name('rw.destroy');
 
-        // 🧱 Manajemen Blok
-        // =====================================================
-        Route::get('/nama-blok', [BlokController::class, 'index'])->name('blok.index');
-        Route::post('/nama-blok', [BlokController::class, 'store'])->name('blok.store');
-        Route::put('/nama-blok/{id}', [BlokController::class, 'update'])->name('blok.update');
-        Route::delete('/nama-blok/{id}', [BlokController::class, 'destroy'])->name('blok.destroy');
+    // =====================================================
+    // 👥 Manajemen RT (Rukun Tetangga)
+    // =====================================================
+    Route::get('/rt', [RtController::class, 'index'])->name('rt.index');
+    Route::get('/rt/create', [RtController::class, 'create'])->name('rt.create');
+    Route::post('/rt', [RtController::class, 'store'])->name('rt.store');
+    Route::get('/rt/{id}/edit', [RtController::class, 'edit'])->name('rt.edit');
+    Route::put('/rt/{id}', [RtController::class, 'update'])->name('rt.update');
+    Route::delete('/rt/{id}', [RtController::class, 'destroy'])->name('rt.destroy');
 
-        // Manajemen Nama Cluster
-        Route::resource('nama_cluster', NamaClusterController::class);
+    // =====================================================
+    // 🏠 Manajemen Rumah
+    // =====================================================
+    Route::get('/rumah', [RumahController::class, 'index'])->name('rumah.index');
+    Route::get('/rumah/create', [RumahController::class, 'create'])->name('rumah.create');
+    Route::post('/rumah', [RumahController::class, 'store'])->name('rumah.store');
+    Route::get('/rumah/{id}/edit', [RumahController::class, 'edit'])->name('rumah.edit');
+    Route::put('/rumah/{id}', [RumahController::class, 'update'])->name('rumah.update');
+    Route::delete('/rumah/{id}', [RumahController::class, 'destroy'])->name('rumah.destroy');
 
+    // =====================================================
+    // 👤 Manajemen Warga
+    // =====================================================
+    Route::get('/warga', [WargaController::class, 'index'])->name('warga.index');
+    Route::get('/warga/create', [WargaController::class, 'create'])->name('warga.create');
+    Route::post('/warga', [WargaController::class, 'store'])->name('warga.store');
+    Route::get('/warga/{id}/edit', [WargaController::class, 'edit'])->name('warga.edit');
+    Route::put('/warga/{id}', [WargaController::class, 'update'])->name('warga.update');
+    Route::delete('/warga/{id}', [WargaController::class, 'destroy'])->name('warga.destroy');
 
-        Route::get('/warga', [WargaController::class, 'index'])->name('warga.index');
-        Route::get('/warga/tambah/halaman', [WargaController::class, 'tambah_halaman'])->name('warga.tambah.halaman');
-        Route::get('/warga/edit/halaman/{id}', [WargaController::class, 'edit_halaman'])->name('warga.edit.halaman');
-        Route::post('/warga/tambah', [WargaController::class, 'tambah'])->name('warga.tambah');
-        Route::post('/warga/hapus/{id}', [WargaController::class, 'hapus'])->name('warga.hapus');
-        Route::post('/warga/update/{id}', [WargaController::class, 'update'])->name('warga.update');
-
-        Route::get('/nama-cluster', [NamaClusterController::class, 'index'])->name('nama-cluster.index');
-        Route::get('/nama-cluster/create', [NamaClusterController::class, 'create'])->name('nama-cluster.create');
-        Route::post('/nama-cluster', [NamaClusterController::class, 'store'])->name('nama-cluster.store');
-        Route::get('/nama-cluster/{id}', [NamaClusterController::class, 'show'])->name('nama-cluster.show');
-        Route::get('/nama-cluster/{id}/edit', [NamaClusterController::class, 'edit'])->name('nama-cluster.edit');
-        Route::put('/nama-cluster/{id}', [NamaClusterController::class, 'update'])->name('nama-cluster.update');
-        Route::delete('/nama-cluster/{id}', [NamaClusterController::class, 'destroy'])->name('nama-cluster.destroy');
-
-
-        // Route::get('/warga', [WargaController::class, 'index'])->name('warga.index');
-        Route::get('/rumah', [RumahController::class, 'index'])->name('rumah.index');
-
-        // Route::get('/warga/tambah/halaman', [WargaController::class, 'tambah_halaman'])->name('warga.tambah.halaman');
-        Route::get('/rumah/tambah/halaman', [RumahController::class, 'tambah_halaman'])->name('rumah.tambah.halaman');
-
-        // Route::get('/warga/edit/halaman/{id}', [WargaController::class, 'edit_halaman'])->name('warga.edit.halaman');
-        Route::get('/rumah/edit/halaman/{id}', [RumahController::class, 'edit_halaman'])->name('rumah.edit.halaman');
-
-        // Route::post('/warga/tambah', [WargaController::class, 'tambah'])->name('warga.tambah');
-        Route::post('/rumah/tambah', [RumahController::class, 'tambah'])->name('rumah.tambah');
-
-        // Route::post('/warga/hapus/{id}', [WargaController::class, 'hapus'])->name('warga.hapus');
-        Route::post('/rumah/hapus/{id}', [RumahController::class, 'hapus'])->name('rumah.hapus');
-
-        // Route::post('/warga/update/{id}', [WargaController::class, 'update'])->name('warga.update');
-        Route::post('/rumah/update/{id}', [RumahController::class, 'update'])->name('rumah.update');
-        // Route::get('/warga', [WargaController::class, 'index'])->name('warga.index');
-        Route::get('/rumah', [RumahController::class, 'index'])->name('rumah.index');
-        Route::get('/rumah/create', [RumahController::class, 'create'])->name('rumah.create');
-        Route::post('/rumah', [RumahController::class, 'store'])->name('rumah.store');
-        Route::get('/rumah/{id}/edit', [RumahController::class, 'edit'])->name('rumah.edit');
-        Route::put('/rumah/{id}', [RumahController::class, 'update'])->name('rumah.update');
-        Route::delete('/rumah/{id}', [RumahController::class, 'destroy'])->name('rumah.destroy');
-    });
 });

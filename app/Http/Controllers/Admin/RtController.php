@@ -18,16 +18,24 @@ class RtController extends Controller
         // Ambil data RT beserta relasi Warga dan RW
         $dataRT = Rt::with(['warga', 'rw'])->get();
 
+        return view('pages.admin.rt.index', compact('dataRT'));
+    }
+
+    /**
+     * Tampilkan form tambah RT
+     */
+    public function create()
+    {
         // Ambil daftar RW untuk dropdown
         $rwList = Rw::all();
 
         // Ambil ID warga yang sudah menjadi RT
         $idWargaSudahRT = Rt::pluck('id_warga')->toArray();
 
-        // Ambil semua data warga untuk dropdown
-        $warga = Warga::all();
+        // Ambil warga yang belum menjadi RT
+        $warga = Warga::whereNotIn('id', $idWargaSudahRT)->get();
 
-        return view('pages.admin.data-rt', compact('dataRT', 'warga', 'rwList', 'idWargaSudahRT'));
+        return view('pages.admin.rt.create', compact('warga', 'rwList'));
     }
 
     /**
@@ -36,9 +44,17 @@ class RtController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_warga' => 'required|exists:warga,id',
+            'id_warga' => 'required|exists:warga,id|unique:rt,id_warga',
             'id_rw'    => 'required|exists:rw,id',
-            'nomor_rt' => 'required|string|max:10',
+            'nomor_rt' => 'required|string|max:10|unique:rt,nomor_rt',
+        ], [
+            'id_warga.required' => 'Ketua RT wajib dipilih.',
+            'id_warga.exists' => 'Warga tidak ditemukan.',
+            'id_warga.unique' => 'Warga ini sudah menjadi ketua RT.',
+            'id_rw.required' => 'RW wajib dipilih.',
+            'id_rw.exists' => 'RW tidak ditemukan.',
+            'nomor_rt.required' => 'Nomor RT wajib diisi.',
+            'nomor_rt.unique' => 'Nomor RT sudah terdaftar.',
         ]);
 
         Rt::create([
@@ -47,9 +63,27 @@ class RtController extends Controller
             'nomor_rt' => $request->nomor_rt,
         ]);
 
-        return redirect()
-            ->route('admin.data-rt.index')
-            ->with('success', '✅ Data RT berhasil ditambahkan!');
+        return redirect()->route('admin.rt.index')
+            ->with('success', 'Data RT berhasil ditambahkan!');
+    }
+
+    /**
+     * Tampilkan form edit RT
+     */
+    public function edit($id)
+    {
+        $rt = Rt::with(['warga', 'rw'])->findOrFail($id);
+
+        // Ambil daftar RW untuk dropdown
+        $rwList = Rw::all();
+
+        // Ambil ID warga yang sudah menjadi RT (kecuali RT yang sedang diedit)
+        $idWargaSudahRT = Rt::where('id', '!=', $id)->pluck('id_warga')->toArray();
+
+        // Ambil warga yang belum menjadi RT + warga yang sedang menjadi RT ini
+        $warga = Warga::whereNotIn('id', $idWargaSudahRT)->get();
+
+        return view('pages.admin.rt.edit', compact('rt', 'warga', 'rwList'));
     }
 
     /**
@@ -57,13 +91,21 @@ class RtController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'id_warga' => 'required|exists:warga,id',
-            'id_rw'    => 'required|exists:rw,id',
-            'nomor_rt' => 'required|string|max:10',
-        ]);
-
         $rt = Rt::findOrFail($id);
+
+        $request->validate([
+            'id_warga' => 'required|exists:warga,id|unique:rt,id_warga,' . $rt->id,
+            'id_rw'    => 'required|exists:rw,id',
+            'nomor_rt' => 'required|string|max:10|unique:rt,nomor_rt,' . $rt->id,
+        ], [
+            'id_warga.required' => 'Ketua RT wajib dipilih.',
+            'id_warga.exists' => 'Warga tidak ditemukan.',
+            'id_warga.unique' => 'Warga ini sudah menjadi ketua RT.',
+            'id_rw.required' => 'RW wajib dipilih.',
+            'id_rw.exists' => 'RW tidak ditemukan.',
+            'nomor_rt.required' => 'Nomor RT wajib diisi.',
+            'nomor_rt.unique' => 'Nomor RT sudah terdaftar.',
+        ]);
 
         $rt->update([
             'id_warga' => $request->id_warga,
@@ -71,9 +113,8 @@ class RtController extends Controller
             'nomor_rt' => $request->nomor_rt,
         ]);
 
-        return redirect()
-            ->route('admin.data-rt.index')
-            ->with('success', '✅ Data RT berhasil diperbarui!');
+        return redirect()->route('admin.rt.index')
+            ->with('success', 'Data RT berhasil diperbarui!');
     }
 
     /**
@@ -81,11 +122,15 @@ class RtController extends Controller
      */
     public function destroy($id)
     {
-        $rt = Rt::findOrFail($id);
-        $rt->delete();
+        try {
+            $rt = Rt::findOrFail($id);
+            $rt->delete();
 
-        return redirect()
-            ->route('admin.data-rt.index')
-            ->with('success', '✅ Data RT berhasil dihapus!');
+            return redirect()->route('admin.rt.index')
+                ->with('success', 'Data RT berhasil dihapus!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.rt.index')
+                ->with('error', 'Gagal menghapus data RT: ' . $e->getMessage());
+        }
     }
 }

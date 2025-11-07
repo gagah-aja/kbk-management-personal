@@ -1,201 +1,256 @@
 @extends('layouts.admin.admin')
 
 @section('content')
-<div class="container py-4">
-    <h2 class="fw-bold mb-3">Edit Data Rumah</h2>
-    <p class="text-muted mb-4">Perbarui informasi rumah berikut.</p>
+<div class="container-fluid py-4">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h2>Edit Data Rumah</h2>
+            <p>Perbarui data rumah</p>
+        </div>
+        <a href="{{ route('admin.rumah.index') }}" class="btn-back">
+            <i class="bi bi-arrow-left"></i> Kembali
+        </a>
+    </div>
 
-        {{-- Pesan Feedback dan Error Validation --}}
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-        @if ($errors->any())
-            <div class="alert alert-danger rounded-3 shadow-sm mb-4">
-                <h5 class="alert-heading fs-6 fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i> Gagal
-                    Menyimpan Perubahan!</h5>
-                <p class="mb-0">Mohon periksa kembali input Anda.</p>
-            </div>
-        @endif
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <strong>Terdapat kesalahan:</strong>
+            <ul class="mb-0 mt-2">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-        <div class="card border-0 shadow-sm rounded-4 p-4">
-            <form action="{{ route('admin.rumah.update', $rumah->id) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                {{-- WAJIB: Gunakan PUT method untuk update di Laravel --}}
-
-                {{-- Nomor Rumah --}}
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Nomor Rumah</label>
-                    <input type="text" name="nomor_rumah"
-                        class="form-control @error('nomor_rumah') is-invalid @enderror"
-                        value="{{ old('nomor_rumah', $rumah->nomor_rumah) }}" required>
-                    @error('nomor_rumah')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+    <div class="row">
+        <div class="col-12">
+            <div class="form-card">
+                <div class="info-box">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="info-box-label">Nomor Rumah</div>
+                            <div class="info-box-value">{{ $rumah->nomor_rumah }}</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box-label">Status</div>
+                            <div class="info-box-value">{{ ucfirst($rumah->status) }}</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box-label">Cluster</div>
+                            <div class="info-box-value">{{ $rumah->cluster->namaCluster->nama_cluster ?? 'N/A' }}</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box-label">Penghuni</div>
+                            <div class="info-box-value">{{ $rumah->warga->nama ?? 'Belum ada' }}</div>
+                        </div>
+                    </div>
                 </div>
 
-                {{-- Alamat --}}
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Alamat Lengkap</label>
-                    <textarea name="alamat_lengkap" rows="3" class="form-control @error('alamat_lengkap') is-invalid @enderror"
-                        required>{{ old('alamat_lengkap', $rumah->alamat_lengkap) }}</textarea>
-                    @error('alamat_lengkap')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                <form action="{{ route('admin.rumah.update', $rumah->id) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    
+                    <div class="row g-3">
+                        {{-- Nomor Rumah --}}
+                        <div class="col-md-6">
+                            <label for="nomor_rumah" class="form-label">
+                                Nomor Rumah <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   name="nomor_rumah" 
+                                   id="nomor_rumah"
+                                   class="form-control @error('nomor_rumah') is-invalid @enderror" 
+                                   placeholder="Contoh: A-01, B-123"
+                                   value="{{ old('nomor_rumah', $rumah->nomor_rumah) }}"
+                                   required
+                                   autofocus>
+                            @error('nomor_rumah')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                {{-- Status --}}
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Status</label>
-                    <select name="status" class="form-select @error('status') is-invalid @enderror" required>
-                        <option value="Tersedia" {{ old('status', $rumah->status) == 'Tersedia' ? 'selected' : '' }}>
-                            Tersedia</option>
-                        <option value="Terisi" {{ old('status', $rumah->status) == 'Terisi' ? 'selected' : '' }}>Terisi
-                        </option>
-                        <option value="Rusak" {{ old('status', $rumah->status) == 'Rusak' ? 'selected' : '' }}>Rusak
-                        </option>
-                    </select>
-                    @error('status')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                        {{-- Status --}}
+                        <div class="col-md-6">
+                            <label for="status" class="form-label">
+                                Status <span class="text-danger">*</span>
+                            </label>
+                            <select name="status" 
+                                    id="status" 
+                                    class="form-select @error('status') is-invalid @enderror" 
+                                    required>
+                                <option value="">-- Pilih Status --</option>
+                                <option value="tersedia" {{ old('status', $rumah->status) == 'tersedia' ? 'selected' : '' }}>Tersedia</option>
+                                <option value="terisi" {{ old('status', $rumah->status) == 'terisi' ? 'selected' : '' }}>Terisi</option>
+                                <option value="rusak" {{ old('status', $rumah->status) == 'rusak' ? 'selected' : '' }}>Rusak</option>
+                            </select>
+                            @error('status')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                {{-- Cluster --}}
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Cluster</label>
-                    <select name="id_cluster" class="form-select @error('id_cluster') is-invalid @enderror" required>
-                        <option value="">-- Pilih Cluster --</option>
-                        @foreach ($clusters as $cluster)
-                            <option value="{{ $cluster->id }}"
-                                {{ old('id_cluster', $rumah->id_cluster) == $cluster->id ? 'selected' : '' }}>
-                                {{ $cluster->id_nama_cluster }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('id_cluster')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                        {{-- Alamat Lengkap --}}
+                        <div class="col-12">
+                            <label for="alamat_lengkap" class="form-label">
+                                Alamat Lengkap <span class="text-danger">*</span>
+                            </label>
+                            <textarea name="alamat_lengkap" 
+                                      id="alamat_lengkap" 
+                                      rows="3"
+                                      class="form-control @error('alamat_lengkap') is-invalid @enderror" 
+                                      placeholder="Masukkan alamat lengkap rumah"
+                                      required>{{ old('alamat_lengkap', $rumah->alamat_lengkap) }}</textarea>
+                            @error('alamat_lengkap')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                {{-- Warga --}}
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Warga (Opsional)</label>
-                    <select name="id_warga" class="form-select @error('id_warga') is-invalid @enderror">
-                        <option value="">-- Belum Ditempati --</option>
-                        @foreach ($warga as $item)
-                            <option value="{{ $item->id }}"
-                                {{ old('id_warga', $rumah->id_warga) == $item->id ? 'selected' : '' }}>
-                                {{ $item->nama }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('id_warga')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                        {{-- Cluster --}}
+                        <div class="col-md-6">
+                            <label for="id_cluster" class="form-label">
+                                Cluster <span class="text-danger">*</span>
+                            </label>
+                            <select name="id_cluster" 
+                                    id="id_cluster" 
+                                    class="form-select @error('id_cluster') is-invalid @enderror" 
+                                    required>
+                                <option value="">-- Pilih Cluster --</option>
+                                @foreach($clusters as $cluster)
+                                    <option value="{{ $cluster->id }}" 
+                                        {{ old('id_cluster', $rumah->id_cluster) == $cluster->id ? 'selected' : '' }}>
+                                        {{ $cluster->namaCluster->nama_cluster ?? 'N/A' }} - 
+                                        RT {{ $cluster->rt->nomor_rt ?? '-' }} - 
+                                        Blok {{ $cluster->blok->nama_blok ?? '-' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('id_cluster')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                {{-- Gambar Rumah (Perbaikan Pratinjau) --}}
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Gambar Rumah (Biarkan kosong jika tidak ingin diubah)</label>
+                        {{-- Penghuni (Warga) --}}
+                        <div class="col-md-6">
+                            <label for="id_warga" class="form-label">
+                                Penghuni <small class="text-muted">(Opsional)</small>
+                            </label>
+                            <select name="id_warga" 
+                                    id="id_warga" 
+                                    class="form-select @error('id_warga') is-invalid @enderror">
+                                <option value="">-- Pilih Penghuni --</option>
+                                @foreach($warga as $w)
+                                    <option value="{{ $w->id }}" 
+                                        {{ old('id_warga', $rumah->id_warga) == $w->id ? 'selected' : '' }}>
+                                        {{ $w->nama }} - {{ $w->nik }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('id_warga')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div class="form-hint">
+                                <i class="bi bi-info-circle"></i>
+                                Kosongkan jika belum ada penghuni
+                            </div>
+                        </div>
 
-                    {{-- Input Hidden untuk menyimpan path gambar lama jika tidak ada upload baru --}}
-                    @if ($rumah->gambar)
-                        <input type="hidden" name="old_gambar" value="{{ $rumah->gambar }}">
-                    @endif
+                        {{-- Latitude --}}
+                        <div class="col-md-6">
+                            <label for="latitude" class="form-label">
+                                Latitude <small class="text-muted">(Opsional)</small>
+                            </label>
+                            <input type="text" 
+                                   name="latitude" 
+                                   id="latitude"
+                                   class="form-control @error('latitude') is-invalid @enderror" 
+                                   placeholder="Contoh: -6.200000"
+                                   value="{{ old('latitude', $rumah->latitude) }}">
+                            @error('latitude')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                    {{-- Kontainer Pratinjau --}}
-                    <div class="mt-2 border p-2 rounded-3 text-center" style="max-width: 300px;">
-                        <img id="gambar_preview"
-                             src="{{ $rumah->gambar ? asset('storage/' . $rumah->gambar) : '#' }}"
-                             alt="Pratinjau Gambar"
-                             style="max-width: 100%; height: auto; border-radius: 0.5rem; object-fit: cover; {{ $rumah->gambar ? 'display: block;' : 'display: none;' }}">
+                        {{-- Longitude --}}
+                        <div class="col-md-6">
+                            <label for="longitude" class="form-label">
+                                Longitude <small class="text-muted">(Opsional)</small>
+                            </label>
+                            <input type="text" 
+                                   name="longitude" 
+                                   id="longitude"
+                                   class="form-control @error('longitude') is-invalid @enderror" 
+                                   placeholder="Contoh: 106.816666"
+                                   value="{{ old('longitude', $rumah->longitude) }}">
+                            @error('longitude')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                        <p id="placeholder_text" class="text-muted mb-0 {{ $rumah->gambar ? 'd-none' : '' }}">
-                            @if ($rumah->gambar)
-                                Gambar lama
-                            @else
-                                Tidak ada gambar yang dipilih
+                        {{-- Gambar --}}
+                        <div class="col-12">
+                            <label for="gambar" class="form-label">
+                                Gambar Rumah <small class="text-muted">(Opsional)</small>
+                            </label>
+                            
+                            {{-- Gambar Saat Ini --}}
+                            @if($rumah->gambar)
+                                <div class="mb-3">
+                                    <small class="text-muted d-block mb-2">Gambar Saat Ini:</small>
+                                    <img src="{{ asset('storage/' . $rumah->gambar) }}" 
+                                         alt="Gambar Rumah" 
+                                         class="img-thumbnail" 
+                                         style="max-height: 150px;">
+                                </div>
                             @endif
-                        </p>
+
+                            <input type="file" 
+                                   name="gambar" 
+                                   id="gambar"
+                                   class="form-control @error('gambar') is-invalid @enderror"
+                                   accept="image/jpeg,image/jpg,image/png"
+                                   onchange="previewImage(event)">
+                            @error('gambar')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div class="form-hint">
+                                <i class="bi bi-info-circle"></i>
+                                Format: JPG, JPEG, PNG. Maksimal 2MB. Kosongkan jika tidak ingin mengubah gambar
+                            </div>
+                            
+                            {{-- Preview Gambar Baru --}}
+                            <div id="imagePreview" class="mt-3" style="display: none;">
+                                <small class="text-muted d-block mb-2">Preview Gambar Baru:</small>
+                                <img id="preview" src="" alt="Preview" class="img-thumbnail" style="max-height: 200px;">
+                            </div>
+                        </div>
                     </div>
 
-                    {{-- Tambahkan ID untuk JavaScript --}}
-                    <input type="file" name="gambar" id="gambar_input" class="form-control mt-2 @error('gambar') is-invalid @enderror">
-                    @error('gambar')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                {{-- Koordinat --}}
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Latitude</label>
-                        {{-- Menggunakan type number untuk koordinat --}}
-                        <input type="number" step="any" name="latitude" class="form-control @error('latitude') is-invalid @enderror"
-                            value="{{ old('latitude', $rumah->latitude) }}">
-                        @error('latitude')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                    <div class="d-flex gap-2 pt-4 mt-4 border-top">
+                        <a href="{{ route('admin.rumah.index') }}" class="btn-cancel">
+                            <i class="bi bi-x"></i> Batal
+                        </a>
+                        <button type="submit" class="btn-submit">
+                            <i class="bi bi-check"></i> Update Data
+                        </button>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Longitude</label>
-                        {{-- Menggunakan type number untuk koordinat --}}
-                        <input type="number" step="any" name="longitude" class="form-control @error('longitude') is-invalid @enderror"
-                            value="{{ old('longitude', $rumah->longitude) }}">
-                        @error('longitude')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
-                {{-- Tombol --}}
-                <div class="d-flex justify-content-between mt-4">
-                    <a href="{{ route('admin.rumah.index') }}" class="btn btn-secondary px-4">Kembali</a>
-                    <button type="submit" class="btn btn-primary px-4">Simpan Perubahan</button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const inputGambar = document.getElementById('gambar_input');
-            const previewGambar = document.getElementById('gambar_preview');
-            const placeholderText = document.getElementById('placeholder_text');
+</div>
 
-            // Simpan URL gambar lama untuk referensi
-            const oldImageUrl = previewGambar.src;
-
-            inputGambar.addEventListener('change', function(event) {
-                const file = event.target.files[0];
-
-                if (file) {
-                    if (file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-
-                        reader.onload = function(e) {
-                            previewGambar.src = e.target.result;
-                            previewGambar.style.display = 'block';
-                            placeholderText.style.display = 'none';
-                        };
-
-                        reader.readAsDataURL(file);
-                    } else {
-                        // Jika file yang dipilih bukan gambar, kembalikan ke gambar lama/placeholder
-                        previewGambar.src = oldImageUrl !== window.location.href ? oldImageUrl : '#';
-                        previewGambar.style.display = oldImageUrl !== window.location.href ? 'block' : 'none';
-                        placeholderText.style.display = 'block';
-                        placeholderText.textContent = 'File yang dipilih bukan gambar.';
-                    }
-                } else {
-                    // Jika input file dikosongkan (cancel/clear)
-                    previewGambar.src = oldImageUrl !== window.location.href ? oldImageUrl : '#';
-                    previewGambar.style.display = oldImageUrl !== window.location.href ? 'block' : 'none';
-                    placeholderText.style.display = oldImageUrl !== window.location.href ? 'none' : 'block';
-                    placeholderText.textContent = oldImageUrl !== window.location.href ? 'Gambar lama' : 'Tidak ada gambar yang dipilih';
-                }
-            });
-        });
-    </script>
+<script>
+function previewImage(event) {
+    const reader = new FileReader();
+    reader.onload = function() {
+        const preview = document.getElementById('preview');
+        const previewDiv = document.getElementById('imagePreview');
+        preview.src = reader.result;
+        previewDiv.style.display = 'block';
+    }
+    if(event.target.files[0]) {
+        reader.readAsDataURL(event.target.files[0]);
+    }
+}
+</script>
 @endsection

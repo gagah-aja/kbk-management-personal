@@ -1,147 +1,298 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard dengan Fixed Sidebar</title>
+    <title>Sistem RT - Dashboard Modern</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" href="{{ asset('css/crud-minimal.css') }}">
     <style>
-
-        /* CSS Khusus untuk Sidebar Fixed */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
         #sidebar {
-            width: 250px;
+            width: 280px;
             height: 100vh;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 30px 20px;
+            box-shadow: 4px 0 30px rgba(0, 0, 0, 0.1);
             z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
         }
-
-        /* Margin untuk konten utama agar tidak tertutup sidebar */
-        #main-content {
-            margin-left: 250px;
-            padding: 20px;
+        
+        #sidebar::-webkit-scrollbar {
+            width: 6px;
         }
-
-        /* Contoh untuk membuat konten utama bisa di-scroll */
-        .scrollable-content {
-            height: 200vh;
-            background-color: #f8f9fa;
+        
+        #sidebar::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 10px;
         }
-        #sidebar{
+        
+        .sidebar-header {
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            animation: fadeInDown 0.6s ease;
+        }
+        
+        .sidebar-header h5 {
+            font-size: 26px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-header p {
+            font-size: 13px;
+            color: #888;
             font-weight: 600;
-            color: gray
+            margin: 0;
+        }
+        
+        .nav-item {
+            margin-bottom: 6px;
+        }
+        
+        .nav-link {
+            padding: 14px 18px;
+            border-radius: 14px;
+            color: #666;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        .nav-link i {
+            font-size: 18px;
+            margin-right: 14px;
+            min-width: 20px;
+        }
+        
+        .nav-link:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            color: #667eea;
+            transform: translateX(5px);
+        }
+        
+        .nav-link.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35);
+        }
+        
+        .nav-link.logout-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            margin-top: 20px;
+        }
+        
+        .nav-link.logout-btn:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 24px rgba(245, 87, 108, 0.4);
+        }
+        
+        #main-content {
+            margin-left: 280px;
+            padding: 40px;
+            min-height: 100vh;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1001;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mobile-toggle i {
+            font-size: 24px;
+            color: #667eea;
+        }
+        
+        @media (max-width: 768px) {
+            #sidebar {
+                transform: translateX(-100%);
+            }
+            
+            #sidebar.show {
+                transform: translateX(0);
+            }
+            
+            #main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            
+            .mobile-toggle {
+                display: flex;
+            }
+            
+            .mobile-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+                display: none;
+            }
+            
+            .mobile-overlay.show {
+                display: block;
+            }
         }
     </style>
 </head>
 
 <body>
     <x-alert></x-alert>
+    
+    <div class="mobile-toggle" onclick="toggleSidebar()">
+        <i class="bi bi-list"></i>
+    </div>
+    
+    <div class="mobile-overlay" onclick="toggleSidebar()"></div>
 
     <div class="d-flex">
-
-        <div id="sidebar" class="d-flex flex-column p-3 bg-white border-end vh-100 position-fixed"
-            style="width: 250px;">
-            <h5 class="fw-bold text-primary mb-1">Sistem RT</h5>
-            <p class="text-muted mb-4 border-bottom pb-2">Pendataan Warga</p>
+        <div id="sidebar">
+            <div class="sidebar-header">
+                <h5>Sistem KBK</h5>
+                <p>Pendataan Warga</p>
+            </div>
 
             <ul class="nav flex-column mb-auto">
-                <li class="nav-item mb-1">
-                    <a href="{{route('admin.dashboard')}}"
-                        class="nav-link d-flex align-items-center px-3 py-2 rounded {{ request()->is('admin/dashboard') ? 'active' : 'text-dark' }}"
-                        style="{{ request()->is('admin/dashboard') ? 'background-color: #eaf2ff; color:#0d6efd; font-weight:600;' : 'color:#333;' }}">
-                        <i class="bi bi-grid-fill me-2"></i> Dashboard
+                <li class="nav-item">
+                    <a href="{{ route('admin.dashboard') }}"
+                        class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }}">
+                        <i class="bi bi-grid-fill"></i> Dashboard
                     </a>
                 </li>
 
-                <li class="nav-item mb-1">
+                <li class="nav-item">
                     <a href="{{ route('admin.rumah.index') }}"
-                        class="nav-link d-flex align-items-center px-3 py-2 rounded {{ request()->is('admin/rumah*') ? 'active' : 'text-dark' }}"
-                        style="{{ request()->is('admin/rumah*') ? 'background-color:#eaf2ff; color:#0d6efd; font-weight:600;' : 'color:#333;' }}">
-                        <i class="bi bi-house-door-fill me-2"></i> Data Rumah
+                        class="nav-link {{ request()->is('admin/rumah*') ? 'active' : '' }}">
+                        <i class="bi bi-house-door-fill"></i> Data Rumah
                     </a>
                 </li>
 
-                <li class="nav-item mb-1">
-                    <a href="/admin/data-cluster"
-                        class="nav-link d-flex align-items-center px-3 py-2 rounded {{ request()->is('admin/data-cluster*') ? 'active' : 'text-dark' }}"
-                        style="{{ request()->is('admin/data-cluster*') ? 'background-color:#eaf2ff; color:#0d6efd; font-weight:600;' : 'color:#333;' }}">
-                        <i class="bi bi-diagram-3-fill me-2"></i> Data Cluster
+                <li class="nav-item">
+                    <a href="{{ route('admin.cluster.index') }}"
+                        class="nav-link {{ request()->is('admin/cluster*') ? 'active' : '' }}">
+                        <i class="bi bi-diagram-3-fill"></i> Data Cluster
                     </a>
                 </li>
 
-                <li class="nav-item mb-1">
+                <li class="nav-item">
                     <a href="{{ route('admin.warga.index') }}"
-                        class="nav-link d-flex align-items-center px-3 py-2 rounded {{ request()->is('admin/warga*') ? 'active' : 'text-dark' }}"
-                        style="{{ request()->is('admin/warga*') ? 'background-color:#eaf2ff; color:#0d6efd; font-weight:600;' : 'color:#333;' }}">
-                        <i class="bi bi-person-lines-fill me-2"></i> Data Warga
+                        class="nav-link {{ request()->is('admin/warga*') ? 'active' : '' }}">
+                        <i class="bi bi-person-lines-fill"></i> Data Warga
                     </a>
                 </li>
 
-                <li class="nav-item mb-1">
-                    <a href="/admin/nama-cluster"
-                        class="nav-link d-flex align-items-center px-3 py-2 rounded {{ request()->is('admin/nama-cluster*') ? 'active' : 'text-dark' }}"
-                        style="{{ request()->is('admin/nama-cluster*') ? 'background-color:#eaf2ff; color:#0d6efd; font-weight:600;' : 'color:#333;' }}">
-                        <i class="bi bi-person-lines-fill me-2"></i> Nama Cluster
+                <li class="nav-item">
+                    <a href="{{ route('admin.nama-cluster.index') }}"
+                        class="nav-link {{ request()->is('admin/nama-cluster*') ? 'active' : '' }}">
+                        <i class="bi bi-collection-fill"></i> Nama Cluster
                     </a>
                 </li>
 
-                <li class="nav-item mb-1">
-                    <a href="/admin/data-rw"
-                        class="nav-link d-flex align-items-center px-3 py-2 rounded {{ request()->is('admin/data-rw*') ? 'active' : 'text-dark' }}"
-                        style="{{ request()->is('admin/data-rw*') ? 'background-color:#eaf2ff; color:#0d6efd; font-weight:600;' : 'color:#333;' }}">
-                        <i class="bi bi-geo-alt-fill me-2"></i> Data RW
+                <li class="nav-item">
+                    <a href="{{ route('admin.rw.index') }}"
+                        class="nav-link {{ request()->is('admin/rw*') ? 'active' : '' }}">
+                        <i class="bi bi-geo-alt-fill"></i> Data RW
                     </a>
                 </li>
 
-                <li class="nav-item mb-1">
-                    <a href="/admin/data-rt"
-                        class="nav-link d-flex align-items-center px-3 py-2 rounded {{ request()->is('admin/data-rt*') ? 'active' : 'text-dark' }}"
-                        style="{{ request()->is('admin/data-rt*') ? 'background-color:#eaf2ff; color:#0d6efd; font-weight:600;' : 'color:#333;' }}">
-                        <i class="bi bi-geo-fill me-2"></i> Data RT
+                <li class="nav-item">
+                    <a href="{{ route('admin.rt.index') }}"
+                        class="nav-link {{ request()->is('admin/rt*') ? 'active' : '' }}">
+                        <i class="bi bi-geo-fill"></i> Data RT
                     </a>
                 </li>
 
-                <li class="nav-item mb-1">
-                    <a href="/admin/nama-blok"
-                        class="nav-link d-flex align-items-center px-3 py-2 rounded {{ request()->is('admin/nama-blok*') ? 'active' : 'text-dark' }}"
-                        style="{{ request()->is('admin/nama-blok*') ? 'background-color:#eaf2ff; color:#0d6efd; font-weight:600;' : 'color:#333;' }}">
-                        <i class="bi bi-megaphone-fill me-2"></i> Blok
+                <li class="nav-item">
+                    <a href="{{ route('admin.blok.index') }}"
+                        class="nav-link {{ request()->is('admin/blok*') ? 'active' : '' }}">
+                        <i class="bi bi-megaphone-fill"></i> Blok
                     </a>
                 </li>
 
-                <li class="nav-item mt-2">
-                    <a href="{{ route('logout') }}"
-                        class="nav-link text-danger d-flex align-items-center px-3 py-2 rounded">
-                        <i class="bi bi-box-arrow-left me-2"></i> Logout
+                <li class="nav-item">
+                    <a href="{{ route('logout') }}" class="nav-link logout-btn">
+                        <i class="bi bi-box-arrow-left"></i> Logout
                     </a>
                 </li>
             </ul>
         </div>
 
-        <div id="main-content" class="flex-grow-1 ">
+        <div id="main-content" class="flex-grow-1">
             @yield('content')
         </div>
-
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Efek hover lembut
-        document.querySelectorAll('#sidebar .nav-link').forEach(link => {
-            link.addEventListener('mouseenter', () => {
-                if (!link.classList.contains('active')) {
-                    link.style.backgroundColor = '#f5f7ff';
-                }
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.mobile-overlay');
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+        
+        if (window.innerWidth <= 768) {
+            document.querySelectorAll('#sidebar .nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    toggleSidebar();
+                });
             });
-            link.addEventListener('mouseleave', () => {
-                if (!link.classList.contains('active')) {
-                    link.style.backgroundColor = 'transparent';
-                }
-            });
-        });
+        }
     </script>
-
 </body>
-
 </html>

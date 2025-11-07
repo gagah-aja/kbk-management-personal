@@ -9,88 +9,113 @@ use App\Models\Warga;
 
 class RwController extends Controller
 {
-    // 🟢 Tampilkan semua data RW
+    /**
+     * Menampilkan daftar RW
+     */
     public function index()
     {
-        $rws = Rw::with('warga')->get();
-        $wargas = Warga::all(); // untuk dropdown tambah/edit
-        return view('pages.admin.data-rw', compact('rws', 'wargas'));
+        // Ambil data RW beserta relasi Warga
+        $dataRW = Rw::with('warga')->get();
+
+        return view('pages.admin.rw.index', compact('dataRW'));
     }
 
-    // 🟢 Simpan Data RW Baru
+    /**
+     * Tampilkan form tambah RW
+     */
+    public function create()
+    {
+        // Ambil ID warga yang sudah menjadi RW
+        $idWargaSudahRW = Rw::pluck('id_warga')->toArray();
+
+        // Ambil warga yang belum menjadi RW
+        $warga = Warga::whereNotIn('id', $idWargaSudahRW)->get();
+
+        return view('pages.admin.rw.create', compact('warga'));
+    }
+
+    /**
+     * Menyimpan data RW baru
+     */
     public function store(Request $request)
     {
         $request->validate([
-            'nomor_rw' => 'required|numeric|unique:rw,nomor_rw',
             'id_warga' => 'required|exists:warga,id|unique:rw,id_warga',
+            'nomor_rw' => 'required|string|max:10|unique:rw,nomor_rw',
         ], [
-            'nomor_rw.required' => 'Nomor RW wajib diisi.',
-            'nomor_rw.numeric' => 'Nomor RW harus berupa angka.',
-            'nomor_rw.unique' => 'Nomor RW sudah terdaftar.',
-            'id_warga.required' => 'Ketua RW harus dipilih.',
+            'id_warga.required' => 'Ketua RW wajib dipilih.',
             'id_warga.exists' => 'Warga tidak ditemukan.',
-            'id_warga.unique' => 'Warga ini sudah menjadi ketua RW lain.',
+            'id_warga.unique' => 'Warga ini sudah menjadi ketua RW.',
+            'nomor_rw.required' => 'Nomor RW wajib diisi.',
+            'nomor_rw.unique' => 'Nomor RW sudah terdaftar.',
         ]);
 
-        Rw::create($request->only('nomor_rw', 'id_warga'));
+        Rw::create([
+            'id_warga' => $request->id_warga,
+            'nomor_rw' => $request->nomor_rw,
+        ]);
 
-        return redirect()->back()->with('success', 'Data RW berhasil ditambahkan!');
+        return redirect()->route('admin.rw.index')
+            ->with('success', 'Data RW berhasil ditambahkan!');
     }
 
-    // 🟡 Update Data RW
+    /**
+     * Tampilkan form edit RW
+     */
+    public function edit($id)
+    {
+        $rw = Rw::with('warga')->findOrFail($id);
+
+        // Ambil ID warga yang sudah menjadi RW (kecuali RW yang sedang diedit)
+        $idWargaSudahRW = Rw::where('id', '!=', $id)->pluck('id_warga')->toArray();
+
+        // Ambil warga yang belum menjadi RW + warga yang sedang menjadi RW ini
+        $warga = Warga::whereNotIn('id', $idWargaSudahRW)->get();
+
+        return view('pages.admin.rw.edit', compact('rw', 'warga'));
+    }
+
+    /**
+     * Memperbarui data RW
+     */
     public function update(Request $request, $id)
     {
-        // Ambil data RW (404 jika tidak ditemukan)
         $rw = Rw::findOrFail($id);
 
-        try {
-            // Validasi input
-            $request->validate([
-                'nomor_rw' => 'required|numeric|unique:rw,nomor_rw,' . $rw->id,
-                'id_warga' => 'required|exists:warga,id|unique:rw,id_warga,' . $rw->id,
-            ], [
-                'nomor_rw.required' => 'Nomor RW wajib diisi.',
-                'nomor_rw.numeric' => 'Nomor RW harus berupa angka.',
-                'nomor_rw.unique' => 'Nomor RW sudah terdaftar.',
-                'id_warga.required' => 'Ketua RW harus dipilih.',
-                'id_warga.exists' => 'Warga tidak ditemukan.',
-                'id_warga.unique' => 'Warga ini sudah menjadi ketua RW lain.',
-            ]);
+        $request->validate([
+            'id_warga' => 'required|exists:warga,id|unique:rw,id_warga,' . $rw->id,
+            'nomor_rw' => 'required|string|max:10|unique:rw,nomor_rw,' . $rw->id,
+        ], [
+            'id_warga.required' => 'Ketua RW wajib dipilih.',
+            'id_warga.exists' => 'Warga tidak ditemukan.',
+            'id_warga.unique' => 'Warga ini sudah menjadi ketua RW.',
+            'nomor_rw.required' => 'Nomor RW wajib diisi.',
+            'nomor_rw.unique' => 'Nomor RW sudah terdaftar.',
+        ]);
 
-            // Update data RW
-            $rw->update($request->only('nomor_rw', 'id_warga'));
+        $rw->update([
+            'id_warga' => $request->id_warga,
+            'nomor_rw' => $request->nomor_rw,
+        ]);
 
-            // Ambil ulang relasi warga agar data baru ikut terkirim
-            $rw->load('warga');
-
-            // Kembalikan response JSON
-          return redirect()->back()->with('success', 'Data RW berhasil diperbarui!');
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Jika validasi gagal, kirim error JSON juga
-            return response()->json([
-                'success' => false,
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (\Exception $e) {
-            // Jika ada error lain
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui data.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        return redirect()->route('admin.rw.index')
+            ->with('success', 'Data RW berhasil diperbarui!');
     }
 
-
-
-    // 🔴 Hapus RW
+    /**
+     * Menghapus data RW
+     */
     public function destroy($id)
     {
-        $rw = Rw::findOrFail($id);
-        $rw->delete();
+        try {
+            $rw = Rw::findOrFail($id);
+            $rw->delete();
 
-        return redirect()->route('admin.rw.index')->with('success', 'Data RW berhasil dihapus.');
+            return redirect()->route('admin.rw.index')
+                ->with('success', 'Data RW berhasil dihapus!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.rw.index')
+                ->with('error', 'Gagal menghapus data RW: ' . $e->getMessage());
+        }
     }
-
 }

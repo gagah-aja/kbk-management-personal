@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('gambar')->nullable(); // path gambar rumah
             $table->string('latitude')->nullable(); // latitude
             $table->string('longitude')->nullable(); // longitude, biasanya berpasangan dengan latitude
-            $table->foreignId('id_cluster')->constrained('clusters')->onDelete('cascade'); // relasi ke tabel clusters
+            $table->foreignId('id_cluster')->constrained('cluster')->onDelete('cascade'); // relasi ke tabel clusters
             $table->foreignId('id_warga')->nullable()->constrained('warga')->onDelete('set null'); // relasi ke warga
             $table->timestamps(); // created_at dan updated_at
         });
