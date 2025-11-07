@@ -12,34 +12,55 @@ use Illuminate\Support\Facades\DB;
 
 class ClusterController extends Controller
 {
-    // 🟢 Tampilkan semua data Cluster
+    /**
+     * Tampilkan semua data Cluster
+     */
     public function index()
     {
         $clusters = Cluster::with(['namaCluster', 'rt', 'blok'])->get();
+        return view('pages.admin.cluster.index', compact('clusters'));
+    }
+
+    /**
+     * Tampilkan form tambah cluster
+     */
+    public function create()
+    {
         $nama_clusters = NamaCluster::all();
         $rts = Rt::all();
         $bloks = Blok::all();
-
-        return view('pages.admin.data-cluster', compact('clusters', 'nama_clusters', 'rts', 'bloks'));
+        
+        return view('pages.admin.cluster.create', compact('nama_clusters', 'rts', 'bloks'));
     }
 
-    // 🟢 Simpan Data Baru
+    /**
+     * Simpan Data Baru
+     */
     public function store(Request $request)
     {
         $request->validate([
             'id_nama_cluster' => 'required|exists:nama_cluster,id',
             'id_rt' => 'required|exists:rt,id',
             'id_blok' => 'required|exists:blok,id',
+        ], [
+            'id_nama_cluster.required' => 'Nama cluster wajib dipilih.',
+            'id_nama_cluster.exists' => 'Nama cluster tidak valid.',
+            'id_rt.required' => 'RT wajib dipilih.',
+            'id_rt.exists' => 'RT tidak valid.',
+            'id_blok.required' => 'Blok wajib dipilih.',
+            'id_blok.exists' => 'Blok tidak valid.',
         ]);
 
-        // 🔎 Cek kombinasi sudah ada
+        // Cek kombinasi sudah ada
         $exists = Cluster::where('id_nama_cluster', $request->id_nama_cluster)
                         ->where('id_rt', $request->id_rt)
                         ->where('id_blok', $request->id_blok)
-                        ->first();
+                        ->exists();
 
         if ($exists) {
-            return redirect()->back()->with('info', 'Cluster dengan kombinasi ini sudah ada.');
+            return redirect()->back()
+                ->withInput()
+                ->with('info', 'Cluster dengan kombinasi ini sudah ada.');
         }
 
         Cluster::create([
@@ -48,37 +69,54 @@ class ClusterController extends Controller
             'id_blok' => $request->id_blok,
         ]);
 
-        return redirect()->route('admin.data-cluster.index')
+        return redirect()->route('admin.cluster.index')
             ->with('success', 'Cluster berhasil ditambahkan.');
     }
 
-    // 🟡 Tampilkan data untuk diedit (AJAX)
+    /**
+     * Tampilkan form edit
+     */
     public function edit($id)
     {
         $cluster = Cluster::findOrFail($id);
-        return response()->json($cluster);
+        $nama_clusters = NamaCluster::all();
+        $rts = Rt::all();
+        $bloks = Blok::all();
+        
+        return view('pages.admin.cluster.edit', compact('cluster', 'nama_clusters', 'rts', 'bloks'));
     }
 
-    // 🟠 Update Data Cluster
+    /**
+     * Update Data Cluster
+     */
     public function update(Request $request, $id)
     {
         $request->validate([
             'id_nama_cluster' => 'required|exists:nama_cluster,id',
             'id_rt' => 'required|exists:rt,id',
             'id_blok' => 'required|exists:blok,id',
+        ], [
+            'id_nama_cluster.required' => 'Nama cluster wajib dipilih.',
+            'id_nama_cluster.exists' => 'Nama cluster tidak valid.',
+            'id_rt.required' => 'RT wajib dipilih.',
+            'id_rt.exists' => 'RT tidak valid.',
+            'id_blok.required' => 'Blok wajib dipilih.',
+            'id_blok.exists' => 'Blok tidak valid.',
         ]);
 
         $cluster = Cluster::findOrFail($id);
 
-        // 🔎 Cek kombinasi unik saat update
+        // Cek kombinasi unik saat update
         $exists = Cluster::where('id_nama_cluster', $request->id_nama_cluster)
                         ->where('id_rt', $request->id_rt)
                         ->where('id_blok', $request->id_blok)
                         ->where('id', '<>', $id)
-                        ->first();
+                        ->exists();
 
         if ($exists) {
-            return redirect()->back()->with('info', 'Cluster dengan kombinasi ini sudah ada.');
+            return redirect()->back()
+                ->withInput()
+                ->with('info', 'Cluster dengan kombinasi ini sudah ada.');
         }
 
         $cluster->update([
@@ -87,22 +125,29 @@ class ClusterController extends Controller
             'id_blok' => $request->id_blok,
         ]);
 
-        return redirect()->route('admin.data-cluster.index')
+        return redirect()->route('admin.cluster.index')
             ->with('success', 'Data cluster berhasil diperbarui.');
     }
 
-    // 🔴 Hapus Data Cluster
+    /**
+     * Hapus Data Cluster
+     */
     public function destroy($id)
     {
-        $cluster = Cluster::findOrFail($id);
-        $cluster->delete();
+        try {
+            $cluster = Cluster::findOrFail($id);
+            $cluster->delete();
 
-        // 🔁 Reset auto increment jika tabel kosong
-        if (Cluster::count() === 0) {
-            DB::statement('ALTER TABLE cluster AUTO_INCREMENT = 1;');
+            // Reset auto increment jika tabel kosong
+            if (Cluster::count() === 0) {
+                DB::statement('ALTER TABLE cluster AUTO_INCREMENT = 1;');
+            }
+
+            return redirect()->route('admin.cluster.index')
+                ->with('success', 'Cluster berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.cluster.index')
+                ->with('error', 'Gagal menghapus cluster: ' . $e->getMessage());
         }
-
-        return redirect()->route('admin.data-cluster.index')
-            ->with('success', 'Cluster berhasil dihapus.');
     }
 }

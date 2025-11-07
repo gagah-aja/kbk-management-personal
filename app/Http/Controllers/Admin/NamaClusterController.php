@@ -14,25 +14,36 @@ class NamaClusterController extends Controller
     public function index()
     {
         $namaClusters = NamaCluster::orderBy('id', 'asc')->get();
-        return view('pages.admin.nama-cluster', compact('namaClusters'));
+        return view('pages.admin.nama-cluster.index', compact('namaClusters'));
+    }
+
+    /**
+     * Tampilkan form tambah Nama Cluster
+     */
+    public function create()
+    {
+        return view('pages.admin.nama-cluster.create');
     }
 
     /**
      * Simpan Nama Cluster baru ke database
-     * Jika sudah ada, tidak membuat duplikat dan beri notifikasi info
      */
     public function store(Request $request)
     {
         $request->validate([
             'nama_cluster' => 'required|string|max:100',
+        ], [
+            'nama_cluster.required' => 'Nama cluster wajib diisi.',
+            'nama_cluster.max' => 'Nama cluster maksimal 100 karakter.',
         ]);
 
         // Cek apakah cluster sudah ada
         $existing = NamaCluster::where('nama_cluster', $request->nama_cluster)->first();
 
         if ($existing) {
-            // Redirect dengan notifikasi info
-            return redirect()->back()->with('info', 'Cluster sudah ada dan akan digunakan data yang ada.');
+            return redirect()->back()
+                ->withInput()
+                ->with('info', 'Cluster sudah ada dan akan digunakan data yang ada.');
         }
 
         // Buat cluster baru dengan ID unik otomatis
@@ -41,7 +52,8 @@ class NamaClusterController extends Controller
             'nama_cluster' => $request->nama_cluster,
         ]);
 
-        return redirect()->back()->with('success', 'Cluster berhasil ditambahkan!');
+        return redirect()->route('admin.nama-cluster.index')
+            ->with('success', 'Cluster berhasil ditambahkan!');
     }
 
     /**
@@ -63,7 +75,7 @@ class NamaClusterController extends Controller
     public function edit($id)
     {
         $namaCluster = NamaCluster::findOrFail($id);
-        return view('admin.nama_cluster.edit', compact('namaCluster'));
+        return view('pages.admin.nama-cluster.edit', compact('namaCluster'));
     }
 
     /**
@@ -76,6 +88,10 @@ class NamaClusterController extends Controller
         $request->validate([
             'id' => 'nullable|integer|unique:nama_cluster,id,' . $id,
             'nama_cluster' => 'required|string|max:100|unique:nama_cluster,nama_cluster,' . $id,
+        ], [
+            'id.unique' => 'ID sudah digunakan.',
+            'nama_cluster.required' => 'Nama cluster wajib diisi.',
+            'nama_cluster.unique' => 'Nama cluster sudah terdaftar.',
         ]);
 
         $namaCluster->update([
@@ -92,10 +108,15 @@ class NamaClusterController extends Controller
      */
     public function destroy($id)
     {
-        $namaCluster = NamaCluster::findOrFail($id);
-        $namaCluster->delete();
+        try {
+            $namaCluster = NamaCluster::findOrFail($id);
+            $namaCluster->delete();
 
-        return redirect()->route('admin.nama-cluster.index')
-            ->with('success', 'Nama Cluster berhasil dihapus.');
+            return redirect()->route('admin.nama-cluster.index')
+                ->with('success', 'Nama Cluster berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.nama-cluster.index')
+                ->with('error', 'Gagal menghapus nama cluster: ' . $e->getMessage());
+        }
     }
 }

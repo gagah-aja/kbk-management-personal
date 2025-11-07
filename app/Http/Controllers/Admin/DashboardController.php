@@ -13,25 +13,24 @@ use App\Models\Rw;
 class DashboardController extends Controller
 {
     /**
-     * Tampilkan halaman dashboard admin.
+     * Tampilkan halaman dashboard admin
      */
- public function index()
+    public function index()
     {
-        // 1. Total Rumah
+        // Total Rumah
         $totalRumah = Rumah::count();
 
-        // 2. Total Warga
+        // Total Warga
         $totalWarga = Warga::count();
 
-        // 3. Total RT & RW
+        // Total RT & RW
         $totalRt = Rt::count();
         $totalRw = Rw::count();
 
-        // 4. Total Cluster
+        // Total Cluster
         $totalCluster = Cluster::count();
 
-        // Kirim semua data ke view
-        return view('pages.admin.dashboard', [
+        return view('pages.admin.dashboard.index', [
             'totalRumah' => $totalRumah,
             'totalWarga' => $totalWarga,
             'totalRt' => $totalRt,
