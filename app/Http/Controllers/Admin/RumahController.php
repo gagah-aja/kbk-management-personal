@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Rumah;
 use App\Models\Cluster;
 use App\Models\Warga;
+use App\Models\StatusRumah;
 use Illuminate\Support\Facades\Storage;
 
 class RumahController extends Controller
@@ -16,7 +17,7 @@ class RumahController extends Controller
      */
     public function index()
     {
-        $rumah = Rumah::with(['cluster.namaCluster', 'cluster.rt', 'cluster.blok', 'warga'])->get();
+        $rumah = Rumah::with(['cluster.namaCluster', 'cluster.rt', 'cluster.blok', 'warga', 'statusRumah'])->get();
         return view('pages.admin.rumah.index', compact('rumah'));
     }
 
@@ -27,7 +28,8 @@ class RumahController extends Controller
     {
         $clusters = Cluster::with(['namaCluster', 'rt', 'blok'])->get();
         $warga = Warga::all();
-        return view('pages.admin.rumah.create', compact('clusters', 'warga'));
+        $status_rumah = StatusRumah::all();
+        return view('pages.admin.rumah.create', compact('clusters', 'warga', 'status_rumah'));
     }
 
     /**
@@ -38,7 +40,7 @@ class RumahController extends Controller
         $validated = $request->validate([
             'nomor_rumah' => 'required|string|max:50|unique:rumah,nomor_rumah',
             'alamat_lengkap' => 'required|string',
-            'status' => 'required|in:tersedia,terisi,rusak',
+            'id_status_rumah' => 'required|exists:status_rumah,id',
             'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'latitude' => 'nullable|numeric',   
             'longitude' => 'nullable|numeric',
@@ -48,8 +50,8 @@ class RumahController extends Controller
             'nomor_rumah.required' => 'Nomor rumah wajib diisi.',
             'nomor_rumah.unique' => 'Nomor rumah sudah terdaftar.',
             'alamat_lengkap.required' => 'Alamat lengkap wajib diisi.',
-            'status.required' => 'Status rumah wajib dipilih.',
-            'status.in' => 'Status tidak valid.',
+            'id_status_rumah.required' => 'Status rumah wajib dipilih.',
+            'id_status_rumah.exists' => 'Status rumah tidak valid.',
             'gambar.image' => 'File harus berupa gambar.',
             'gambar.mimes' => 'Gambar harus berformat JPG, JPEG, atau PNG.',
             'gambar.max' => 'Ukuran gambar maksimal 2MB.',
@@ -73,11 +75,12 @@ class RumahController extends Controller
      */
     public function edit($id)
     {
-        $rumah = Rumah::with(['cluster', 'warga'])->findOrFail($id);
+        $rumah = Rumah::with(['cluster', 'warga', 'statusRumah'])->findOrFail($id);
         $clusters = Cluster::with(['namaCluster', 'rt', 'blok'])->get();
         $warga = Warga::all();
+        $status_rumah = StatusRumah::all();
 
-        return view('pages.admin.rumah.edit', compact('rumah', 'clusters', 'warga'));
+        return view('pages.admin.rumah.edit', compact('rumah', 'clusters', 'warga', 'status_rumah'));
     }
 
     /**
@@ -90,7 +93,7 @@ class RumahController extends Controller
         $validated = $request->validate([
             'nomor_rumah' => 'required|string|max:50|unique:rumah,nomor_rumah,' . $rumah->id,
             'alamat_lengkap' => 'required|string',
-            'status' => 'required|in:tersedia,terisi,rusak',
+            'id_status_rumah' => 'required|exists:status_rumah,id',
             'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
@@ -100,8 +103,8 @@ class RumahController extends Controller
             'nomor_rumah.required' => 'Nomor rumah wajib diisi.',
             'nomor_rumah.unique' => 'Nomor rumah sudah terdaftar.',
             'alamat_lengkap.required' => 'Alamat lengkap wajib diisi.',
-            'status.required' => 'Status rumah wajib dipilih.',
-            'status.in' => 'Status tidak valid.',
+            'id_status_rumah.required' => 'Status rumah wajib dipilih.',
+            'id_status_rumah.exists' => 'Status rumah tidak valid.',
             'gambar.image' => 'File harus berupa gambar.',
             'gambar.mimes' => 'Gambar harus berformat JPG, JPEG, atau PNG.',
             'gambar.max' => 'Ukuran gambar maksimal 2MB.',

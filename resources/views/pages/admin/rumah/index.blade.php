@@ -2,7 +2,8 @@
 
 @section('content')
 <div class="container-fluid py-4">
-    <div class="page-header d-flex justify-content-between align-items-center">
+    {{-- Header --}}
+    <div class="page-header d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2>Data Rumah</h2>
             <p>Kelola data rumah perumahan</p>
@@ -12,48 +13,34 @@
         </a>
     </div>
 
+    {{-- Data Rumah --}}
     <div class="data-card">
         @if($rumah->count() > 0)
-            {{-- Grid Cards --}}
             <div class="row g-4">
                 @foreach($rumah as $r)
                     <div class="col-md-6 col-lg-4 col-xl-3">
                         <div class="card-rumah">
-                            {{-- Gambar Rumah --}}
-                            <div class="card-rumah-image">
-                                @if($r->gambar)
-                                    <img src="{{ asset('storage/' . $r->gambar) }}" alt="Rumah {{ $r->nomor_rumah }}">
-                                @else
-                                    <div class="card-rumah-image-placeholder">
-                                        <i class="bi bi-house-door"></i>
-                                    </div>
-                                @endif
-                            </div>
-
                             <div class="card-rumah-body">
                                 {{-- Nomor Rumah & Status --}}
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <h5 class="card-rumah-title mb-0">{{ $r->nomor_rumah }}</h5>
                                     @php
-                                        $statusColor = [
-                                            'tersedia' => 'success',
-                                            'terisi' => 'primary',
-                                            'rusak' => 'danger'
-                                        ];
+                                        $statusColor = ['tersedia'=>'success','terisi'=>'primary','rusak'=>'danger'];
+                                        $statusNama = $r->statusRumah->nama_status ?? 'unknown';
                                     @endphp
-                                    <span class="badge-status badge-{{ $statusColor[$r->status] ?? 'secondary' }}">
-                                        {{ ucfirst($r->status) }}
+                                    <span class="badge-status badge-{{ $statusColor[$statusNama] ?? 'secondary' }}">
+                                        {{ ucfirst($statusNama) }}
                                     </span>
                                 </div>
 
                                 {{-- Alamat --}}
                                 <p class="card-rumah-text mb-2">
-                                    <i class="bi bi-geo-alt"></i> {{ Str::limit($r->alamat_lengkap, 50) }}
+                                    <i class="bi bi-geo-alt"></i> {{ Str::limit($r->alamat_lengkap,50) }}
                                 </p>
 
                                 <div class="card-rumah-divider"></div>
 
-                                {{-- Info Cluster --}}
+                                {{-- Cluster --}}
                                 <div class="card-rumah-info">
                                     <small class="text-muted d-block">Cluster</small>
                                     <strong>{{ $r->cluster->namaCluster->nama_cluster ?? 'N/A' }}</strong>
@@ -63,7 +50,7 @@
                                     </div>
                                 </div>
 
-                                {{-- Info Penghuni --}}
+                                {{-- Penghuni --}}
                                 <div class="card-rumah-info">
                                     <small class="text-muted d-block">Penghuni</small>
                                     @if($r->warga)
@@ -78,24 +65,29 @@
                                     <div class="card-rumah-info">
                                         <small class="text-muted">
                                             <i class="bi bi-pin-map"></i>
-                                            {{ number_format($r->latitude, 6) }}, {{ number_format($r->longitude, 6) }}
+                                            {{ number_format($r->latitude,6) }}, {{ number_format($r->longitude,6) }}
                                         </small>
                                     </div>
                                 @endif
 
-                                {{-- Tombol Aksi --}}
-                                <div class="card-rumah-actions">
+                                {{-- Tombol Buka Gambar --}}
+                                @if($r->gambar)
+                                    <button type="button" class="btn btn-sm btn-outline-primary w-100 open-modal-gambar" 
+                                            data-gambar="{{ asset('storage/' . $r->gambar) }}"
+                                            data-nomor="{{ $r->nomor_rumah }}">
+                                        <i class="bi bi-image"></i> Buka Gambar
+                                    </button>
+                                @endif
+
+                                {{-- Aksi --}}
+                                <div class="card-rumah-actions mt-3">
                                     <a href="{{ route('admin.rumah.edit', $r->id) }}" class="btn-action btn-edit">
                                         <i class="bi bi-pencil"></i> Edit
                                     </a>
-                                    <form action="{{ route('admin.rumah.destroy', $r->id) }}" 
-                                          method="POST" 
-                                          class="form-hapus d-inline">
+                                    <form action="{{ route('admin.rumah.destroy', $r->id) }}" method="POST" class="form-hapus d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" 
-                                                class="btn-action btn-delete"
-                                                data-nama="Rumah {{ $r->nomor_rumah }}">
+                                        <button type="submit" class="btn-action btn-delete" data-nama="Rumah {{ $r->nomor_rumah }}">
                                             <i class="bi bi-trash"></i> Hapus
                                         </button>
                                     </form>
@@ -106,8 +98,8 @@
                 @endforeach
             </div>
         @else
-            <div class="empty-state">
-                <i class="bi bi-inbox"></i>
+            <div class="empty-state text-center py-5">
+                <i class="bi bi-inbox mb-2" style="font-size:2rem;"></i>
                 <h5>Belum Ada Data</h5>
                 <p>Mulai tambahkan data rumah pertama</p>
                 <a href="{{ route('admin.rumah.create') }}" class="btn-add">
@@ -118,182 +110,92 @@
     </div>
 </div>
 
+{{-- Modal Global --}}
+<div class="modal fade" id="modalGambarGlobal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalGambarTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalGambarImg" src="" alt="" class="img-fluid rounded" style="max-height:400px;width:auto;">
+            </div>
+            <div class="modal-footer">
+                <a id="modalGambarLink" href="#" target="_blank" class="btn btn-outline-primary">
+                    <i class="bi bi-box-arrow-up-right"></i> Buka di Tab Baru
+                </a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- SweetAlert & JS --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    @if (session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: '{{ session('success') }}',
-            showConfirmButton: false,
-            timer: 2000
-        });
+    // Notifikasi
+    @if(session('success'))
+        Swal.fire({ icon:'success', title:'Berhasil!', text:'{{ session('success') }}', showConfirmButton:false, timer:2000 });
+    @endif
+    @if(session('error'))
+        Swal.fire({ icon:'error', title:'Gagal!', text:'{{ session('error') }}', confirmButtonColor:'#ef4444' });
     @endif
 
-    @if (session('error'))
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal!',
-            text: '{{ session('error') }}',
-            confirmButtonColor: '#ef4444'
-        });
-    @endif
-
-    document.querySelectorAll('.form-hapus').forEach(form => {
-        form.addEventListener('submit', function(e) {
+    // Konfirmasi hapus
+    document.querySelectorAll('.form-hapus').forEach(form=>{
+        form.addEventListener('submit', function(e){
             e.preventDefault();
             const nama = this.querySelector('button').dataset.nama;
-            
             Swal.fire({
-                title: 'Hapus Data?',
-                html: `<strong>${nama}</strong> dan gambar akan dihapus permanen.`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            });
+                title:'Hapus Data?',
+                html:`<strong>${nama}</strong> dan gambar akan dihapus permanen.`,
+                icon:'warning', showCancelButton:true,
+                confirmButtonColor:'#ef4444', cancelButtonColor:'#6b7280',
+                confirmButtonText:'Ya, Hapus!', cancelButtonText:'Batal',
+                reverseButtons:true
+            }).then(result=>{ if(result.isConfirmed) form.submit(); });
+        });
+    });
+
+    // Modal Global Gambar
+    const modal = new bootstrap.Modal(document.getElementById('modalGambarGlobal'));
+    const imgModal = document.getElementById('modalGambarImg');
+    const titleModal = document.getElementById('modalGambarTitle');
+    const linkModal = document.getElementById('modalGambarLink');
+
+    document.querySelectorAll('.open-modal-gambar').forEach(btn=>{
+        btn.addEventListener('click', function(){
+            const src = this.dataset.gambar;
+            const nomor = this.dataset.nomor;
+            imgModal.src = src;
+            titleModal.textContent = `Gambar Rumah ${nomor}`;
+            linkModal.href = src; // link untuk tab baru
+            modal.show();
         });
     });
 });
 </script>
 
+{{-- Styles --}}
 <style>
-/* Card Rumah Styles */
-.card-rumah {
-    background: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.card-rumah:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-}
-
-.card-rumah-image {
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-    background: #f8f9fa;
-}
-
-.card-rumah-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.card-rumah-image-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-}
-
-.card-rumah-image-placeholder i {
-    font-size: 4rem;
-    opacity: 0.5;
-}
-
-.card-rumah-body {
-    padding: 1.25rem;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.card-rumah-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-}
-
-.card-rumah-text {
-    font-size: 0.875rem;
-    color: #64748b;
-    line-height: 1.5;
-}
-
-.card-rumah-text i {
-    margin-right: 0.25rem;
-}
-
-.card-rumah-divider {
-    height: 1px;
-    background: #e2e8f0;
-    margin: 0.75rem 0;
-}
-
-.card-rumah-info {
-    margin-bottom: 0.75rem;
-}
-
-.card-rumah-info small {
-    font-size: 0.75rem;
-}
-
-.card-rumah-info strong {
-    font-size: 0.9rem;
-    color: #1e293b;
-}
-
-.card-rumah-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: auto;
-    padding-top: 0.75rem;
-    border-top: 1px solid #e2e8f0;
-}
-
-.card-rumah-actions .btn-action {
-    flex: 1;
-    padding: 0.5rem;
-    font-size: 0.875rem;
-    text-align: center;
-}
-
-.badge-status {
-    padding: 0.35rem 0.75rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border-radius: 6px;
-    text-transform: uppercase;
-}
-
-.badge-success {
-    background: #10b981;
-    color: #fff;
-}
-
-.badge-primary {
-    background: #3b82f6;
-    color: #fff;
-}
-
-.badge-danger {
-    background: #ef4444;
-    color: #fff;
-}
-
-.badge-secondary {
-    background: #6b7280;
-    color: #fff;
-}
+.card-rumah { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:0.3s; display:flex; flex-direction:column; height:100%; }
+.card-rumah:hover { transform:translateY(-4px); box-shadow:0 4px 16px rgba(0,0,0,0.12); }
+.card-rumah-body { padding:1rem; flex:1; display:flex; flex-direction:column; }
+.card-rumah-title { font-size:1.1rem; font-weight:600; color:#1e293b; }
+.card-rumah-text { font-size:0.85rem; color:#64748b; line-height:1.5; }
+.card-rumah-divider { height:1px; background:#e2e8f0; margin:0.5rem 0; }
+.card-rumah-info { margin-bottom:0.5rem; }
+.card-rumah-actions { display:flex; gap:0.5rem; margin-top:auto; padding-top:0.75rem; border-top:1px solid #e2e8f0; }
+.card-rumah-actions .btn-action { flex:1; padding:0.4rem; font-size:0.8rem; text-align:center; }
+.btn-add { display:inline-flex; align-items:center; gap:0.3rem; padding:0.4rem 0.6rem; background:#3b82f6; color:#fff; border-radius:6px; text-decoration:none; }
+.btn-add i { font-size:0.9rem; }
+.empty-state { text-align:center; padding:4rem 1rem; color:#64748b; }
+.badge-status { padding:0.3rem 0.6rem; font-size:0.7rem; font-weight:600; border-radius:6px; text-transform:uppercase; }
+.badge-success { background:#10b981; color:#fff; }
+.badge-primary { background:#3b82f6; color:#fff; }
+.badge-danger  { background:#ef4444; color:#fff; }
+.badge-secondary { background:#6b7280; color:#fff; }
 </style>
 @endsection

@@ -9,14 +9,14 @@ class Rumah extends Model
 {
     use HasFactory;
 
-    // Nama tabel (opsional kalau nama tabel mengikuti konvensi Laravel, yaitu "rumahs")
+    // Nama tabel
     protected $table = 'rumah';
 
     // Kolom yang bisa diisi secara mass assignment
     protected $fillable = [
         'nomor_rumah',
         'alamat_lengkap',
-        'status',
+        'id_status_rumah',
         'gambar',
         'latitude',
         'longitude',
@@ -32,11 +32,19 @@ class Rumah extends Model
         return $this->belongsTo(Cluster::class, 'id_cluster');
     }
 
-    /** 
+    /**
      * Relasi ke Warga
      */
     public function warga()
     {
         return $this->belongsTo(Warga::class, 'id_warga');
+    }
+
+    /**
+     * Relasi ke Status Rumah
+     */
+    public function statusRumah()
+    {
+        return $this->belongsTo(StatusRumah::class, 'id_status_rumah');
     }
 }

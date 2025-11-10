@@ -234,7 +234,7 @@
                                     <option value="">-- Pilih Rumah --</option>
                                     @foreach($rumahList as $rumah)
                                         <option value="{{ $rumah->id }}" {{ old('id_rumah') == $rumah->id ? 'selected' : '' }}>
-                                            {{ $rumah->alamat }}
+                                            {{ $rumah->alamat_lengkap }}
                                         </option>
                                     @endforeach
                                 </select>

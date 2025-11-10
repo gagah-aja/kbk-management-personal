@@ -39,6 +39,7 @@ class WargaController extends Controller
     {
         // Ambil daftar rumah untuk dropdown
         $rumahList = Rumah::all();
+        // dd($rumahList);
         
         return view('pages.admin.warga.create', compact('rumahList'));
     }

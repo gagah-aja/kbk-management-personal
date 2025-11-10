@@ -48,21 +48,23 @@
                             @enderror
                         </div>
 
-                        {{-- Status --}}
+                        {{-- ✅ Status Rumah (ambil dari tabel status_rumah) --}}
                         <div class="col-md-6">
-                            <label for="status" class="form-label">
-                                Status <span class="text-danger">*</span>
+                            <label for="id_status_rumah" class="form-label">
+                                Status Rumah <span class="text-danger">*</span>
                             </label>
-                            <select name="status" 
-                                    id="status" 
-                                    class="form-select @error('status') is-invalid @enderror" 
+                            <select name="id_status_rumah" 
+                                    id="id_status_rumah" 
+                                    class="form-select @error('id_status_rumah') is-invalid @enderror" 
                                     required>
-                                <option value="">-- Pilih Status --</option>
-                                <option value="tersedia" {{ old('status') == 'tersedia' ? 'selected' : '' }}>Tersedia</option>
-                                <option value="terisi" {{ old('status') == 'terisi' ? 'selected' : '' }}>Terisi</option>
-                                <option value="rusak" {{ old('status') == 'rusak' ? 'selected' : '' }}>Rusak</option>
+                                <option value="">-- Pilih Status Rumah --</option>
+                                @foreach($status_rumah as $status)
+                                    <option value="{{ $status->id }}" {{ old('id_status_rumah') == $status->id ? 'selected' : '' }}>
+                                        {{ $status->nama_status }}
+                                    </option>
+                                @endforeach
                             </select>
-                            @error('status')
+                            @error('id_status_rumah')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -95,7 +97,7 @@
                                 <option value="">-- Pilih Cluster --</option>
                                 @foreach($clusters as $cluster)
                                     <option value="{{ $cluster->id }}" {{ old('id_cluster') == $cluster->id ? 'selected' : '' }}>
-                                        {{ $cluster->namaCluster->nama_cluster ?? 'N/A' }} - 
+                                        {{ $cluster->nama_cluster ?? 'N/A' }} - 
                                         RT {{ $cluster->rt->nomor_rt ?? '-' }} - 
                                         Blok {{ $cluster->blok->nama_blok ?? '-' }}
                                     </option>
@@ -117,7 +119,7 @@
                                 <option value="">-- Pilih Penghuni --</option>
                                 @foreach($warga as $w)
                                     <option value="{{ $w->id }}" {{ old('id_warga') == $w->id ? 'selected' : '' }}>
-                                        {{ $w->nama }} - {{ $w->nik }}
+                                        {{ $w->nama_lengkap}} - {{ $w->nik }}
                                     </option>
                                 @endforeach
                             </select>
