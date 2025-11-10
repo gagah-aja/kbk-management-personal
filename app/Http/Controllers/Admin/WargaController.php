@@ -21,8 +21,8 @@ class WargaController extends Controller
         $dataWarga = Warga::with('rumah')
             ->when($search, function ($query, $search) {
                 $query->where('nama_lengkap', 'like', "%{$search}%")
-                      ->orWhere('nik', 'like', "%{$search}%")
-                      ->orWhere('no_telp', 'like', "%{$search}%");
+                    ->orWhere('nik', 'like', "%{$search}%")
+                    ->orWhere('no_telp', 'like', "%{$search}%");
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
@@ -39,7 +39,8 @@ class WargaController extends Controller
     {
         // Ambil daftar rumah untuk dropdown
         $rumahList = Rumah::all();
-        
+        // dd($rumahList);
+
         return view('pages.admin.warga.create', compact('rumahList'));
     }
 
@@ -110,7 +111,6 @@ class WargaController extends Controller
 
             return redirect()->route('admin.warga.index')
                 ->with('success', 'Data warga berhasil ditambahkan!');
-                
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -134,10 +134,10 @@ class WargaController extends Controller
     public function edit($id)
     {
         $warga = Warga::with('rumah')->findOrFail($id);
-        
+
         // Ambil daftar rumah untuk dropdown
         $rumahList = Rumah::all();
-        
+
         return view('pages.admin.warga.edit', compact('warga', 'rumahList'));
     }
 
@@ -218,7 +218,6 @@ class WargaController extends Controller
 
             return redirect()->route('admin.warga.index')
                 ->with('success', 'Data warga berhasil diperbarui!');
-                
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -236,27 +235,32 @@ class WargaController extends Controller
         try {
             $warga = Warga::findOrFail($id);
 
+            // Cek apakah warga adalah ketua RT atau RW
+            if ($warga->rt()->exists() || $warga->rw()->exists()) {
+                return redirect()->route('admin.warga.index')
+                    ->with('error', 'Warga tidak dapat dihapus karena masih menjabat sebagai ketua RT/RW.');
+            }
+
             DB::beginTransaction();
 
             // Hapus foto dari storage
             if ($warga->foto && Storage::disk('public')->exists($warga->foto)) {
                 Storage::disk('public')->delete($warga->foto);
             }
-            
+
             if ($warga->foto_ktp && Storage::disk('public')->exists($warga->foto_ktp)) {
                 Storage::disk('public')->delete($warga->foto_ktp);
             }
 
             $warga->delete();
-            
+
             DB::commit();
 
             return redirect()->route('admin.warga.index')
                 ->with('success', 'Data warga berhasil dihapus!');
-                
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return redirect()->route('admin.warga.index')
                 ->with('error', 'Gagal menghapus data warga: ' . $e->getMessage());
         }

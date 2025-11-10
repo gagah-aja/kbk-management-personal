@@ -265,6 +265,13 @@
                 </li>
 
                 <li class="nav-item">
+                    <a href="{{ route('admin.status-rumah.index') }}"
+                        class="nav-link {{ request()->is('admin/status-rumah*') ? 'active' : '' }}">
+                        <i class="bi bi-file-earmark-text-fill"></i> Status Rumah
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a href="{{ route('logout') }}" class="nav-link logout-btn">
                         <i class="bi bi-box-arrow-left"></i> Logout
                     </a>

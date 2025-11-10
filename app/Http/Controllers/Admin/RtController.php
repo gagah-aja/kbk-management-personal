@@ -124,6 +124,13 @@ class RtController extends Controller
     {
         try {
             $rt = Rt::findOrFail($id);
+
+            // Cek apakah RT sedang digunakan
+            if ($rt->clusters()->count() > 0) {
+                return redirect()->route('admin.rt.index')
+                    ->with('error', 'RT tidak dapat dihapus karena masih digunakan oleh cluster.');
+            }
+
             $rt->delete();
 
             return redirect()->route('admin.rt.index')

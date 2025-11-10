@@ -136,13 +136,20 @@ class ClusterController extends Controller
     {
         try {
             $cluster = Cluster::findOrFail($id);
+            
+            // Cek apakah cluster sedang digunakan oleh rumah
+            if ($cluster->rumah()->count() > 0) {
+                return redirect()->route('admin.cluster.index')
+                    ->with('error', 'Cluster tidak dapat dihapus karena masih digunakan oleh rumah.');
+            }
+            
             $cluster->delete();
-
+    
             // Reset auto increment jika tabel kosong
             if (Cluster::count() === 0) {
                 DB::statement('ALTER TABLE cluster AUTO_INCREMENT = 1;');
             }
-
+    
             return redirect()->route('admin.cluster.index')
                 ->with('success', 'Cluster berhasil dihapus.');
         } catch (\Exception $e) {

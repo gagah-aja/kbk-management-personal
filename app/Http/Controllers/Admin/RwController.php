@@ -109,6 +109,13 @@ class RwController extends Controller
     {
         try {
             $rw = Rw::findOrFail($id);
+
+            // Cek apakah RW sedang digunakan oleh RT
+            if ($rw->rts()->count() > 0) {
+                return redirect()->route('admin.rw.index')
+                    ->with('error', 'RW tidak dapat dihapus karena masih memiliki RT.');
+            }
+
             $rw->delete();
 
             return redirect()->route('admin.rw.index')

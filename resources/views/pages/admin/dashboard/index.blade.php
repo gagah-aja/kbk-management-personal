@@ -5,6 +5,10 @@
     .page-header {
         margin-bottom: 40px;
         animation: fadeInDown 0.6s ease;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 32px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
     }
     
     .page-header h2 {
@@ -12,7 +16,7 @@
         font-weight: 800;
         color: white;
         margin-bottom: 8px;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         letter-spacing: -0.5px;
     }
     
@@ -43,6 +47,7 @@
     .stats-card:nth-child(2) { animation-delay: 0.2s; }
     .stats-card:nth-child(3) { animation-delay: 0.3s; }
     .stats-card:nth-child(4) { animation-delay: 0.4s; }
+    .stats-card:nth-child(5) { animation-delay: 0.5s; }
     
     .stats-card::before {
         content: '';
@@ -108,6 +113,12 @@
         color: white;
         box-shadow: 0 8px 16px rgba(255, 154, 86, 0.3);
     }
+
+    .bg-gradient-red {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        box-shadow: 0 8px 16px rgba(245, 87, 108, 0.3);
+    }
     
     .stats-card .card-content {
         position: relative;
@@ -132,35 +143,29 @@
         line-height: 1;
     }
     
-    /* Chart Cards */
-    .chart-card {
+    /* Quick Actions */
+    .quick-actions-card {
         background: rgba(255, 255, 255, 0.98);
         backdrop-filter: blur(20px);
         border-radius: 20px;
-        padding: 36px;
+        padding: 32px;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
         margin-bottom: 24px;
         animation: fadeInUp 0.6s ease backwards;
-        animation-delay: 0.5s;
-        transition: all 0.3s ease;
+        animation-delay: 0.6s;
     }
-    
-    .chart-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
-    }
-    
-    .chart-title {
+
+    .section-title {
         font-size: 22px;
         font-weight: 700;
         color: #333;
-        margin-bottom: 28px;
+        margin-bottom: 24px;
         padding-bottom: 16px;
         border-bottom: 3px solid #f0f0f0;
         position: relative;
     }
-    
-    .chart-title::after {
+
+    .section-title::after {
         content: '';
         position: absolute;
         bottom: -3px;
@@ -170,7 +175,127 @@
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border-radius: 10px;
     }
-    
+
+    .action-btn {
+        display: flex;
+        align-items: center;
+        padding: 18px 24px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 14px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        font-size: 15px;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        border: none;
+        width: 100%;
+        margin-bottom: 12px;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .action-btn i {
+        font-size: 20px;
+        margin-right: 12px;
+    }
+
+    .action-btn.btn-success {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+    }
+
+    .action-btn.btn-success:hover {
+        box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
+    }
+
+    .action-btn.btn-info {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+    }
+
+    .action-btn.btn-info:hover {
+        box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+    }
+
+    .action-btn.btn-warning {
+        background: linear-gradient(135deg, #ff9a56 0%, #ffce54 100%);
+        box-shadow: 0 4px 15px rgba(255, 154, 86, 0.3);
+    }
+
+    .action-btn.btn-warning:hover {
+        box-shadow: 0 8px 25px rgba(255, 154, 86, 0.4);
+    }
+
+    /* Info Cards */
+    .info-card {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+        margin-bottom: 24px;
+        animation: fadeInUp 0.6s ease backwards;
+        animation-delay: 0.7s;
+        transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 16px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .info-item:hover {
+        background: #e9ecef;
+        transform: translateX(5px);
+    }
+
+    .info-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .info-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-right: 16px;
+        flex-shrink: 0;
+    }
+
+    .info-content h6 {
+        font-size: 14px;
+        color: #888;
+        margin: 0 0 4px 0;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-content p {
+        font-size: 18px;
+        font-weight: 700;
+        color: #333;
+        margin: 0;
+    }
+
     /* Animations */
     @keyframes fadeInUp {
         from {
@@ -217,6 +342,29 @@
         opacity: 1;
         left: 100%;
     }
+
+    /* Welcome Alert */
+    .welcome-alert {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 16px;
+        padding: 24px 28px;
+        color: white;
+        margin-bottom: 32px;
+        animation: fadeInDown 0.6s ease;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .welcome-alert h5 {
+        font-weight: 700;
+        margin-bottom: 8px;
+        font-size: 20px;
+    }
+
+    .welcome-alert p {
+        margin: 0;
+        opacity: 0.95;
+    }
     
     /* Responsive */
     @media (max-width: 768px) {
@@ -237,24 +385,50 @@
         .stats-card h4 {
             font-size: 28px;
         }
+
+        .action-btn {
+            padding: 14px 20px;
+            font-size: 14px;
+        }
     }
 </style>
 
 <div class="container-fluid py-4">
+    {{-- <!-- Welcome Alert -->
+    <div class="alert welcome-alert" role="alert">
+        <h5><i class="bi bi-stars me-2"></i>Selamat Datang di Dashboard Admin</h5>
+        <p>Kelola data warga, rumah, dan wilayah RT/RW dengan mudah</p>
+    </div> --}}
+
     <!-- Page Header -->
     <div class="page-header">
-        <h2>Dashboard</h2>
-        <p>Statistik dan Data Warga RT</p>
+        <h2><i class="bi bi-stars me-2"></i>Selamat Datang di Dashboard Admin</h2>
+        <p>Kelola data warga, rumah, dan wilayah RT/RW dengan mudah/p>
     </div>
 
     <!-- Stats Cards Row -->
     <div class="row mb-4">
-        <!-- Total Rumah -->
-        <div class="col-xl-3 col-md-6 mb-4">
+        <!-- Total Warga -->
+        <div class="col-xl col-lg-4 col-md-6 mb-4">
             <div class="stats-card">
                 <div class="d-flex align-items-start">
                     <div class="card-icon-wrapper bg-gradient-blue me-3">
-                        <i class="bi bi-houses-fill"></i>
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div class="card-content">
+                        <small>Total Warga</small>
+                        <h4>{{ $totalWarga }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Rumah -->
+        <div class="col-xl col-lg-4 col-md-6 mb-4">
+            <div class="stats-card">
+                <div class="d-flex align-items-start">
+                    <div class="card-icon-wrapper bg-gradient-green me-3">
+                        <i class="bi bi-house-door-fill"></i>
                     </div>
                     <div class="card-content">
                         <small>Total Rumah</small>
@@ -264,27 +438,42 @@
             </div>
         </div>
 
-        <!-- Total RT & RW -->
-        <div class="col-xl-3 col-md-6 mb-4">
+        <!-- Total RT -->
+        <div class="col-xl col-lg-4 col-md-6 mb-4">
             <div class="stats-card">
                 <div class="d-flex align-items-start">
-                    <div class="card-icon-wrapper bg-gradient-green me-3">
-                        <i class="bi bi-people-fill"></i>
+                    <div class="card-icon-wrapper bg-gradient-purple me-3">
+                        <i class="bi bi-diagram-3-fill"></i>
                     </div>
                     <div class="card-content">
-                        <small>Total RT & RW</small>
-                        <h4>{{ $totalRt }} & {{ $totalRw }}</h4>
+                        <small>Total RT</small>
+                        <h4>{{ $totalRt }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total RW -->
+        <div class="col-xl col-lg-4 col-md-6 mb-4">
+            <div class="stats-card">
+                <div class="d-flex align-items-start">
+                    <div class="card-icon-wrapper bg-gradient-orange me-3">
+                        <i class="bi bi-pin-map-fill"></i>
+                    </div>
+                    <div class="card-content">
+                        <small>Total RW</small>
+                        <h4>{{ $totalRw }}</h4>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Total Cluster -->
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl col-lg-4 col-md-6 mb-4">
             <div class="stats-card">
                 <div class="d-flex align-items-start">
-                    <div class="card-icon-wrapper bg-gradient-purple me-3">
-                        <i class="bi bi-diagram-3-fill"></i>
+                    <div class="card-icon-wrapper bg-gradient-red me-3">
+                        <i class="bi bi-geo-alt-fill"></i>
                     </div>
                     <div class="card-content">
                         <small>Total Cluster</small>
@@ -293,153 +482,107 @@
                 </div>
             </div>
         </div>
-
-        <!-- Total Warga -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="stats-card">
-                <div class="d-flex align-items-start">
-                    <div class="card-icon-wrapper bg-gradient-orange me-3">
-                        <i class="bi bi-person-fill"></i>
-                    </div>
-                    <div class="card-content">
-                        <small>Total Warga</small>
-                        <h4>{{ $totalWarga }}</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <!-- Charts Section (Optional - Uncomment if needed) -->
-    {{-- 
+    <!-- Quick Actions & System Info -->
     <div class="row">
-        <!-- Gender Distribution Chart -->
+        <!-- Quick Actions -->
         <div class="col-lg-6 mb-4">
-            <div class="chart-card">
-                <div class="chart-title">Distribusi Jenis Kelamin</div>
-                
-                <div class="d-flex justify-content-center mb-3 text-center">
-                    <span class="fw-bold me-4" style="color: #667eea;">
-                        <i class="bi bi-circle-fill me-1"></i> Laki-laki 41%
-                    </span>
-                    <span class="fw-bold" style="color: #f5576c;">
-                        <i class="bi bi-circle-fill me-1"></i> Perempuan 59%
-                    </span>
+            <div class="quick-actions-card">
+                <div class="section-title">
+                    <i class="bi bi-lightning-charge-fill me-2"></i>Aksi Cepat
                 </div>
-
-                <div class="text-center">
-                    <canvas id="genderChart" style="max-height: 300px;"></canvas>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="{{ route('admin.warga.create') }}" class="action-btn">
+                            <i class="bi bi-person-plus-fill"></i>
+                            Tambah Warga
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{{ route('admin.rumah.create') }}" class="action-btn btn-success">
+                            <i class="bi bi-house-add-fill"></i>
+                            Tambah Rumah
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{{ route('admin.rt.index') }}" class="action-btn btn-info">
+                            <i class="bi bi-diagram-2-fill"></i>
+                            Kelola RT
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{{ route('admin.cluster.index') }}" class="action-btn btn-warning">
+                            <i class="bi bi-collection-fill"></i>
+                            Kelola Cluster
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Age Distribution Chart -->
+        <!-- System Information -->
         <div class="col-lg-6 mb-4">
-            <div class="chart-card">
-                <div class="chart-title">Distribusi Kelompok Umur</div>
-                
-                <div>
-                    <canvas id="ageChart" style="max-height: 300px;"></canvas>
+            <div class="info-card">
+                <div class="section-title">
+                    <i class="bi bi-info-circle-fill me-2"></i>Informasi Sistem
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon bg-gradient-blue">
+                        <i class="bi bi-calendar3"></i>
+                    </div>
+                    <div class="info-content">
+                        <h6>Tanggal Hari Ini</h6>
+                        <p>{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM YYYY') }}</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon bg-gradient-green">
+                        <i class="bi bi-clock-fill"></i>
+                    </div>
+                    <div class="info-content">
+                        <h6>Waktu Sekarang</h6>
+                        <p id="current-time">{{ \Carbon\Carbon::now()->format('H:i:s') }} WIB</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon bg-gradient-purple">
+                        <i class="bi bi-person-badge-fill"></i>
+                    </div>
+                    <div class="info-content">
+                        <h6>Login Sebagai</h6>
+                        <p>Administrator</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon bg-gradient-orange">
+                        <i class="bi bi-database-fill"></i>
+                    </div>
+                    <div class="info-content">
+                        <h6>Total Data Tersimpan</h6>
+                        <p>{{ $totalWarga + $totalRumah + $totalRt + $totalRw + $totalCluster }} Records</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Chart.js Script -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Gender Distribution Chart
-        const genderCtx = document.getElementById('genderChart');
-        if (genderCtx) {
-            new Chart(genderCtx.getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['Laki-laki', 'Perempuan'],
-                    datasets: [{
-                        data: [41, 59],
-                        backgroundColor: [
-                            'rgba(102, 126, 234, 0.85)',
-                            'rgba(245, 87, 108, 0.85)'
-                        ],
-                        borderWidth: 0,
-                        hoverOffset: 15
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 20,
-                                font: {
-                                    size: 14,
-                                    weight: '600',
-                                    family: "'Inter', sans-serif"
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Age Distribution Chart
-        const ageCtx = document.getElementById('ageChart');
-        if (ageCtx) {
-            new Chart(ageCtx.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['18-34', '35-59', '5-17', '60+'],
-                    datasets: [{
-                        label: 'Jumlah',
-                        data: [2, 7, 7, 1],
-                        backgroundColor: 'rgba(102, 126, 234, 0.85)',
-                        borderRadius: 12,
-                        borderSkipped: false,
-                        hoverBackgroundColor: 'rgba(118, 75, 162, 0.85)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            },
-                            ticks: {
-                                font: {
-                                    family: "'Inter', sans-serif",
-                                    size: 12,
-                                    weight: '600'
-                                }
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                font: {
-                                    family: "'Inter', sans-serif",
-                                    size: 12,
-                                    weight: '600'
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-    </script>
-    --}}
 </div>
+
+<script>
+    // Update current time every second
+    function updateTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds} WIB`;
+    }
+    
+    setInterval(updateTime, 1000);
+</script>
 @endsection

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\BlokController;
 use App\Http\Controllers\Admin\NamaClusterController;
 use App\Http\Controllers\Admin\RumahController;
 use App\Http\Controllers\Admin\WargaController;
+use App\Http\Controllers\Admin\StatusRumahController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 
@@ -119,5 +120,9 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/warga/{id}/edit', [WargaController::class, 'edit'])->name('warga.edit');
     Route::put('/warga/{id}', [WargaController::class, 'update'])->name('warga.update');
     Route::delete('/warga/{id}', [WargaController::class, 'destroy'])->name('warga.destroy');
+
+    // 🧾 Status Rumah
+    // =====================================================
+    Route::resource('status-rumah', StatusRumahController::class)->except(['show']);
 
 });
