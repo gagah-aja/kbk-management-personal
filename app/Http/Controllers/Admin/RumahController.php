@@ -42,8 +42,8 @@ class RumahController extends Controller
             'alamat_lengkap' => 'required|string',
             'id_status_rumah' => 'required|exists:status_rumah,id',
             'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'latitude' => 'nullable|numeric',   
-            'longitude' => 'nullable|numeric',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'id_cluster' => 'required|exists:cluster,id',
             'id_warga' => 'nullable|exists:warga,id',
         ], [
@@ -95,8 +95,8 @@ class RumahController extends Controller
             'alamat_lengkap' => 'required|string',
             'id_status_rumah' => 'required|exists:status_rumah,id',
             'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'id_cluster' => 'required|exists:cluster,id',
             'id_warga' => 'nullable|exists:warga,id',
         ], [
@@ -134,12 +134,12 @@ class RumahController extends Controller
     {
         try {
             $rumah = Rumah::findOrFail($id);
-            
+
             // Hapus gambar jika ada
             if ($rumah->gambar) {
                 Storage::disk('public')->delete($rumah->gambar);
             }
-            
+
             $rumah->delete();
 
             return redirect()->route('admin.rumah.index')

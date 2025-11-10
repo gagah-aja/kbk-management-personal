@@ -28,27 +28,17 @@ class NamaClusterController extends Controller
     /**
      * Simpan Nama Cluster baru ke database
      */
+    // Hapus method getNextId() dan custom ID
     public function store(Request $request)
     {
         $request->validate([
-            'nama_cluster' => 'required|string|max:100',
+            'nama_cluster' => 'required|string|max:100|unique:nama_cluster,nama_cluster',
         ], [
             'nama_cluster.required' => 'Nama cluster wajib diisi.',
-            'nama_cluster.max' => 'Nama cluster maksimal 100 karakter.',
+            'nama_cluster.unique' => 'Nama cluster sudah terdaftar.',
         ]);
 
-        // Cek apakah cluster sudah ada
-        $existing = NamaCluster::where('nama_cluster', $request->nama_cluster)->first();
-
-        if ($existing) {
-            return redirect()->back()
-                ->withInput()
-                ->with('info', 'Cluster sudah ada dan akan digunakan data yang ada.');
-        }
-
-        // Buat cluster baru dengan ID unik otomatis
         NamaCluster::create([
-            'id' => $this->getNextId(),
             'nama_cluster' => $request->nama_cluster,
         ]);
 
@@ -81,21 +71,19 @@ class NamaClusterController extends Controller
     /**
      * Update Nama Cluster di database
      */
+    // Hapus validasi dan update custom ID di method update
     public function update(Request $request, $id)
     {
         $namaCluster = NamaCluster::findOrFail($id);
 
         $request->validate([
-            'id' => 'nullable|integer|unique:nama_cluster,id,' . $id,
             'nama_cluster' => 'required|string|max:100|unique:nama_cluster,nama_cluster,' . $id,
         ], [
-            'id.unique' => 'ID sudah digunakan.',
             'nama_cluster.required' => 'Nama cluster wajib diisi.',
             'nama_cluster.unique' => 'Nama cluster sudah terdaftar.',
         ]);
 
         $namaCluster->update([
-            'id' => $request->id ?? $namaCluster->id,
             'nama_cluster' => $request->nama_cluster,
         ]);
 
