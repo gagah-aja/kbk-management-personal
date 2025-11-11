@@ -11,11 +11,20 @@ class BlokController extends Controller
     /**
      * Tampilkan semua blok
      */
-    public function index()
-    {
-        $bloks = Blok::orderBy('id', 'asc')->get();
-        return view('pages.admin.blok.index', compact('bloks'));
-    }
+    public function index(Request $request)
+{
+    $search = $request->input('search');
+
+    $bloks = \App\Models\Blok::when($search, function ($query, $search) {
+            $query->where('nama_blok', 'like', "%{$search}%");
+        })
+        ->orderBy('nama_blok', 'asc')
+        ->paginate(10)
+        ->withQueryString(); // agar query search tetap terbawa saat pindah halaman
+
+    return view('pages.admin.blok.index', compact('bloks', 'search'));
+}
+
 
     /**
      * Tampilkan form tambah blok

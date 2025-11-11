@@ -3,15 +3,25 @@
 
 @section('content')
 <div class="container mt-4">
-    {{-- 🔹 Header --}}
+    {{-- Header --}}
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="mb-0">Status Rumah</h3>
-        <a href="{{ route('admin.status-rumah.create') }}" class="btn btn-primary">
-            Tambah Status
-        </a>
+
+        <div class="d-flex gap-2">
+            {{-- Form Search --}}
+            <form action="{{ route('admin.status-rumah.index') }}" method="GET" class="d-flex">
+                <input type="text" name="search" class="form-control"
+                       placeholder="Cari nama status..." value="{{ $search ?? '' }}">
+                <button type="submit" class="btn btn-primary ms-2">Cari</button>
+            </form>
+
+            <a href="{{ route('admin.status-rumah.create') }}" class="btn btn-dark">
+                Tambah Status
+            </a>
+        </div>
     </div>
 
-    {{-- 🔹 Notifikasi --}}
+    {{-- Notifikasi --}}
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
@@ -25,7 +35,7 @@
         </div>
     @endif
 
-    {{-- 🔹 Card Tabel --}}
+    {{-- Tabel --}}
     <div class="card shadow-sm border-0">
         <div class="card-body">
             @if ($statuses->isEmpty())
@@ -45,7 +55,7 @@
                         <tbody>
                             @foreach($statuses as $index => $s)
                             <tr class="text-center">
-                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $statuses->firstItem() + $index }}</td>
                                 <td>{{ $s->nama_status }}</td>
                                 <td>
                                     <a href="{{ route('admin.status-rumah.edit', $s->id) }}" 
@@ -66,6 +76,19 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+
+                {{-- Pagination --}}
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>
+                        <small>
+                            Menampilkan {{ $statuses->firstItem() }} - {{ $statuses->lastItem() }}
+                            dari {{ $statuses->total() }} data
+                        </small>
+                    </div>
+                    <div>
+                        {{ $statuses->links('pagination::bootstrap-5') }}
+                    </div>
                 </div>
             @endif
         </div>

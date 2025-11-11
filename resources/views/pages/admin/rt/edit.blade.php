@@ -50,7 +50,7 @@
                             <label for="nomor_rt" class="form-label">
                                 Nomor RT <span class="text-danger">*</span>
                             </label>
-                            <input type="text" 
+                            <input type="number" 
                                    name="nomor_rt" 
                                    id="nomor_rt" 
                                    class="form-control @error('nomor_rt') is-invalid @enderror" 

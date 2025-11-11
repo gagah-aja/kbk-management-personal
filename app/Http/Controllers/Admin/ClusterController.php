@@ -15,11 +15,29 @@ class ClusterController extends Controller
     /**
      * Tampilkan semua data Cluster
      */
-    public function index()
-    {
-        $clusters = Cluster::with(['namaCluster', 'rt', 'blok'])->get();
-        return view('pages.admin.cluster.index', compact('clusters'));
-    }
+    public function index(Request $request)
+{
+    $search = $request->get('search');
+
+    $clusters = Cluster::with(['namaCluster', 'rt', 'blok'])
+        ->when($search, function ($query, $search) {
+            $query->whereHas('namaCluster', function ($q) use ($search) {
+                $q->where('nama_cluster', 'like', "%{$search}%");
+            })
+            ->orWhereHas('rt', function ($q) use ($search) {
+                $q->where('nomor_rt', 'like', "%{$search}%");
+            })
+            ->orWhereHas('blok', function ($q) use ($search) {
+                $q->where('nama_blok', 'like', "%{$search}%");
+            });
+        })
+        ->orderBy('id', 'desc')
+        ->paginate(10)
+        ->appends(['search' => $search]); // biar query search tetap ada di pagination link
+
+    return view('pages.admin.cluster.index', compact('clusters', 'search'));
+}
+
 
     /**
      * Tampilkan form tambah cluster

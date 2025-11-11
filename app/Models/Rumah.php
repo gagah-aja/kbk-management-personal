@@ -9,10 +9,8 @@ class Rumah extends Model
 {
     use HasFactory;
 
-    // Nama tabel
     protected $table = 'rumah';
 
-    // Kolom yang bisa diisi secara mass assignment
     protected $fillable = [
         'nomor_rumah',
         'alamat_lengkap',
@@ -21,7 +19,7 @@ class Rumah extends Model
         'latitude',
         'longitude',
         'id_cluster',
-        'id_warga',
+        'id_warga', // Tetap ada untuk backward compatibility
     ];
 
     /**
@@ -33,7 +31,8 @@ class Rumah extends Model
     }
 
     /**
-     * Relasi ke Warga
+     * Relasi ke Warga (OLD - untuk backward compatibility)
+     * Sebaiknya pakai penghuni() sekarang
      */
     public function warga()
     {
@@ -46,5 +45,39 @@ class Rumah extends Model
     public function statusRumah()
     {
         return $this->belongsTo(StatusRumah::class, 'id_status_rumah');
+    }
+
+    /**
+     * ⭐ NEW: Relasi ke Penghuni (One-to-Many)
+     */
+    public function penghuni()
+    {
+        return $this->hasMany(Penghuni::class, 'id_rumah');
+    }
+
+    /**
+     * ⭐ Relasi ke Penghuni Aktif saja
+     */
+    public function penghuniAktif()
+    {
+        return $this->hasMany(Penghuni::class, 'id_rumah')->where('is_active', true);
+    }
+
+    /**
+     * ⭐ Helper: Cek apakah rumah punya penghuni aktif
+     */
+    public function hasPenghuniAktif()
+    {
+        return $this->penghuniAktif()->exists();
+    }
+
+    /**
+     * ⭐ Helper: Dapatkan Kepala Keluarga
+     */
+    public function kepalaKeluarga()
+    {
+        return $this->penghuniAktif()
+            ->where('status_penghuni', 'Kepala Keluarga')
+            ->first();
     }
 }

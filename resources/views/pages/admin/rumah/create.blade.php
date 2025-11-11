@@ -95,9 +95,10 @@
                                     class="form-select @error('id_cluster') is-invalid @enderror" 
                                     required>
                                 <option value="">-- Pilih Cluster --</option>
+                                
                                 @foreach($clusters as $cluster)
                                     <option value="{{ $cluster->id }}" {{ old('id_cluster') == $cluster->id ? 'selected' : '' }}>
-                                        {{ $cluster->nama_cluster ?? 'N/A' }} - 
+                                        {{ $cluster->namaCluster->nama_cluster ?? 'N/A' }} - 
                                         RT {{ $cluster->rt->nomor_rt ?? '-' }} - 
                                         Blok {{ $cluster->blok->nama_blok ?? '-' }}
                                     </option>

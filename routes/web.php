@@ -38,7 +38,7 @@ Route::prefix('user')->name('user.')->group(function () {
 // =====================================================
 Route::get('/login_admin', [AuthController::class, 'login'])->name('login');
 Route::post('/auth_login', [AuthController::class, 'authenticate'])->name('auth_login');
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // =====================================================
 // 🔹 ROUTE ADMIN PANEL (Memerlukan Authentication)
@@ -111,6 +111,18 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::put('/rumah/{id}', [RumahController::class, 'update'])->name('rumah.update');
     Route::delete('/rumah/{id}', [RumahController::class, 'destroy'])->name('rumah.destroy');
 
+    // ⭐ Manajemen Penghuni
+    // =====================================================
+    Route::prefix('rumah/{id_rumah}/penghuni')->name('rumah.penghuni.')->group(function() {
+        Route::get('/create', [RumahController::class, 'createPenghuni'])->name('create');
+        Route::post('/', [RumahController::class, 'storePenghuni'])->name('store');
+    });
+
+    Route::prefix('penghuni')->name('penghuni.')->group(function() {
+        Route::delete('/{id}', [RumahController::class, 'destroyPenghuni'])->name('destroy');
+        Route::delete('/{id}/force', [RumahController::class, 'forceDeletePenghuni'])->name('force-delete');
+    });
+
     // =====================================================
     // 👤 Manajemen Warga
     // =====================================================
@@ -124,5 +136,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     // 🧾 Status Rumah
     // =====================================================
     Route::resource('status-rumah', StatusRumahController::class)->except(['show']);
+
+    
 
 });

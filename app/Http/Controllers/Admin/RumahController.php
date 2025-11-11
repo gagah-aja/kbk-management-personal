@@ -8,6 +8,7 @@ use App\Models\Rumah;
 use App\Models\Cluster;
 use App\Models\Warga;
 use App\Models\StatusRumah;
+use App\Models\Penghuni;
 use Illuminate\Support\Facades\Storage;
 
 class RumahController extends Controller
@@ -15,15 +16,38 @@ class RumahController extends Controller
     /**
      * Tampilkan semua data rumah
      */
-    public function index()
+    public function index(Request $request)
     {
-        $rumah = Rumah::with(['cluster.namaCluster', 'cluster.rt', 'cluster.blok', 'warga', 'statusRumah'])->get();
+        $query = Rumah::with([
+            'cluster.namaCluster', 
+            'cluster.rt', 
+            'cluster.blok', 
+            'warga', 
+            'statusRumah',
+            'penghuniAktif.warga' // ⭐ Load penghuni aktif
+        ]);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nomor_rumah', 'like', "%{$search}%")
+                  ->orWhere('alamat_lengkap', 'like', "%{$search}%")
+                  ->orWhereHas('cluster.namaCluster', function($sub) use ($search) {
+                      $sub->where('nama_cluster', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('penghuniAktif.warga', function($sub) use ($search) {
+                      $sub->where('nama_lengkap', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('statusRumah', function($sub) use ($search) {
+                      $sub->where('nama_status', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $rumah = $query->orderBy('id', 'desc')->paginate(10);
         return view('pages.admin.rumah.index', compact('rumah'));
     }
 
-    /**
-     * Tampilkan form tambah rumah
-     */
     public function create()
     {
         $clusters = Cluster::with(['namaCluster', 'rt', 'blok'])->get();
@@ -32,9 +56,6 @@ class RumahController extends Controller
         return view('pages.admin.rumah.create', compact('clusters', 'warga', 'status_rumah'));
     }
 
-    /**
-     * Simpan data rumah baru
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -46,18 +67,6 @@ class RumahController extends Controller
             'longitude' => 'nullable|numeric|between:-180,180',
             'id_cluster' => 'required|exists:cluster,id',
             'id_warga' => 'nullable|exists:warga,id',
-        ], [
-            'nomor_rumah.required' => 'Nomor rumah wajib diisi.',
-            'nomor_rumah.unique' => 'Nomor rumah sudah terdaftar.',
-            'alamat_lengkap.required' => 'Alamat lengkap wajib diisi.',
-            'id_status_rumah.required' => 'Status rumah wajib dipilih.',
-            'id_status_rumah.exists' => 'Status rumah tidak valid.',
-            'gambar.image' => 'File harus berupa gambar.',
-            'gambar.mimes' => 'Gambar harus berformat JPG, JPEG, atau PNG.',
-            'gambar.max' => 'Ukuran gambar maksimal 2MB.',
-            'id_cluster.required' => 'Cluster wajib dipilih.',
-            'id_cluster.exists' => 'Cluster tidak valid.',
-            'id_warga.exists' => 'Warga tidak valid.',
         ]);
 
         if ($request->hasFile('gambar')) {
@@ -65,31 +74,21 @@ class RumahController extends Controller
         }
 
         Rumah::create($validated);
-
-        return redirect()->route('admin.rumah.index')
-            ->with('success', 'Data rumah berhasil ditambahkan!');
+        return redirect()->route('admin.rumah.index')->with('success', 'Data rumah berhasil ditambahkan!');
     }
 
-    /**
-     * Tampilkan form edit rumah
-     */
     public function edit($id)
     {
         $rumah = Rumah::with(['cluster', 'warga', 'statusRumah'])->findOrFail($id);
         $clusters = Cluster::with(['namaCluster', 'rt', 'blok'])->get();
         $warga = Warga::all();
         $status_rumah = StatusRumah::all();
-
         return view('pages.admin.rumah.edit', compact('rumah', 'clusters', 'warga', 'status_rumah'));
     }
 
-    /**
-     * Update data rumah
-     */
     public function update(Request $request, $id)
     {
         $rumah = Rumah::findOrFail($id);
-
         $validated = $request->validate([
             'nomor_rumah' => 'required|string|max:50|unique:rumah,nomor_rumah,' . $rumah->id,
             'alamat_lengkap' => 'required|string',
@@ -99,21 +98,8 @@ class RumahController extends Controller
             'longitude' => 'nullable|numeric|between:-180,180',
             'id_cluster' => 'required|exists:cluster,id',
             'id_warga' => 'nullable|exists:warga,id',
-        ], [
-            'nomor_rumah.required' => 'Nomor rumah wajib diisi.',
-            'nomor_rumah.unique' => 'Nomor rumah sudah terdaftar.',
-            'alamat_lengkap.required' => 'Alamat lengkap wajib diisi.',
-            'id_status_rumah.required' => 'Status rumah wajib dipilih.',
-            'id_status_rumah.exists' => 'Status rumah tidak valid.',
-            'gambar.image' => 'File harus berupa gambar.',
-            'gambar.mimes' => 'Gambar harus berformat JPG, JPEG, atau PNG.',
-            'gambar.max' => 'Ukuran gambar maksimal 2MB.',
-            'id_cluster.required' => 'Cluster wajib dipilih.',
-            'id_cluster.exists' => 'Cluster tidak valid.',
-            'id_warga.exists' => 'Warga tidak valid.',
         ]);
 
-        // Ganti gambar jika diunggah baru
         if ($request->hasFile('gambar')) {
             if ($rumah->gambar) {
                 Storage::disk('public')->delete($rumah->gambar);
@@ -122,31 +108,107 @@ class RumahController extends Controller
         }
 
         $rumah->update($validated);
-
-        return redirect()->route('admin.rumah.index')
-            ->with('success', 'Data rumah berhasil diperbarui!');
+        return redirect()->route('admin.rumah.index')->with('success', 'Data rumah berhasil diperbarui!');
     }
 
-    /**
-     * Hapus data rumah
-     */
     public function destroy($id)
     {
         try {
             $rumah = Rumah::findOrFail($id);
-
-            // Hapus gambar jika ada
             if ($rumah->gambar) {
                 Storage::disk('public')->delete($rumah->gambar);
             }
-
             $rumah->delete();
-
-            return redirect()->route('admin.rumah.index')
-                ->with('success', 'Data rumah berhasil dihapus!');
+            return redirect()->route('admin.rumah.index')->with('success', 'Data rumah berhasil dihapus!');
         } catch (\Exception $e) {
-            return redirect()->route('admin.rumah.index')
-                ->with('error', 'Gagal menghapus data rumah: ' . $e->getMessage());
+            return redirect()->route('admin.rumah.index')->with('error', 'Gagal menghapus data rumah: ' . $e->getMessage());
+        }
+    }
+
+    // ========================================
+    // ⭐ FITUR BARU: CRUD PENGHUNI
+    // ========================================
+
+    /**
+     * Tampilkan form tambah penghuni (Modal atau Halaman)
+     */
+    public function createPenghuni($id_rumah)
+    {
+        $rumah = Rumah::findOrFail($id_rumah);
+        $warga = Warga::all();
+        return view('pages.admin.rumah.create-penghuni', compact('rumah', 'warga'));
+    }
+
+    /**
+     * Simpan penghuni baru
+     */
+    public function storePenghuni(Request $request, $id_rumah)
+    {
+        $validated = $request->validate([
+            'id_warga' => 'required|exists:warga,id',
+            'status_penghuni' => 'required|in:Kepala Keluarga,Istri/Suami,Anak,Orang Tua,Keluarga Lainnya',
+            'tanggal_masuk' => 'required|date',
+            'keterangan' => 'nullable|string',
+        ], [
+            'id_warga.required' => 'Warga wajib dipilih',
+            'status_penghuni.required' => 'Status penghuni wajib dipilih',
+            'tanggal_masuk.required' => 'Tanggal masuk wajib diisi',
+        ]);
+
+        // Cek apakah warga sudah jadi penghuni aktif di rumah ini
+        $existingPenghuni = Penghuni::where('id_rumah', $id_rumah)
+            ->where('id_warga', $validated['id_warga'])
+            ->where('is_active', true)
+            ->first();
+
+        if ($existingPenghuni) {
+            return back()->with('error', 'Warga ini sudah terdaftar sebagai penghuni aktif di rumah ini!');
+        }
+
+        Penghuni::create([
+            'id_rumah' => $id_rumah,
+            'id_warga' => $validated['id_warga'],
+            'status_penghuni' => $validated['status_penghuni'],
+            'tanggal_masuk' => $validated['tanggal_masuk'],
+            'keterangan' => $validated['keterangan'] ?? null,
+            'is_active' => true,
+        ]);
+
+        return redirect()->route('admin.rumah.index')
+            ->with('success', 'Penghuni berhasil ditambahkan!');
+    }
+
+    /**
+     * Hapus penghuni (soft delete = set is_active = false)
+     */
+    public function destroyPenghuni($id_penghuni)
+    {
+        try {
+            $penghuni = Penghuni::findOrFail($id_penghuni);
+            
+            // Soft delete: set tanggal keluar dan is_active = false
+            $penghuni->update([
+                'is_active' => false,
+                'tanggal_keluar' => now(),
+            ]);
+
+            return back()->with('success', 'Penghuni berhasil dihapus!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal menghapus penghuni: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Hard delete penghuni (hapus permanen)
+     */
+    public function forceDeletePenghuni($id_penghuni)
+    {
+        try {
+            $penghuni = Penghuni::findOrFail($id_penghuni);
+            $penghuni->delete();
+            return back()->with('success', 'Penghuni berhasil dihapus permanen!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal menghapus penghuni: ' . $e->getMessage());
         }
     }
 }

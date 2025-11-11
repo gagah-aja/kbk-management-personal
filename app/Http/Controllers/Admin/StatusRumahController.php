@@ -9,16 +9,21 @@ use App\Models\Rumah;
 
 class StatusRumahController extends Controller
 {
-    public function index()
-    {
-        $statuses = StatusRumah::withCount('rumah')->orderBy('id')->get();
-        return view('pages.admin.status-rumah.index', compact('statuses'));
-    }
+    public function index(Request $request)
+{
+    $search = $request->input('search');
 
-    public function create()
-    {
-        return view('pages.admin.status-rumah.create');
-    }
+    $statuses = \App\Models\StatusRumah::withCount('rumah')
+        ->when($search, function($query, $search) {
+            $query->where('nama_status', 'like', "%{$search}%");
+        })
+        ->orderBy('id', 'asc')
+        ->paginate(10)
+        ->withQueryString(); // Supaya query search terbawa saat pindah halaman
+
+    return view('pages.admin.status-rumah.index', compact('statuses', 'search'));
+}
+
 
     public function store(Request $request)
     {
