@@ -29,7 +29,7 @@ class RumahController extends Controller
                   $sub->where('nama_cluster', 'like', "%{$search}%");
               })
               ->orWhereHas('warga', function($sub) use ($search) {
-                  $sub->where('nama', 'like', "%{$search}%");
+                  $sub->where('nama_lengkap', 'like', "%{$search}%");
               })
               ->orWhereHas('statusRumah', function($sub) use ($search) {
                   $sub->where('nama_status', 'like', "%{$search}%");
