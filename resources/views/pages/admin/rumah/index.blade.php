@@ -1,6 +1,45 @@
 @extends('layouts.admin.admin')
 
 @section('content')
+
+{{-- Styles --}}
+<style>
+.card-rumah { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:0.3s; display:flex; flex-direction:column; height:100%; }
+.card-rumah:hover { transform:translateY(-4px); box-shadow:0 4px 16px rgba(0,0,0,0.12); }
+.card-rumah-body { padding:1rem; flex:1; display:flex; flex-direction:column; }
+.card-rumah-title { font-size:1.1rem; font-weight:600; color:#1e293b; }
+.card-rumah-text { font-size:0.85rem; color:#64748b; line-height:1.5; }
+.card-rumah-divider { height:1px; background:#e2e8f0; margin:0.5rem 0; }
+.card-rumah-info { margin-bottom:0.5rem; }
+.card-rumah-actions { display:flex; gap:0.5rem; margin-top:auto; padding-top:0.75rem; border-top:1px solid #e2e8f0; }
+/* .card-rumah-actions .btn-action { flex:1; padding:0.4rem; font-size:0.8rem; text-align:center; } */
+
+.card-rumah-actions .btn-action {
+    flex:1;
+    display: inline-flex;       /* bikin <a> dan <button> sama */
+    align-items: center;        /* vertikal center icon & text */
+    justify-content: center;    /* horizontal center */
+    gap: 0.3rem;                /* jarak icon dan text */
+    padding: 0.35rem 0.5rem;    /* sesuaikan */
+    font-size: 0.8rem;
+    line-height: 1;             /* hapus perbedaan default */
+    border-radius: 6px;
+    text-decoration: none;      /* untuk <a> */
+    border: none;               /* untuk <button> */
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-add { display:inline-flex; align-items:center; gap:0.3rem; padding:0.4rem 0.6rem; background:#3b82f6; color:#fff; border-radius:6px; text-decoration:none; }
+.btn-add i { font-size:0.9rem; }
+.empty-state { text-align:center; padding:4rem 1rem; color:#64748b; }
+.badge-status { padding:0.3rem 0.6rem; font-size:0.7rem; font-weight:600; border-radius:6px; text-transform:uppercase; }
+.badge-success { background:#10b981; color:#fff; }
+.badge-primary { background:#3b82f6; color:#fff; }
+.badge-danger  { background:#ef4444; color:#fff; }
+.badge-secondary { background:#6b7280; color:#fff; }
+</style>
+
 <div class="container-fluid py-4">
     {{-- Header --}}
     <div class="page-header d-flex justify-content-between align-items-center mb-4">
@@ -18,7 +57,8 @@
         @if($rumah->count() > 0)
             <div class="row g-4">
                 @foreach($rumah as $r)
-                    <div class="col-md-6 col-lg-4 col-xl-3">
+                    {{-- <div class="col-md-6 col-lg-4 col-xl-3"> --}}
+                    <div class="col-md-6 col-lg-4 col-xl-4">
                         <div class="card-rumah">
                             <div class="card-rumah-body">
                                 {{-- Nomor Rumah & Status --}}
@@ -60,22 +100,25 @@
                                     @endif
                                 </div>
 
-                                {{-- Koordinat --}}
+                                {{-- Koordinat sebagai tombol Google Maps --}}
                                 @if($r->latitude && $r->longitude)
-                                    <div class="card-rumah-info">
-                                        <small class="text-muted">
-                                            <i class="bi bi-pin-map"></i>
-                                            {{ number_format($r->latitude,6) }}, {{ number_format($r->longitude,6) }}
-                                        </small>
+                                    <div class="card-rumah-info mt-2">
+                                        @php
+                                            $mapsUrl = "https://www.google.com/maps?q={$r->latitude},{$r->longitude}";
+                                        @endphp
+                                        <a href="{{ $mapsUrl }}" target="_blank" class="btn btn-sm btn-outline-success w-100">
+                                            Lihat di Maps
+                                        </a>
                                     </div>
                                 @endif
+
 
                                 {{-- Tombol Buka Gambar --}}
                                 @if($r->gambar)
                                     <button type="button" class="btn btn-sm btn-outline-primary w-100 open-modal-gambar" 
                                             data-gambar="{{ asset('storage/' . $r->gambar) }}"
                                             data-nomor="{{ $r->nomor_rumah }}">
-                                        <i class="bi bi-image"></i> Buka Gambar
+                                            Buka Gambar
                                     </button>
                                 @endif
 
@@ -178,24 +221,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-{{-- Styles --}}
-<style>
-.card-rumah { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:0.3s; display:flex; flex-direction:column; height:100%; }
-.card-rumah:hover { transform:translateY(-4px); box-shadow:0 4px 16px rgba(0,0,0,0.12); }
-.card-rumah-body { padding:1rem; flex:1; display:flex; flex-direction:column; }
-.card-rumah-title { font-size:1.1rem; font-weight:600; color:#1e293b; }
-.card-rumah-text { font-size:0.85rem; color:#64748b; line-height:1.5; }
-.card-rumah-divider { height:1px; background:#e2e8f0; margin:0.5rem 0; }
-.card-rumah-info { margin-bottom:0.5rem; }
-.card-rumah-actions { display:flex; gap:0.5rem; margin-top:auto; padding-top:0.75rem; border-top:1px solid #e2e8f0; }
-.card-rumah-actions .btn-action { flex:1; padding:0.4rem; font-size:0.8rem; text-align:center; }
-.btn-add { display:inline-flex; align-items:center; gap:0.3rem; padding:0.4rem 0.6rem; background:#3b82f6; color:#fff; border-radius:6px; text-decoration:none; }
-.btn-add i { font-size:0.9rem; }
-.empty-state { text-align:center; padding:4rem 1rem; color:#64748b; }
-.badge-status { padding:0.3rem 0.6rem; font-size:0.7rem; font-weight:600; border-radius:6px; text-transform:uppercase; }
-.badge-success { background:#10b981; color:#fff; }
-.badge-primary { background:#3b82f6; color:#fff; }
-.badge-danger  { background:#ef4444; color:#fff; }
-.badge-secondary { background:#6b7280; color:#fff; }
-</style>
+
 @endsection

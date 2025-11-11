@@ -403,7 +403,7 @@
     <!-- Page Header -->
     <div class="page-header">
         <h2><i class="bi bi-stars me-2"></i>Selamat Datang di Dashboard Admin</h2>
-        <p>Kelola data warga, rumah, dan wilayah RT/RW dengan mudah/p>
+        <p>Kelola data warga, rumah, dan wilayah RT/RW dengan mudah</p>
     </div>
 
     <!-- Stats Cards Row -->
