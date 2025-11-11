@@ -38,7 +38,7 @@ Route::prefix('user')->name('user.')->group(function () {
 // =====================================================
 Route::get('/login_admin', [AuthController::class, 'login'])->name('login');
 Route::post('/auth_login', [AuthController::class, 'authenticate'])->name('auth_login');
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // =====================================================
 // 🔹 ROUTE ADMIN PANEL (Memerlukan Authentication)

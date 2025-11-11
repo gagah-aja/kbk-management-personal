@@ -41,7 +41,7 @@ class RwController extends Controller
     {
         $request->validate([
             'id_warga' => 'required|exists:warga,id|unique:rw,id_warga',
-            'nomor_rw' => 'required|string|max:10|unique:rw,nomor_rw',
+            'nomor_rw' => 'required|digits_between:1,3|unique:rw,nomor_rw'
         ], [
             'id_warga.required' => 'Ketua RW wajib dipilih.',
             'id_warga.exists' => 'Warga tidak ditemukan.',

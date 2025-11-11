@@ -49,12 +49,14 @@
                             <label for="nomor_rw" class="form-label">
                                 Nomor RW <span class="text-danger">*</span>
                             </label>
-                            <input type="text" 
+                            <input type="number" 
                                    name="nomor_rw" 
                                    id="nomor_rw" 
                                    class="form-control @error('nomor_rw') is-invalid @enderror" 
                                    placeholder="Contoh: 001, 002"
-                                   value="{{ old('nomor_rw', $rw->nomor_rw) }}"
+                                   value="{{ old('nomor_rw') }}"
+                                   min="1"
+                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                    required>
                             @error('nomor_rw')
                                 <div class="invalid-feedback">{{ $message }}</div>

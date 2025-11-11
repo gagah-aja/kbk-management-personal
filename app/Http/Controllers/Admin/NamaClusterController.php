@@ -9,16 +9,26 @@ use App\Models\NamaCluster;
 class NamaClusterController extends Controller
 {
     /**
-     * Tampilkan semua data Nama Cluster
+     * 🧾 Tampilkan semua data Nama Cluster (dengan pagination & search)
      */
-    public function index()
+    public function index(Request $request)
     {
-        $namaClusters = NamaCluster::orderBy('id', 'asc')->get();
-        return view('pages.admin.nama-cluster.index', compact('namaClusters'));
+        $query = NamaCluster::query();
+
+        // 🔍 Fitur pencarian
+        if ($request->filled('search')) {
+            $query->where('nama_cluster', 'like', '%' . $request->search . '%');
+        }
+
+        // 📄 Pagination (10 data per halaman)
+        $namaClusters = $query->orderBy('id', 'asc')->paginate(5);
+
+        return view('pages.admin.nama-cluster.index', compact('namaClusters'))
+            ->with('search', $request->search);
     }
 
     /**
-     * Tampilkan form tambah Nama Cluster
+     * ➕ Tampilkan form tambah Nama Cluster
      */
     public function create()
     {
@@ -26,9 +36,8 @@ class NamaClusterController extends Controller
     }
 
     /**
-     * Simpan Nama Cluster baru ke database
+     * 💾 Simpan Nama Cluster baru ke database
      */
-    // Hapus method getNextId() dan custom ID
     public function store(Request $request)
     {
         $request->validate([
@@ -47,20 +56,7 @@ class NamaClusterController extends Controller
     }
 
     /**
-     * Hitung ID terkecil yang belum dipakai
-     */
-    private function getNextId()
-    {
-        $usedIds = NamaCluster::pluck('id')->toArray();
-        $newId = 1;
-        while (in_array($newId, $usedIds)) {
-            $newId++;
-        }
-        return $newId;
-    }
-
-    /**
-     * Tampilkan form edit Nama Cluster
+     * ✏️ Tampilkan form edit Nama Cluster
      */
     public function edit($id)
     {
@@ -69,9 +65,8 @@ class NamaClusterController extends Controller
     }
 
     /**
-     * Update Nama Cluster di database
+     * 🔄 Update Nama Cluster di database
      */
-    // Hapus validasi dan update custom ID di method update
     public function update(Request $request, $id)
     {
         $namaCluster = NamaCluster::findOrFail($id);
@@ -92,7 +87,7 @@ class NamaClusterController extends Controller
     }
 
     /**
-     * Hapus Nama Cluster dari database
+     * ❌ Hapus Nama Cluster dari database
      */
     public function destroy($id)
     {

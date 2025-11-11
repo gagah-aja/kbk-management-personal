@@ -26,5 +26,11 @@ class Rt extends Model
     {
         return $this->belongsTo(Rw::class, 'id_rw');
     }
+
+     // ✅ Tambahkan ini — RT memiliki banyak Cluster
+    public function clusters()
+    {
+        return $this->hasMany(Cluster::class, 'id_rt');
+    }
 }
 
