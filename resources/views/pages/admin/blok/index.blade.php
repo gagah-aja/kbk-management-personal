@@ -2,17 +2,31 @@
 
 @section('content')
 <div class="container-fluid py-4">
-    <div class="page-header d-flex justify-content-between align-items-center">
+    {{-- 📘 Header --}}
+    <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
             <h2>Data Blok</h2>
             <p>Kelola data blok perumahan</p>
         </div>
-        <a href="{{ route('admin.blok.create') }}" class="btn-add">
-            <i class="bi bi-plus"></i> Tambah Blok
-        </a>
+
+        <div class="d-flex gap-2 align-items-center">
+            {{-- 🔍 Form Pencarian --}}
+            <form action="{{ route('admin.blok.index') }}" method="GET" class="d-flex">
+                <input type="text" name="search" class="form-control"
+                       placeholder="Cari nama blok..." value="{{ $search ?? '' }}">
+                <button type="submit" class="btn btn-primary ms-2">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+
+            <a href="{{ route('admin.blok.create') }}" class="btn-add">
+                <i class="bi bi-plus"></i> Tambah Blok
+            </a>
+        </div>
     </div>
 
-    <div class="data-card">
+    {{-- 📋 Data Table --}}
+    <div class="data-card mt-3">
         <div class="table-container">
             @if($bloks->count() > 0)
                 <table class="table-minimal">
@@ -24,10 +38,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($bloks as $blok)
+                        @foreach($bloks as $index => $blok)
                         <tr>
                             <td class="text-center">
-                                <span class="badge-number">{{ $loop->iteration }}</span>
+                                <span class="badge-number">
+                                    {{ $bloks->firstItem() + $index }}
+                                </span>
                             </td>
                             <td>
                                 <span class="blok-name">{{ $blok->nama_blok }}</span>
@@ -56,6 +72,19 @@
                         @endforeach
                     </tbody>
                 </table>
+
+                {{-- 📄 Pagination --}}
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>
+                        <small>
+                            Menampilkan {{ $bloks->firstItem() }} - {{ $bloks->lastItem() }}
+                            dari {{ $bloks->total() }} data
+                        </small>
+                    </div>
+                    <div>
+                        {{ $bloks->links('pagination::bootstrap-5') }}
+                    </div>
+                </div>
             @else
                 <div class="empty-state">
                     <i class="bi bi-inbox"></i>
@@ -70,6 +99,7 @@
     </div>
 </div>
 
+{{-- SweetAlert --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {

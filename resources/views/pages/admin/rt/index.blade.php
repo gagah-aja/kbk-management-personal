@@ -2,59 +2,62 @@
 
 @section('content')
 <div class="container-fluid py-4">
-    <div class="page-header d-flex justify-content-between align-items-center">
+    {{-- 📘 Header --}}
+    <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
             <h2>Data RT</h2>
             <p>Kelola data Rukun Tetangga (RT)</p>
         </div>
-        <a href="{{ route('admin.rt.create') }}" class="btn-add">
-            <i class="bi bi-plus"></i> Tambah RT
-        </a>
+
+        <div class="d-flex align-items-center gap-2">
+            {{-- 🔍 Form Pencarian --}}
+            <form action="{{ route('admin.rt.index') }}" method="GET" class="d-flex">
+                <input type="text" name="search" class="form-control me-2"
+                       placeholder="Cari nomor RT / RW / nama ketua..."
+                       value="{{ request('search') }}">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+
+            {{-- ➕ Tombol Tambah --}}
+            <a href="{{ route('admin.rt.create') }}" class="btn-add">
+                <i class="bi bi-plus"></i> Tambah RT
+            </a>
+        </div>
     </div>
 
-    <div class="data-card">
+    {{-- 📄 Tabel Data --}}
+    <div class="data-card mt-3">
         <div class="table-container">
             @if($dataRT->count() > 0)
-                <table class="table-minimal">
-                    <thead>
-                        <tr>
-                            <th width="80" class="text-center">NO</th>
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr class="text-center">
+                            <th width="80">NO</th>
                             <th>NOMOR RT</th>
                             <th>KETUA RT</th>
                             <th>RW</th>
-                            <th width="200" class="text-center">AKSI</th>
+                            <th width="200">AKSI</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($dataRT as $rt)
+                        @foreach($dataRT as $index => $rt)
                         <tr>
+                            <td class="text-center">{{ $dataRT->firstItem() + $index }}</td>
+                            <td>RT {{ $rt->nomor_rt }}</td>
+                            <td>{{ $rt->warga->nama_lengkap ?? 'N/A' }}</td>
+                            <td>RW {{ $rt->rw->nomor_rw ?? 'N/A' }}</td>
                             <td class="text-center">
-                                <span class="badge-number">{{ $loop->iteration }}</span>
-                            </td>
-                            <td>
-                                <span class="blok-name">RT {{ $rt->nomor_rt }}</span>
-                            </td>
-                            <td>
-                                <span class="text-muted">{{ $rt->warga->nama_lengkap ?? 'N/A' }}</span>
-                            </td>
-                            <td>
-                                <span class="text-muted">RW {{ $rt->rw->nomor_rw ?? 'N/A' }}</span>
-                            </td>
-                            <td>
-                                <div class="btn-group-actions d-flex justify-content-center gap-2">
-                                    <a href="{{ route('admin.rt.edit', $rt->id) }}" 
-                                       class="btn-action btn-edit">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a href="{{ route('admin.rt.edit', $rt->id) }}" class="btn btn-warning btn-sm">
                                         <i class="bi bi-pencil"></i> Edit
                                     </a>
-
-                                    <form action="{{ route('admin.rt.destroy', $rt->id) }}" 
-                                          method="POST" 
-                                          class="delete-form d-inline">
+                                    <form action="{{ route('admin.rt.destroy', $rt->id) }}" method="POST" class="delete-form d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" 
-                                                class="btn-action btn-delete"
-                                                data-nama="RT {{ $rt->nomor_rt }} - {{ $rt->warga->nama_lengkap ?? 'RT' }}">
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                            data-nama="RT {{ $rt->nomor_rt }} - {{ $rt->warga->nama_lengkap ?? 'RT' }}">
                                             <i class="bi bi-trash"></i> Hapus
                                         </button>
                                     </form>
@@ -64,9 +67,15 @@
                         @endforeach
                     </tbody>
                 </table>
+
+                {{-- 📜 Pagination --}}
+                <div class="d-flex justify-content-center mt-3">
+                    {{ $dataRT->links('pagination::bootstrap-5') }}
+                </div>
             @else
-                <div class="empty-state">
-                    <i class="bi bi-inbox"></i>
+                {{-- 🚫 Kosong --}}
+                <div class="empty-state text-center py-5">
+                    <i class="bi bi-inbox display-4 text-muted"></i>
                     <h5>Belum Ada Data</h5>
                     <p>Mulai tambahkan data RT pertama</p>
                     <a href="{{ route('admin.rt.create') }}" class="btn-add">
@@ -78,6 +87,7 @@
     </div>
 </div>
 
+{{-- SweetAlert --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -100,20 +110,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     @endif
 
-    @if (session('info'))
-        Swal.fire({
-            icon: 'info',
-            title: 'Info',
-            text: '{{ session('info') }}',
-            confirmButtonColor: '#3b82f6'
-        });
-    @endif
-
     document.querySelectorAll('.delete-form').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const nama = this.querySelector('button').dataset.nama;
-            
+
             Swal.fire({
                 title: 'Hapus Data RT?',
                 html: `Data <strong>"${nama}"</strong> akan dihapus permanen.`,
@@ -125,9 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 cancelButtonText: 'Batal',
                 reverseButtons: true
             }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
+                if (result.isConfirmed) form.submit();
             });
         });
     });

@@ -21,7 +21,7 @@ class NamaClusterController extends Controller
         }
 
         // 📄 Pagination (10 data per halaman)
-        $namaClusters = $query->orderBy('id', 'asc')->paginate(5);
+        $namaClusters = $query->orderBy('id', 'asc')->paginate(10);
 
         return view('pages.admin.nama-cluster.index', compact('namaClusters'))
             ->with('search', $request->search);

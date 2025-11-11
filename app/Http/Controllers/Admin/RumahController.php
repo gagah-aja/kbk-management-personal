@@ -15,11 +15,34 @@ class RumahController extends Controller
     /**
      * Tampilkan semua data rumah
      */
-    public function index()
-    {
-        $rumah = Rumah::with(['cluster.namaCluster', 'cluster.rt', 'cluster.blok', 'warga', 'statusRumah'])->get();
-        return view('pages.admin.rumah.index', compact('rumah'));
+    public function index(Request $request)
+{
+    $query = Rumah::with(['cluster.namaCluster', 'cluster.rt', 'cluster.blok', 'warga', 'statusRumah']);
+
+    // 🔍 Pencarian berdasarkan nomor rumah, nama cluster, warga, atau status
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('nomor_rumah', 'like', "%{$search}%")
+              ->orWhere('alamat_lengkap', 'like', "%{$search}%")
+              ->orWhereHas('cluster.namaCluster', function($sub) use ($search) {
+                  $sub->where('nama_cluster', 'like', "%{$search}%");
+              })
+              ->orWhereHas('warga', function($sub) use ($search) {
+                  $sub->where('nama', 'like', "%{$search}%");
+              })
+              ->orWhereHas('statusRumah', function($sub) use ($search) {
+                  $sub->where('nama_status', 'like', "%{$search}%");
+              });
+        });
     }
+
+    // 📄 Pagination (8 per halaman)
+    $rumah = $query->orderBy('id', 'desc')->paginate(10);
+
+    return view('pages.admin.rumah.index', compact('rumah'));
+}
+
 
     /**
      * Tampilkan form tambah rumah

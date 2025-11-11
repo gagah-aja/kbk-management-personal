@@ -13,30 +13,54 @@ class RtController extends Controller
     /**
      * Menampilkan daftar RT
      */
-    public function index()
-    {
-        // Ambil data RT beserta relasi Warga dan RW
-        $dataRT = Rt::with(['warga', 'rw'])->get();
+    public function index(Request $request)
+{
+    $search = $request->input('search');
 
-        return view('pages.admin.rt.index', compact('dataRT'));
-    }
+    // Ambil data RT beserta relasi Warga dan RW dengan pencarian
+    $dataRT = Rt::with(['warga', 'rw'])
+        ->when($search, function ($query, $search) {
+            $query->where('nomor_rt', 'like', "%{$search}%")
+                  ->orWhereHas('warga', function ($q) use ($search) {
+                      $q->where('nama_lengkap', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('rw', function ($q) use ($search) {
+                      $q->where('nomor_rw', 'like', "%{$search}%");
+                  });
+        })
+        ->orderBy('nomor_rt', 'asc')
+        ->paginate(10)
+        ->withQueryString(); // supaya pagination tetap bawa query pencarian
+
+    return view('pages.admin.rt.index', compact('dataRT', 'search'));
+}
+
 
     /**
      * Tampilkan form tambah RT
      */
     public function create()
-    {
-        // Ambil daftar RW untuk dropdown
-        $rwList = Rw::all();
+{
+    // Ambil ID warga yang sudah menjadi RT
+    $idWargaSudahRT = \App\Models\Rt::pluck('id_warga')->toArray();
 
-        // Ambil ID warga yang sudah menjadi RT
-        $idWargaSudahRT = Rt::pluck('id_warga')->toArray();
+    // Ambil ID warga yang sudah menjadi RW
+    $idWargaSudahRW = \App\Models\Rw::pluck('id_warga')->toArray();
 
-        // Ambil warga yang belum menjadi RT
-        $warga = Warga::whereNotIn('id', $idWargaSudahRT)->get();
+    // Gabungkan keduanya agar tidak bisa dipilih lagi
+    $idTerkunci = array_merge($idWargaSudahRT, $idWargaSudahRW);
 
-        return view('pages.admin.rt.create', compact('warga', 'rwList'));
-    }
+    // Ambil warga yang belum menjadi RT maupun RW
+    $warga = \App\Models\Warga::whereNotIn('id', $idTerkunci)
+        ->orderBy('nama_lengkap', 'asc')
+        ->get();
+
+    // Ambil daftar RW untuk dropdown
+    $rwList = \App\Models\Rw::orderBy('nomor_rw', 'asc')->get();
+
+    return view('pages.admin.rt.create', compact('warga', 'rwList'));
+}
+
 
     /**
      * Menyimpan data RT baru
