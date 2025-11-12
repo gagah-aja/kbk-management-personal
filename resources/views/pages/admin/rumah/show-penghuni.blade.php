@@ -2,46 +2,172 @@
 @section('content')
 
 <style>
-.info-rumah { background:#f8fafc; padding:1rem; border-radius:8px; margin-bottom:1.5rem; border-left:4px solid #3b82f6; }
+/* Base Styles */
+* { box-sizing: border-box; }
+
+.info-rumah { 
+    background:#f8fafc; 
+    padding:1rem; 
+    border-radius:8px; 
+    margin-bottom:1.5rem; 
+    border-left:4px solid #3b82f6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
 .info-rumah h4 { margin:0; color:#1e293b; font-size:1.2rem; }
-.info-rumah p { margin:0.25rem 0 0 0; color:#64748b; font-size:0.9rem; }
-.badge-kk { background:#10b981; color:#fff; padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem; white-space:nowrap; }
-.badge-istri { background:#3b82f6; color:#fff; padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem; white-space:nowrap; }
-.badge-anak { background:#f59e0b; color:#fff; padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem; white-space:nowrap; }
-.badge-ortu { background:#8b5cf6; color:#fff; padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem; white-space:nowrap; }
-.badge-lainnya { background:#6b7280; color:#fff; padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem; white-space:nowrap; }
-.empty-state { padding:3rem; text-align:center; }
+.info-rumah p { margin:0.25rem 0 0 0; color:#64748b; font-size:0.9rem; word-break:break-word; }
 
-/* 📱 Style untuk Mobile Card View */
-.penghuni-card { background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:1rem; margin-bottom:1rem; }
-.penghuni-card-header { display:flex; justify-content:space-between; align-items:start; margin-bottom:0.75rem; }
-.penghuni-nama { font-weight:600; color:#1e293b; font-size:1rem; margin:0; }
-.penghuni-nik { color:#64748b; font-size:0.85rem; margin-top:0.25rem; }
-.penghuni-detail { display:grid; gap:0.5rem; margin-top:0.75rem; padding-top:0.75rem; border-top:1px solid #e5e7eb; }
-.penghuni-detail-item { display:flex; justify-content:space-between; align-items:center; }
-.penghuni-detail-label { color:#64748b; font-size:0.85rem; }
-.penghuni-detail-value { color:#1e293b; font-weight:500; font-size:0.85rem; }
+.badge-kk { background:#10b981; color:#fff; padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem; white-space:nowrap; display:inline-block; }
+.badge-istri { background:#3b82f6; color:#fff; padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem; white-space:nowrap; display:inline-block; }
+.badge-anak { background:#f59e0b; color:#fff; padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem; white-space:nowrap; display:inline-block; }
+.badge-ortu { background:#8b5cf6; color:#fff; padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem; white-space:nowrap; display:inline-block; }
+.badge-lainnya { background:#6b7280; color:#fff; padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem; white-space:nowrap; display:inline-block; }
+.empty-state { padding:3rem 1rem; text-align:center; }
 
-/* Desktop Table (hidden on mobile) */
-.table-desktop { display:table; }
-.mobile-cards { display:none; }
+/* 📱 Mobile Card View */
+.penghuni-card { 
+    background:#fff; 
+    border:1px solid #e5e7eb; 
+    border-radius:8px; 
+    padding:1rem; 
+    margin-bottom:1rem;
+    width:100%;
+    max-width:100%;
+    overflow:hidden;
+}
+.penghuni-card-header { 
+    display:flex; 
+    justify-content:space-between; 
+    align-items:flex-start; 
+    margin-bottom:0.75rem;
+    gap:0.5rem;
+}
+.penghuni-card-header > div:first-child { flex:1; min-width:0; }
+.penghuni-nama { 
+    font-weight:600; 
+    color:#1e293b; 
+    font-size:1rem; 
+    margin:0;
+    word-wrap:break-word;
+    overflow-wrap:break-word;
+}
+.penghuni-nik { 
+    color:#64748b; 
+    font-size:0.8rem; 
+    margin-top:0.25rem;
+    word-break:break-all;
+}
+.penghuni-detail { 
+    display:flex;
+    flex-direction:column;
+    gap:0.6rem; 
+    margin-top:0.75rem; 
+    padding-top:0.75rem; 
+    border-top:1px solid #e5e7eb; 
+}
+.penghuni-detail-item { 
+    display:flex; 
+    justify-content:space-between; 
+    align-items:center;
+    gap:0.5rem;
+}
+.penghuni-detail-label { 
+    color:#64748b; 
+    font-size:0.8rem;
+    flex-shrink:0;
+}
+.penghuni-detail-value { 
+    color:#1e293b; 
+    font-weight:500; 
+    font-size:0.8rem;
+    text-align:right;
+}
+
+/* Desktop Table (default) */
+.table-desktop { display:block !important; width:100%; overflow-x:auto; }
+.mobile-cards { display:none !important; }
 
 /* 📱 Mobile Responsive */
 @media (max-width: 768px) {
-    .table-desktop { display:none; }
-    .mobile-cards { display:block; }
+    /* Hide desktop table */
+    .table-desktop { display:none !important; }
+    .mobile-cards { display:block !important; }
     
-    .info-rumah h4 { font-size:1rem; }
-    .info-rumah p { font-size:0.8rem; line-height:1.4; }
+    /* Container adjustments */
+    .container-fluid { padding-left:0.75rem !important; padding-right:0.75rem !important; }
     
-    .page-header { flex-direction:column; align-items:stretch !important; }
-    .page-header > div:last-child { margin-top:0.75rem; }
-    .page-header .d-flex { flex-direction:column; gap:0.5rem; }
-    .page-header .btn { width:100%; }
+    /* Info Rumah */
+    .info-rumah { 
+        padding:0.75rem;
+        margin-bottom:1rem;
+        font-size:0.85rem;
+    }
+    .info-rumah h4 { font-size:0.95rem; }
+    .info-rumah p { font-size:0.75rem; line-height:1.5; }
     
-    .summary-stats { flex-direction:column; }
-    .summary-stats > div { text-align:center; padding:0.5rem 0; border-bottom:1px solid #e5e7eb; }
+    /* Page Header */
+    .page-header { 
+        flex-direction:column !important; 
+        align-items:stretch !important;
+        gap:0.75rem !important;
+    }
+    .page-header h2 { font-size:1.25rem; margin-bottom:0.25rem; }
+    .page-header p { font-size:0.85rem; }
+    .page-header > div:last-child { 
+        margin-top:0 !important;
+        width:100%;
+    }
+    .page-header .d-flex { 
+        flex-direction:column !important;
+        gap:0.5rem !important;
+        width:100%;
+    }
+    .page-header .btn { 
+        width:100% !important;
+        justify-content:center;
+    }
+    
+    /* Card adjustments */
+    .card { 
+        border-radius:8px;
+        margin:0;
+        width:100%;
+    }
+    .card-body { padding:0 !important; }
+    
+    /* Mobile Cards Container */
+    .mobile-cards { 
+        padding:0.75rem !important;
+        width:100%;
+    }
+    
+    /* Summary Stats */
+    .summary-stats { 
+        flex-direction:column !important;
+        gap:0 !important;
+    }
+    .summary-stats > div { 
+        text-align:center !important; 
+        padding:0.75rem !important; 
+        border-bottom:1px solid #e5e7eb;
+        font-size:0.85rem;
+    }
     .summary-stats > div:last-child { border-bottom:none; }
+    
+    /* Button adjustments */
+    .btn-sm { font-size:0.8rem; padding:0.35rem 0.7rem; }
+}
+
+/* Extra small devices */
+@media (max-width: 390px) {
+    .info-rumah { padding:0.5rem; }
+    .info-rumah h4 { font-size:0.9rem; }
+    .info-rumah p { font-size:0.7rem; }
+    .penghuni-card { padding:0.75rem; }
+    .penghuni-nama { font-size:0.9rem; }
+    .penghuni-nik { font-size:0.75rem; }
+    .penghuni-detail-label,
+    .penghuni-detail-value { font-size:0.75rem; }
 }
 </style>
 
