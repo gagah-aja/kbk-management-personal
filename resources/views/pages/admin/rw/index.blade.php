@@ -19,7 +19,7 @@
                 </button>
             </form>
 
-            {{-- ➕ Tombol Tambah (warna hitam / class lama) --}}
+            {{-- ➕ Tombol Tambah --}}
             <a href="{{ route('admin.rw.create') }}" class="btn-add">
                 <i class="bi bi-plus"></i> Tambah RW
             </a>
@@ -42,9 +42,7 @@
                     <tbody>
                         @foreach($dataRW as $index => $rw)
                         <tr>
-                            <td class="text-center">
-                                {{ $dataRW->firstItem() + $index }}
-                            </td>
+                            <td class="text-center">{{ $dataRW->firstItem() + $index }}</td>
                             <td>RW {{ $rw->nomor_rw }}</td>
                             <td>{{ $rw->warga->nik ?? 'N/A' }}</td>
                             <td>{{ $rw->warga->nama_lengkap ?? 'N/A' }}</td>
@@ -68,10 +66,14 @@
                     </tbody>
                 </table>
 
-                {{-- 📄 Pagination --}}
-                <div class="d-flex justify-content-center mt-3">
-                    {{ $dataRW->links('pagination::bootstrap-5') }}
-                </div>
+                {{-- 📄 Pagination Bulat & Tengah --}}
+                @if ($dataRW->hasPages())
+                    <div class="pagination-wrapper mt-4">
+                        <div class="pagination-container">
+                            {{ $dataRW->appends(['search' => request('search')])->links('pagination::bootstrap-5') }}
+                        </div>
+                    </div>
+                @endif
 
             @else
                 <div class="empty-state text-center py-5">
@@ -87,7 +89,31 @@
     </div>
 </div>
 
-{{-- SweetAlert --}}
+{{-- 🎨 Style Pagination Bulat --}}
+<style>
+.pagination-wrapper { display:flex; justify-content:center; align-items:center; margin-top:1.5rem; }
+.pagination-container { display:flex; justify-content:center; width:100%; }
+.pagination { display:flex; flex-wrap:wrap; gap:10px; list-style:none; padding:0; margin:0; }
+.pagination .page-item .page-link {
+    border:none; border-radius:50%; width:42px; height:42px; display:flex; align-items:center; justify-content:center;
+    font-weight:500; font-size:.95rem; color:#374151; background:#f9fafb; transition:all .25s; box-shadow:0 1px 3px rgba(0,0,0,.05);
+}
+.pagination .page-item .page-link:hover {
+    background:#2563eb; color:#fff; transform:translateY(-2px) scale(1.05);
+    box-shadow:0 3px 8px rgba(37,99,235,.3);
+}
+.pagination .page-item.active .page-link {
+    background:#2563eb; color:#fff; font-weight:600; box-shadow:0 4px 10px rgba(37,99,235,.4); transform:scale(1.05);
+}
+.pagination .page-item.disabled .page-link {
+    color:#9ca3af; background:#f3f4f6; box-shadow:none; cursor:not-allowed; transform:none;
+}
+@media(max-width:576px){
+    .pagination .page-item .page-link { width:34px; height:34px; font-size:.85rem; }
+}
+</style>
+
+{{-- 🧩 SweetAlert --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -123,4 +149,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endsection
-    
