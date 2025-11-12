@@ -7,10 +7,21 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function login()
-    {
-        return view('pages.auth.login');
+    public function login(Request $request)
+{
+    // Kalau sudah login → ke dashboard
+    if (Auth::check()) {
+        return redirect()->route('admin.dashboard');
     }
+
+    // Jika diarahkan dari middleware karena belum login
+    if ($request->has('need_login')) {
+        return view('pages.auth.login')->with('needLogin', true);
+    }
+
+    return view('pages.auth.login');
+}
+
     public function authenticate(Request $request)
     {
         // 1. Validasi Data
