@@ -63,11 +63,11 @@
                                        Edit
                                     </a>
                                     <form action="{{ route('admin.status-rumah.destroy', $s->id) }}" 
-                                          method="POST" class="d-inline"
-                                          onsubmit="return confirm('Yakin ingin menghapus status ini?');">
+                                          method="POST" class="form-hapus d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">
+                                        <button type="submit" class="btn btn-sm btn-danger"
+                                                data-nama="{{ $s->nama_status }}">
                                             Hapus
                                         </button>
                                     </form>
@@ -78,20 +78,67 @@
                     </table>
                 </div>
 
-                {{-- Pagination --}}
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <div>
-                        <small>
-                            Menampilkan {{ $statuses->firstItem() }} - {{ $statuses->lastItem() }}
-                            dari {{ $statuses->total() }} data
-                        </small>
+                {{-- 📄 Pagination Bulat & Tengah --}}
+                @if ($statuses->hasPages())
+                    <div class="pagination-wrapper mt-4">
+                        <div class="pagination-container">
+                            {{ $statuses->appends(['search' => $search ?? ''])->links('pagination::bootstrap-5') }}
+                        </div>
                     </div>
-                    <div>
-                        {{ $statuses->links('pagination::bootstrap-5') }}
-                    </div>
-                </div>
+                @endif
             @endif
         </div>
     </div>
 </div>
+
+{{-- 🎨 Style Pagination --}}
+<style>
+.pagination-wrapper { display:flex; justify-content:center; align-items:center; margin-top:1.5rem; }
+.pagination-container { display:flex; justify-content:center; width:100%; }
+.pagination { display:flex; flex-wrap:wrap; gap:10px; list-style:none; padding:0; margin:0; }
+.pagination .page-item .page-link {
+    border:none; border-radius:50%; width:42px; height:42px; display:flex; align-items:center; justify-content:center;
+    font-weight:500; font-size:.95rem; color:#374151; background:#f9fafb; transition:all .25s; box-shadow:0 1px 3px rgba(0,0,0,.05);
+}
+.pagination .page-item .page-link:hover {
+    background:#2563eb; color:#fff; transform:translateY(-2px) scale(1.05);
+    box-shadow:0 3px 8px rgba(37,99,235,.3);
+}
+.pagination .page-item.active .page-link {
+    background:#2563eb; color:#fff; font-weight:600; box-shadow:0 4px 10px rgba(37,99,235,.4); transform:scale(1.05);
+}
+.pagination .page-item.disabled .page-link {
+    color:#9ca3af; background:#f3f4f6; box-shadow:none; cursor:not-allowed; transform:none;
+}
+@media(max-width:576px){
+    .pagination .page-item .page-link { width:34px; height:34px; font-size:.85rem; }
+}
+</style>
+
+{{-- 🧩 SweetAlert --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.form-hapus').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nama = this.querySelector('button').dataset.nama;
+            
+            Swal.fire({
+                title: 'Hapus Status Rumah?',
+                html: `Data status <strong>"${nama}"</strong> akan dihapus permanen.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) form.submit();
+            });
+        });
+    });
+});
+</script>
 @endsection

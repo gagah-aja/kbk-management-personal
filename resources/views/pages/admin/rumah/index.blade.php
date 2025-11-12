@@ -22,6 +22,28 @@
 .btn-hapus-penghuni { background:transparent; border:none; color:#ef4444; font-size:0.8rem; padding:0.2rem 0.4rem; cursor:pointer; }
 .btn-hapus-penghuni:hover { color:#dc2626; }
 .btn-tambah-penghuni { width:100%; margin-top:0.5rem; font-size:0.85rem; padding:0.4rem; }
+
+/* ⭐ Pagination Bulat & Tengah */
+.pagination-wrapper { display:flex; justify-content:center; align-items:center; margin-top:1.5rem; }
+.pagination-container { display:flex; justify-content:center; width:100%; }
+.pagination { display:flex; flex-wrap:wrap; gap:10px; list-style:none; padding:0; margin:0; }
+.pagination .page-item .page-link {
+    border:none; border-radius:50%; width:42px; height:42px; display:flex; align-items:center; justify-content:center;
+    font-weight:500; font-size:.95rem; color:#374151; background:#f9fafb; transition:all .25s; box-shadow:0 1px 3px rgba(0,0,0,.05);
+}
+.pagination .page-item .page-link:hover {
+    background:#2563eb; color:#fff; transform:translateY(-2px) scale(1.05);
+    box-shadow:0 3px 8px rgba(37,99,235,.3);
+}
+.pagination .page-item.active .page-link {
+    background:#2563eb; color:#fff; font-weight:600; box-shadow:0 4px 10px rgba(37,99,235,.4); transform:scale(1.05);
+}
+.pagination .page-item.disabled .page-link {
+    color:#9ca3af; background:#f3f4f6; box-shadow:none; cursor:not-allowed; transform:none;
+}
+@media(max-width:576px){
+    .pagination .page-item .page-link { width:34px; height:34px; font-size:.85rem; }
+}
 </style>
 
 <div class="container-fluid py-4">
@@ -74,7 +96,7 @@
                                 </div>
                             </div>
 
-                            {{-- ⭐ BAGIAN PENGHUNI RINGKAS --}}
+                            {{-- Penghuni Ringkas --}}
                             <div class="mb-2">
                                 <small class="text-muted d-block">Penghuni</small>
                                 
@@ -125,9 +147,14 @@
                 @endforeach
             </div>
 
-            <div class="mt-4 d-flex justify-content-center">
-                {{ $rumah->appends(['search' => request('search')])->links('pagination::bootstrap-5') }}
+            {{-- 📄 Pagination Bulat & Tengah --}}
+            @if($rumah->hasPages())
+            <div class="pagination-wrapper mt-4">
+                <div class="pagination-container">
+                    {{ $rumah->appends(['search'=>request('search')])->links('pagination::bootstrap-5') }}
+                </div>
             </div>
+            @endif
         @else
             <div class="empty-state text-center py-5">
                 <i class="bi bi-inbox mb-2" style="font-size:2rem;"></i>
@@ -159,21 +186,6 @@ document.addEventListener('DOMContentLoaded', function() {
             Swal.fire({
                 title:'Hapus Data?',
                 html:`<strong>${nama}</strong> akan dihapus permanen.`,
-                icon:'warning',showCancelButton:true,
-                confirmButtonColor:'#ef4444',cancelButtonColor:'#6b7280',
-                confirmButtonText:'Ya, Hapus!',cancelButtonText:'Batal'
-            }).then(res=>{if(res.isConfirmed) form.submit();});
-        });
-    });
-
-    // ⭐ Hapus Penghuni
-    document.querySelectorAll('.form-hapus-penghuni').forEach(form=>{
-        form.addEventListener('submit',function(e){
-            e.preventDefault();
-            const nama=this.querySelector('button').dataset.nama;
-            Swal.fire({
-                title:'Hapus Penghuni?',
-                html:`<strong>${nama}</strong> akan dihapus dari daftar penghuni.`,
                 icon:'warning',showCancelButton:true,
                 confirmButtonColor:'#ef4444',cancelButtonColor:'#6b7280',
                 confirmButtonText:'Ya, Hapus!',cancelButtonText:'Batal'
