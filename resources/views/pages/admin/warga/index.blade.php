@@ -42,7 +42,6 @@
         @if($dataWarga->count() > 0)
             <div class="accordion" id="accordionWarga">
                 @foreach($dataWarga as $index => $warga)
-                    {{-- Accordion Item --}}
                     <div class="accordion-item">
                         <h2 class="accordion-header">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
@@ -77,8 +76,30 @@
                         </h2>
                         <div id="collapse{{ $warga->id }}" class="accordion-collapse collapse" data-bs-parent="#accordionWarga">
                             <div class="accordion-body">
-                                {{-- Isi detail Warga di sini --}}
-                                {{-- Bisa sama seperti versi sebelumnya --}}
+                                {{-- Detail Warga --}}
+                                <div class="row mb-2">
+                                    <div class="col-md-6"><strong>Alamat Rumah:</strong> {{ $warga->rumah?->alamat_lengkap ?? '-' }}</div>
+                                    <div class="col-md-6"><strong>No. Telepon:</strong> {{ $warga->no_telp ?? '-' }}</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-6"><strong>Email:</strong> {{ $warga->email ?? '-' }}</div>
+                                    <div class="col-md-6"><strong>Pekerjaan:</strong> {{ $warga->pekerjaan ?? '-' }}</div>
+                                </div>
+
+                                {{-- Tombol Edit & Hapus --}}
+                                <div class="d-flex gap-2 mt-3">
+                                    <a href="{{ route('admin.warga.edit', $warga->id) }}" class="btn btn-warning btn-sm">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </a>
+
+                                    <form action="{{ route('admin.warga.destroy', $warga->id) }}" method="POST" class="form-hapus d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm" data-nama="{{ $warga->nama_lengkap }}">
+                                            <i class="bi bi-trash"></i> Hapus
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -107,7 +128,8 @@
                     <h5>Belum Ada Data</h5>
                     <p>Mulai tambahkan data warga pertama.</p>
                     <a href="{{ route('admin.warga.create') }}" class="btn btn-primary mt-2">
-                        <i class="bi bi-plus"></i> Tambah Data</a>
+                        <i class="bi bi-plus"></i> Tambah Data
+                    </a>
                 @endif
             </div>
         @endif
@@ -116,26 +138,26 @@
 
 {{-- 🎨 Style Pagination --}}
 <style>
-    .pagination-wrapper { display:flex; justify-content:center; align-items:center; margin-top:1.5rem; }
-    .pagination-container { display:flex; justify-content:center; width:100%; }
-    .pagination { display:flex; flex-wrap:wrap; gap:10px; list-style:none; padding:0; margin:0; }
-    .pagination .page-item .page-link {
-        border:none; border-radius:50%; width:42px; height:42px; display:flex; align-items:center; justify-content:center;
-        font-weight:500; font-size:.95rem; color:#374151; background:#f9fafb; transition:all .25s; box-shadow:0 1px 3px rgba(0,0,0,.05);
-    }
-    .pagination .page-item .page-link:hover {
-        background:#2563eb; color:#fff; transform:translateY(-2px) scale(1.05);
-        box-shadow:0 3px 8px rgba(37,99,235,.3);
-    }
-    .pagination .page-item.active .page-link {
-        background:#2563eb; color:#fff; font-weight:600; box-shadow:0 4px 10px rgba(37,99,235,.4); transform:scale(1.05);
-    }
-    .pagination .page-item.disabled .page-link {
-        color:#9ca3af; background:#f3f4f6; box-shadow:none; cursor:not-allowed; transform:none;
-    }
-    @media(max-width:576px){
-        .pagination .page-item .page-link { width:34px; height:34px; font-size:.85rem; }
-    }
+.pagination-wrapper { display:flex; justify-content:center; align-items:center; margin-top:1.5rem; }
+.pagination-container { display:flex; justify-content:center; width:100%; }
+.pagination { display:flex; flex-wrap:wrap; gap:10px; list-style:none; padding:0; margin:0; }
+.pagination .page-item .page-link {
+    border:none; border-radius:50%; width:42px; height:42px; display:flex; align-items:center; justify-content:center;
+    font-weight:500; font-size:.95rem; color:#374151; background:#f9fafb; transition:all .25s; box-shadow:0 1px 3px rgba(0,0,0,.05);
+}
+.pagination .page-item .page-link:hover {
+    background:#2563eb; color:#fff; transform:translateY(-2px) scale(1.05);
+    box-shadow:0 3px 8px rgba(37,99,235,.3);
+}
+.pagination .page-item.active .page-link {
+    background:#2563eb; color:#fff; font-weight:600; box-shadow:0 4px 10px rgba(37,99,235,.4); transform:scale(1.05);
+}
+.pagination .page-item.disabled .page-link {
+    color:#9ca3af; background:#f3f4f6; box-shadow:none; cursor:not-allowed; transform:none;
+}
+@media(max-width:576px){
+    .pagination .page-item .page-link { width:34px; height:34px; font-size:.85rem; }
+}
 </style>
 
 {{-- 🧩 SweetAlert --}}
