@@ -36,8 +36,8 @@ Route::prefix('user')->name('user.')->group(function () {
 // =====================================================
 // 🔹 ROUTE AUTHENTICATION
 // =====================================================
-Route::get('/login_admin', [AuthController::class, 'login'])->name('login');
-Route::post('/auth_login', [AuthController::class, 'authenticate'])->name('auth_login');
+Route::get('/admin/login', [AuthController::class, 'login'])->name('login');
+Route::post('/auth/login', [AuthController::class, 'authenticate'])->name('auth_login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // =====================================================
