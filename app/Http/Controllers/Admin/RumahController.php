@@ -130,6 +130,27 @@ class RumahController extends Controller
     // ========================================
 
     /**
+     * ⭐ Tampilkan halaman list penghuni per rumah
+     */
+    public function showPenghuni($id_rumah)
+    {
+        $rumah = Rumah::with([
+            'cluster.namaCluster',
+            'cluster.rt',
+            'cluster.blok'
+        ])->findOrFail($id_rumah);
+
+        // Ambil semua penghuni (aktif & tidak aktif) dengan warga
+        $penghuni = Penghuni::with('warga')
+            ->where('id_rumah', $id_rumah)
+            ->orderBy('is_active', 'desc')
+            ->orderBy('tanggal_masuk', 'desc')
+            ->get();
+
+        return view('pages.admin.rumah.show-penghuni', compact('rumah', 'penghuni'));
+    }
+
+    /**
      * Tampilkan form tambah penghuni (Modal atau Halaman)
      */
     public function createPenghuni($id_rumah)

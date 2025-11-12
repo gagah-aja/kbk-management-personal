@@ -113,12 +113,13 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     // ⭐ Manajemen Penghuni
     // =====================================================
-    Route::prefix('rumah/{id_rumah}/penghuni')->name('rumah.penghuni.')->group(function() {
+    Route::prefix('rumah/{id_rumah}/penghuni')->name('rumah.penghuni.')->group(function () {
+        Route::get('/', [RumahController::class, 'showPenghuni'])->name('show'); // Halaman list penghuni
         Route::get('/create', [RumahController::class, 'createPenghuni'])->name('create');
         Route::post('/', [RumahController::class, 'storePenghuni'])->name('store');
     });
 
-    Route::prefix('penghuni')->name('penghuni.')->group(function() {
+    Route::prefix('penghuni')->name('penghuni.')->group(function () {
         Route::delete('/{id}', [RumahController::class, 'destroyPenghuni'])->name('destroy');
         Route::delete('/{id}/force', [RumahController::class, 'forceDeletePenghuni'])->name('force-delete');
     });
@@ -136,7 +137,4 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     // 🧾 Status Rumah
     // =====================================================
     Route::resource('status-rumah', StatusRumahController::class)->except(['show']);
-
-    
-
 });
