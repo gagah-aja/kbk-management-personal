@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Blok;
+use Illuminate\Support\Facades\DB;
 
 class BlokController extends Controller
 {
@@ -12,19 +13,19 @@ class BlokController extends Controller
      * Tampilkan semua blok
      */
     public function index(Request $request)
-{
-    $search = $request->input('search');
+    {
+        $search = $request->get('search');
 
-    $bloks = \App\Models\Blok::when($search, function ($query, $search) {
-            $query->where('nama_blok', 'like', "%{$search}%");
-        })
-        ->orderBy('nama_blok', 'asc')
-        ->paginate(10)
-        ->withQueryString(); // agar query search tetap terbawa saat pindah halaman
+        $bloks = Blok::when($search, function ($query, $search) {
+                $query->where('nama_blok', 'like', "%{$search}%");
+            })
+            ->orderBy('nama_blok', 'asc')
+            ->paginate(10);
 
-    return view('pages.admin.blok.index', compact('bloks', 'search'));
-}
+        $bloks->appends(['search' => $search]);
 
+        return view('pages.admin.blok.index', compact('bloks', 'search'));
+    }
 
     /**
      * Tampilkan form tambah blok
@@ -100,6 +101,12 @@ class BlokController extends Controller
             }
             
             $blok->delete();
+
+            // Reset auto increment jika tabel kosong
+            if (Blok::count() === 0) {
+                DB::statement('ALTER TABLE blok AUTO_INCREMENT = 1;');
+            }
+
             return redirect()->route('admin.blok.index')
                 ->with('success', 'Blok berhasil dihapus!');
         } catch (\Exception $e) {
