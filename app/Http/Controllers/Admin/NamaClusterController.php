@@ -5,30 +5,31 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\NamaCluster;
+use Illuminate\Support\Facades\DB;
 
 class NamaClusterController extends Controller
 {
     /**
-     * 🧾 Tampilkan semua data Nama Cluster (dengan pagination & search)
+     * Tampilkan semua data Nama Cluster (dengan pagination & search)
      */
     public function index(Request $request)
     {
-        $query = NamaCluster::query();
+        $search = $request->get('search');
 
-        // 🔍 Fitur pencarian
-        if ($request->filled('search')) {
-            $query->where('nama_cluster', 'like', '%' . $request->search . '%');
-        }
+        $namaClusters = NamaCluster::query()
+            ->when($search, function ($query, $search) {
+                $query->where('nama_cluster', 'like', "%{$search}%");
+            })
+            ->orderBy('id', 'desc')
+            ->paginate(10);
 
-        // 📄 Pagination (10 data per halaman)
-        $namaClusters = $query->orderBy('id', 'asc')->paginate(10);
+        $namaClusters->appends(['search' => $search]);
 
-        return view('pages.admin.nama-cluster.index', compact('namaClusters'))
-            ->with('search', $request->search);
+        return view('pages.admin.nama-cluster.index', compact('namaClusters', 'search'));
     }
 
     /**
-     * ➕ Tampilkan form tambah Nama Cluster
+     * Tampilkan form tambah Nama Cluster
      */
     public function create()
     {
@@ -36,7 +37,7 @@ class NamaClusterController extends Controller
     }
 
     /**
-     * 💾 Simpan Nama Cluster baru ke database
+     * Simpan Nama Cluster baru ke database
      */
     public function store(Request $request)
     {
@@ -52,11 +53,11 @@ class NamaClusterController extends Controller
         ]);
 
         return redirect()->route('admin.nama-cluster.index')
-            ->with('success', 'Cluster berhasil ditambahkan!');
+            ->with('success', 'Nama cluster berhasil ditambahkan!');
     }
 
     /**
-     * ✏️ Tampilkan form edit Nama Cluster
+     * Tampilkan form edit Nama Cluster
      */
     public function edit($id)
     {
@@ -65,7 +66,7 @@ class NamaClusterController extends Controller
     }
 
     /**
-     * 🔄 Update Nama Cluster di database
+     * Update Nama Cluster di database
      */
     public function update(Request $request, $id)
     {
@@ -83,20 +84,32 @@ class NamaClusterController extends Controller
         ]);
 
         return redirect()->route('admin.nama-cluster.index')
-            ->with('success', 'Nama Cluster berhasil diperbarui.');
+            ->with('success', 'Nama cluster berhasil diperbarui.');
     }
 
     /**
-     * ❌ Hapus Nama Cluster dari database
+     * Hapus Nama Cluster dari database
      */
     public function destroy($id)
     {
         try {
             $namaCluster = NamaCluster::findOrFail($id);
+            
+            // Cek apakah nama cluster sedang digunakan
+            if ($namaCluster->cluster()->count() > 0) {
+                return redirect()->route('admin.nama-cluster.index')
+                    ->with('error', 'Nama cluster tidak dapat dihapus karena masih digunakan.');
+            }
+            
             $namaCluster->delete();
 
+            // Reset auto increment jika tabel kosong
+            if (NamaCluster::count() === 0) {
+                DB::statement('ALTER TABLE nama_cluster AUTO_INCREMENT = 1;');
+            }
+
             return redirect()->route('admin.nama-cluster.index')
-                ->with('success', 'Nama Cluster berhasil dihapus.');
+                ->with('success', 'Nama cluster berhasil dihapus.');
         } catch (\Exception $e) {
             return redirect()->route('admin.nama-cluster.index')
                 ->with('error', 'Gagal menghapus nama cluster: ' . $e->getMessage());

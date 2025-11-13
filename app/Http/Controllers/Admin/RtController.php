@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Rt;
 use App\Models\Warga;
 use App\Models\Rw;
+use Illuminate\Support\Facades\DB;
 
 class RtController extends Controller
 {
@@ -14,53 +15,52 @@ class RtController extends Controller
      * Menampilkan daftar RT
      */
     public function index(Request $request)
-{
-    $search = $request->input('search');
+    {
+        $search = $request->get('search');
 
-    // Ambil data RT beserta relasi Warga dan RW dengan pencarian
-    $dataRT = Rt::with(['warga', 'rw'])
-        ->when($search, function ($query, $search) {
-            $query->where('nomor_rt', 'like', "%{$search}%")
-                  ->orWhereHas('warga', function ($q) use ($search) {
-                      $q->where('nama_lengkap', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('rw', function ($q) use ($search) {
-                      $q->where('nomor_rw', 'like', "%{$search}%");
-                  });
-        })
-        ->orderBy('nomor_rt', 'asc')
-        ->paginate(10)
-        ->withQueryString(); // supaya pagination tetap bawa query pencarian
+        $dataRT = Rt::with(['warga', 'rw'])
+            ->when($search, function ($query, $search) {
+                $query->where('nomor_rt', 'like', "%{$search}%")
+                      ->orWhereHas('warga', function ($q) use ($search) {
+                          $q->where('nama_lengkap', 'like', "%{$search}%")
+                            ->orWhere('nik', 'like', "%{$search}%");
+                      })
+                      ->orWhereHas('rw', function ($q) use ($search) {
+                          $q->where('nomor_rw', 'like', "%{$search}%");
+                      });
+            })
+            ->orderBy('nomor_rt', 'asc')
+            ->paginate(10);
 
-    return view('pages.admin.rt.index', compact('dataRT', 'search'));
-}
+        $dataRT->appends(['search' => $search]);
 
+        return view('pages.admin.rt.index', compact('dataRT', 'search'));
+    }
 
     /**
      * Tampilkan form tambah RT
      */
     public function create()
-{
-    // Ambil ID warga yang sudah menjadi RT
-    $idWargaSudahRT = \App\Models\Rt::pluck('id_warga')->toArray();
+    {
+        // Ambil ID warga yang sudah menjadi RT
+        $idWargaSudahRT = Rt::pluck('id_warga')->toArray();
 
-    // Ambil ID warga yang sudah menjadi RW
-    $idWargaSudahRW = \App\Models\Rw::pluck('id_warga')->toArray();
+        // Ambil ID warga yang sudah menjadi RW
+        $idWargaSudahRW = Rw::pluck('id_warga')->toArray();
 
-    // Gabungkan keduanya agar tidak bisa dipilih lagi
-    $idTerkunci = array_merge($idWargaSudahRT, $idWargaSudahRW);
+        // Gabungkan keduanya agar tidak bisa dipilih lagi
+        $idTerkunci = array_merge($idWargaSudahRT, $idWargaSudahRW);
 
-    // Ambil warga yang belum menjadi RT maupun RW
-    $warga = \App\Models\Warga::whereNotIn('id', $idTerkunci)
-        ->orderBy('nama_lengkap', 'asc')
-        ->get();
+        // Ambil warga yang belum menjadi RT maupun RW
+        $warga = Warga::whereNotIn('id', $idTerkunci)
+            ->orderBy('nama_lengkap', 'asc')
+            ->get();
 
-    // Ambil daftar RW untuk dropdown
-    $rwList = \App\Models\Rw::orderBy('nomor_rw', 'asc')->get();
+        // Ambil daftar RW untuk dropdown
+        $rwList = Rw::orderBy('nomor_rw', 'asc')->get();
 
-    return view('pages.admin.rt.create', compact('warga', 'rwList'));
-}
-
+        return view('pages.admin.rt.create', compact('warga', 'rwList'));
+    }
 
     /**
      * Menyimpan data RT baru
@@ -70,7 +70,7 @@ class RtController extends Controller
         $request->validate([
             'id_warga' => 'required|exists:warga,id|unique:rt,id_warga',
             'id_rw'    => 'required|exists:rw,id',
-            'nomor_rt' => 'required|string|max:10|unique:rt,nomor_rt',
+            'nomor_rt' => 'required|digits_between:1,3|unique:rt,nomor_rt',
         ], [
             'id_warga.required' => 'Ketua RT wajib dipilih.',
             'id_warga.exists' => 'Warga tidak ditemukan.',
@@ -99,13 +99,22 @@ class RtController extends Controller
         $rt = Rt::with(['warga', 'rw'])->findOrFail($id);
 
         // Ambil daftar RW untuk dropdown
-        $rwList = Rw::all();
+        $rwList = Rw::orderBy('nomor_rw', 'asc')->get();
 
         // Ambil ID warga yang sudah menjadi RT (kecuali RT yang sedang diedit)
         $idWargaSudahRT = Rt::where('id', '!=', $id)->pluck('id_warga')->toArray();
 
-        // Ambil warga yang belum menjadi RT + warga yang sedang menjadi RT ini
-        $warga = Warga::whereNotIn('id', $idWargaSudahRT)->get();
+        // Ambil ID warga yang sudah menjadi RW
+        $idWargaSudahRW = Rw::pluck('id_warga')->toArray();
+
+        // Gabungkan (kecuali warga RT yang sedang diedit)
+        $idTerkunci = array_merge($idWargaSudahRT, $idWargaSudahRW);
+
+        // Ambil warga yang belum menjadi RT/RW + warga yang sedang menjadi RT ini
+        $warga = Warga::whereNotIn('id', $idTerkunci)
+            ->orWhere('id', $rt->id_warga)
+            ->orderBy('nama_lengkap', 'asc')
+            ->get();
 
         return view('pages.admin.rt.edit', compact('rt', 'warga', 'rwList'));
     }
@@ -120,7 +129,7 @@ class RtController extends Controller
         $request->validate([
             'id_warga' => 'required|exists:warga,id|unique:rt,id_warga,' . $rt->id,
             'id_rw'    => 'required|exists:rw,id',
-            'nomor_rt' => 'required|string|max:10|unique:rt,nomor_rt,' . $rt->id,
+            'nomor_rt' => 'required|digits_between:1,3|unique:rt,nomor_rt,' . $rt->id,
         ], [
             'id_warga.required' => 'Ketua RT wajib dipilih.',
             'id_warga.exists' => 'Warga tidak ditemukan.',
@@ -156,6 +165,11 @@ class RtController extends Controller
             }
 
             $rt->delete();
+
+            // Reset auto increment jika tabel kosong
+            if (Rt::count() === 0) {
+                DB::statement('ALTER TABLE rt AUTO_INCREMENT = 1;');
+            }
 
             return redirect()->route('admin.rt.index')
                 ->with('success', 'Data RT berhasil dihapus!');

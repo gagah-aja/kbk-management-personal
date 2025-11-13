@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Rw;
 use App\Models\Warga;
+use Illuminate\Support\Facades\DB;
 
 class RwController extends Controller
 {
@@ -13,48 +14,46 @@ class RwController extends Controller
      * Menampilkan daftar RW
      */
     public function index(Request $request)
-{
-    $search = $request->input('search');
+    {
+        $search = $request->get('search');
 
-    // Query RW dengan relasi Warga
-    $dataRW = Rw::with('warga')
-        ->when($search, function ($query, $search) {
-            $query->where('nomor_rw', 'like', "%{$search}%")
-                  ->orWhereHas('warga', function ($q) use ($search) {
-                      $q->where('nama_lengkap', 'like', "%{$search}%")
-                        ->orWhere('nik', 'like', "%{$search}%");
-                  });
-        })
-        ->orderBy('nomor_rw', 'asc')
-        ->paginate(10) // jumlah item per halaman
-        ->withQueryString(); // agar pagination tetap bawa query search
+        $dataRW = Rw::with('warga')
+            ->when($search, function ($query, $search) {
+                $query->where('nomor_rw', 'like', "%{$search}%")
+                      ->orWhereHas('warga', function ($q) use ($search) {
+                          $q->where('nama_lengkap', 'like', "%{$search}%")
+                            ->orWhere('nik', 'like', "%{$search}%");
+                      });
+            })
+            ->orderBy('nomor_rw', 'asc')
+            ->paginate(10);
 
-    return view('pages.admin.rw.index', compact('dataRW', 'search'));
-}
+        $dataRW->appends(['search' => $search]);
 
+        return view('pages.admin.rw.index', compact('dataRW', 'search'));
+    }
 
     /**
      * Tampilkan form tambah RW
      */
     public function create()
-{
-    // Ambil ID warga yang sudah menjadi RW
-    $idWargaSudahRW = \App\Models\Rw::pluck('id_warga')->toArray();
+    {
+        // Ambil ID warga yang sudah menjadi RW
+        $idWargaSudahRW = Rw::pluck('id_warga')->toArray();
 
-    // Ambil ID warga yang sudah menjadi RT
-    $idWargaSudahRT = \App\Models\Rt::pluck('id_warga')->toArray();
+        // Ambil ID warga yang sudah menjadi RT
+        $idWargaSudahRT = \App\Models\Rt::pluck('id_warga')->toArray();
 
-    // Gabungkan keduanya agar tidak bisa dipilih lagi
-    $idTerkunci = array_merge($idWargaSudahRW, $idWargaSudahRT);
+        // Gabungkan keduanya agar tidak bisa dipilih lagi
+        $idTerkunci = array_merge($idWargaSudahRW, $idWargaSudahRT);
 
-    // Ambil warga yang belum menjadi RT maupun RW
-    $warga = \App\Models\Warga::whereNotIn('id', $idTerkunci)
-        ->orderBy('nama_lengkap', 'asc')
-        ->get();
+        // Ambil warga yang belum menjadi RT maupun RW
+        $warga = Warga::whereNotIn('id', $idTerkunci)
+            ->orderBy('nama_lengkap', 'asc')
+            ->get();
 
-    return view('pages.admin.rw.create', compact('warga'));
-}
-
+        return view('pages.admin.rw.create', compact('warga'));
+    }
 
     /**
      * Menyimpan data RW baru
@@ -91,8 +90,17 @@ class RwController extends Controller
         // Ambil ID warga yang sudah menjadi RW (kecuali RW yang sedang diedit)
         $idWargaSudahRW = Rw::where('id', '!=', $id)->pluck('id_warga')->toArray();
 
-        // Ambil warga yang belum menjadi RW + warga yang sedang menjadi RW ini
-        $warga = Warga::whereNotIn('id', $idWargaSudahRW)->get();
+        // Ambil ID warga yang sudah menjadi RT
+        $idWargaSudahRT = \App\Models\Rt::pluck('id_warga')->toArray();
+
+        // Gabungkan (kecuali warga RW yang sedang diedit)
+        $idTerkunci = array_merge($idWargaSudahRW, $idWargaSudahRT);
+
+        // Ambil warga yang belum menjadi RW/RT + warga yang sedang menjadi RW ini
+        $warga = Warga::whereNotIn('id', $idTerkunci)
+            ->orWhere('id', $rw->id_warga)
+            ->orderBy('nama_lengkap', 'asc')
+            ->get();
 
         return view('pages.admin.rw.edit', compact('rw', 'warga'));
     }
@@ -106,7 +114,7 @@ class RwController extends Controller
 
         $request->validate([
             'id_warga' => 'required|exists:warga,id|unique:rw,id_warga,' . $rw->id,
-            'nomor_rw' => 'required|string|max:10|unique:rw,nomor_rw,' . $rw->id,
+            'nomor_rw' => 'required|digits_between:1,3|unique:rw,nomor_rw,' . $rw->id,
         ], [
             'id_warga.required' => 'Ketua RW wajib dipilih.',
             'id_warga.exists' => 'Warga tidak ditemukan.',
@@ -139,6 +147,11 @@ class RwController extends Controller
             }
 
             $rw->delete();
+
+            // Reset auto increment jika tabel kosong
+            if (Rw::count() === 0) {
+                DB::statement('ALTER TABLE rw AUTO_INCREMENT = 1;');
+            }
 
             return redirect()->route('admin.rw.index')
                 ->with('success', 'Data RW berhasil dihapus!');
