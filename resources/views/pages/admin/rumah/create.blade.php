@@ -117,7 +117,7 @@
                             <select name="id_warga" 
                                     id="id_warga" 
                                     class="form-select @error('id_warga') is-invalid @enderror">
-                                <option value="">-- Pilih Penghuni --</option>
+                                <option value="">-- Pilih Pemilik Rumah --</option>
                                 @foreach($warga as $w)
                                     <option value="{{ $w->id }}" {{ old('id_warga') == $w->id ? 'selected' : '' }}>
                                         {{ $w->nama_lengkap}} - {{ $w->nik }}
@@ -129,7 +129,7 @@
                             @enderror
                             <div class="form-hint">
                                 <i class="bi bi-info-circle"></i>
-                                Kosongkan jika belum ada penghuni
+                                
                             </div>
                         </div>
 

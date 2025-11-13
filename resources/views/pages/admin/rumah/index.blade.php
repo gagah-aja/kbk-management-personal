@@ -112,11 +112,6 @@
                         {{-- 🏠 Nomor Rumah --}}
                         <h4 class="fw-semibold">{{ $r->nomor_rumah }}</h4>
 
-                        {{-- 📍 Alamat --}}
-                        <p class="text-muted mb-1">
-                            <i class="bi bi-geo-alt"></i> {{ $r->alamat_lengkap }}
-                        </p>
-
                         {{-- 🏘️ Cluster --}}
                         <p class="mb-1">
                             Cluster <strong>{{ $r->cluster->namaCluster->nama_cluster ?? '-' }}</strong><br>
