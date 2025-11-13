@@ -18,21 +18,20 @@ class SettingController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'landing_page' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'landing_page' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $setting = Setting::firstOrCreate(['key' => 'landing_page']);
+        $setting = Setting::firstOrNew(['key' => 'landing_page']);
 
-        if ($request->hasFile('landing_page')) {
-            // Hapus gambar lama
-            if ($setting->value && Storage::disk('public')->exists($setting->value)) {
-                Storage::disk('public')->delete($setting->value);
-            }
-
-            // Simpan gambar baru
-            $path = $request->file('landing_page')->store('landing_page', 'public');
-            $setting->update(['value' => $path]);
+        // Hapus file lama kalau ada
+        if ($setting->value && Storage::exists('public/' . $setting->value)) {
+            Storage::delete('public/' . $setting->value);
         }
+
+        // Simpan file baru
+        $path = $request->file('landing_page')->store('landing', 'public');
+        $setting->value = $path;
+        $setting->save();
 
         return redirect()->back()->with('success', 'Gambar landing page berhasil diperbarui!');
     }

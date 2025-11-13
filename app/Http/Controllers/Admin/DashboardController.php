@@ -27,7 +27,7 @@ class DashboardController extends Controller
         $totalRt = Rt::count();
         $totalRw = Rw::count();
 
-        // Total Cluster
+        // Total Cluster    
         $totalCluster = Cluster::count();
 
         return view('pages.admin.dashboard.index', [
