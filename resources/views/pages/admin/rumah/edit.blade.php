@@ -128,7 +128,7 @@
                             <label for="id_warga" class="form-label">Pemilik Rumah<small class="text-muted"></small></label>
                             <select name="id_warga" id="id_warga"
                                     class="form-select @error('id_warga') is-invalid @enderror">
-                                <option value="">-- Pilih Penghuni --</option>
+                                <option value="">-- Pilih Pemilik Rumah --</option>
                                 @foreach($warga as $w)
                                     <option value="{{ $w->id }}" 
                                         {{ old('id_warga', $rumah->id_warga) == $w->id ? 'selected' : '' }}>
