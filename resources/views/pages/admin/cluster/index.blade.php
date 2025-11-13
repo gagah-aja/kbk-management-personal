@@ -68,15 +68,18 @@
                     </tbody>
                 </table>
 
-                {{-- 📄 Pagination Final --}}
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <div class="text-muted small">
+                {{-- 📄 Pagination --}}
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3 gap-3">
+                    <div class="text-muted small text-center text-md-start">
                         Menampilkan <strong>{{ $clusters->firstItem() }}</strong> - 
                         <strong>{{ $clusters->lastItem() }}</strong> dari 
                         <strong>{{ $clusters->total() }}</strong> data
                     </div>
-                    <div>
-                        {{ $clusters->appends(['search' => request('search')])->links('pagination::bootstrap-5') }}
+
+                    <div class="d-flex justify-content-center w-100">
+                        <div class="custom-pagination">
+                            {{ $clusters->appends(['search' => request('search')])->links('pagination::bootstrap-5') }}
+                        </div>
                     </div>
                 </div>
 
@@ -102,15 +105,59 @@
     </div>
 </div>
 
+{{-- 🎨 Pagination Style --}}
+<style>
+.custom-pagination nav {
+    display: flex;
+    justify-content: center;
+}
+
+.custom-pagination .page-item .page-link {
+    border-radius: 50% !important;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2563eb;
+    border: 1px solid #d1d5db;
+    transition: all 0.2s ease-in-out;
+}
+
+.custom-pagination .page-item.active .page-link {
+    background-color: #2563eb !important;
+    color: white !important;
+    border-color: #2563eb !important;
+}
+
+.custom-pagination .page-item .page-link:hover {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    border-color: #93c5fd;
+}
+</style>
+
 {{-- SweetAlert --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     @if (session('success'))
-        Swal.fire({ icon: 'success', title: 'Berhasil!', text: '{{ session('success') }}', showConfirmButton: false, timer: 2000 });
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            showConfirmButton: false,
+            timer: 2000
+        });
     @endif
+
     @if (session('error'))
-        Swal.fire({ icon: 'error', title: 'Gagal!', text: '{{ session('error') }}', confirmButtonColor: '#ef4444' });
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: '{{ session('error') }}',
+            confirmButtonColor: '#ef4444'
+        });
     @endif
 
     document.querySelectorAll('.delete-form').forEach(form => {
