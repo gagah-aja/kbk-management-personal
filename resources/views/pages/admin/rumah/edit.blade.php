@@ -125,7 +125,7 @@
 
                         {{-- Penghuni --}}
                         <div class="col-md-6">
-                            <label for="id_warga" class="form-label">Penghuni <small class="text-muted">(Opsional)</small></label>
+                            <label for="id_warga" class="form-label">Pemilik Rumah<small class="text-muted"></small></label>
                             <select name="id_warga" id="id_warga"
                                     class="form-select @error('id_warga') is-invalid @enderror">
                                 <option value="">-- Pilih Penghuni --</option>

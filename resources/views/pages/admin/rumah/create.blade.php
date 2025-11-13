@@ -112,7 +112,7 @@
                         {{-- Penghuni (Warga) --}}
                         <div class="col-md-6">
                             <label for="id_warga" class="form-label">
-                                Penghuni <small class="text-muted">(Opsional)</small>
+                                Pemilik Rumah <small class="text-muted"></small>
                             </label>
                             <select name="id_warga" 
                                     id="id_warga" 
