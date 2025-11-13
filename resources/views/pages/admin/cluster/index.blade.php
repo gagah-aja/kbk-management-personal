@@ -8,22 +8,30 @@
             <h2>Data Cluster</h2>
             <p>Kelola data cluster perumahan</p>
         </div>
-        <div class="d-flex gap-2 align-items-center">
-            {{-- 🔍 Search --}}
-            <form action="{{ route('admin.cluster.index') }}" method="GET" class="d-flex" role="search">
-                <input type="text" name="search" class="form-control me-2" 
-                       placeholder="Cari nama cluster / RT / blok..." 
-                       value="{{ $search }}">
-                <button type="submit" class="btn btn-outline-primary">
-                    <i class="bi bi-search"></i>
-                </button>
-            </form>
+        <a href="{{ route('admin.cluster.create') }}" class="btn-add">
+            <i class="bi bi-plus"></i> Tambah Cluster
+        </a>
+    </div>
 
-            {{-- ➕ Tambah --}}
-            <a href="{{ route('admin.cluster.create') }}" class="btn-add">
-                <i class="bi bi-plus"></i> Tambah Cluster
-            </a>
-        </div>
+    {{-- 🔍 Search Box --}}
+    <div class="data-card mb-3">
+        <form action="{{ route('admin.cluster.index') }}" method="GET">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" name="search" class="form-control border-start-0"
+                    placeholder="Cari nama cluster, RT, atau blok..." value="{{ $search ?? '' }}">
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-search"></i> Cari
+                </button>
+                @if ($search)
+                    <a href="{{ route('admin.cluster.index') }}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> Reset
+                    </a>
+                @endif
+            </div>
+        </form>
     </div>
 
     {{-- Tabel Data --}}
@@ -68,23 +76,21 @@
                     </tbody>
                 </table>
 
-                {{-- 📄 Pagination --}}
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3 gap-3">
-                    <div class="text-muted small text-center text-md-start">
-                        Menampilkan <strong>{{ $clusters->firstItem() }}</strong> - 
-                        <strong>{{ $clusters->lastItem() }}</strong> dari 
-                        <strong>{{ $clusters->total() }}</strong> data
-                    </div>
-
-                    <div class="d-flex justify-content-center w-100">
-                        <div class="custom-pagination">
-                            {{ $clusters->appends(['search' => request('search')])->links('pagination::bootstrap-5') }}
+                {{-- ✅ FIXED: Pagination dengan Custom Style --}}
+                <div class="pagination-wrapper">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div class="text-muted small">
+                            Menampilkan {{ $clusters->firstItem() }} - {{ $clusters->lastItem() }}
+                            dari {{ $clusters->total() }} data
+                        </div>
+                        <div>
+                            {{ $clusters->appends(request()->except('page'))->links('vendor.pagination.bootstrap-5') }}
                         </div>
                     </div>
                 </div>
 
             @else
-                <div class="empty-state text-center py-5">
+                <div class="empty-state">
                     <i class="bi bi-inbox"></i>
                     @if($search)
                         <h5>Tidak Ada Hasil</h5>
@@ -104,38 +110,6 @@
         </div>
     </div>
 </div>
-
-{{-- 🎨 Pagination Style --}}
-<style>
-.custom-pagination nav {
-    display: flex;
-    justify-content: center;
-}
-
-.custom-pagination .page-item .page-link {
-    border-radius: 50% !important;
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #2563eb;
-    border: 1px solid #d1d5db;
-    transition: all 0.2s ease-in-out;
-}
-
-.custom-pagination .page-item.active .page-link {
-    background-color: #2563eb !important;
-    color: white !important;
-    border-color: #2563eb !important;
-}
-
-.custom-pagination .page-item .page-link:hover {
-    background-color: #eff6ff;
-    color: #1d4ed8;
-    border-color: #93c5fd;
-}
-</style>
 
 {{-- SweetAlert --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -160,10 +134,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     @endif
 
+    @if (session('info'))
+        Swal.fire({
+            icon: 'info',
+            title: 'Informasi',
+            text: '{{ session('info') }}',
+            confirmButtonColor: '#3b82f6'
+        });
+    @endif
+
     document.querySelectorAll('.delete-form').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const nama = this.querySelector('button').dataset.nama;
+
             Swal.fire({
                 title: 'Hapus Cluster?',
                 html: `Data cluster <strong>"${nama}"</strong> akan dihapus permanen.`,
@@ -175,7 +159,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 cancelButtonText: 'Batal',
                 reverseButtons: true
             }).then((result) => {
-                if (result.isConfirmed) form.submit();
+                if (result.isConfirmed) {
+                    form.submit();
+                }
             });
         });
     });

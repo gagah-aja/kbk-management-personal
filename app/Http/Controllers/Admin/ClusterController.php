@@ -16,28 +16,28 @@ class ClusterController extends Controller
      * Tampilkan semua data Cluster
      */
     public function index(Request $request)
-{
-    $search = $request->get('search');
+    {
+        $search = $request->get('search');
 
-    $clusters = Cluster::with(['namaCluster', 'rt', 'blok'])
-        ->when($search, function ($query, $search) {
-            $query->whereHas('namaCluster', function ($q) use ($search) {
-                $q->where('nama_cluster', 'like', "%{$search}%");
+        $clusters = Cluster::with(['namaCluster', 'rt', 'blok'])
+            ->when($search, function ($query, $search) {
+                $query->whereHas('namaCluster', function ($q) use ($search) {
+                    $q->where('nama_cluster', 'like', "%{$search}%");
+                })
+                ->orWhereHas('rt', function ($q) use ($search) {
+                    $q->where('nomor_rt', 'like', "%{$search}%");
+                })
+                ->orWhereHas('blok', function ($q) use ($search) {
+                    $q->where('nama_blok', 'like', "%{$search}%");
+                });
             })
-            ->orWhereHas('rt', function ($q) use ($search) {
-                $q->where('nomor_rt', 'like', "%{$search}%");
-            })
-            ->orWhereHas('blok', function ($q) use ($search) {
-                $q->where('nama_blok', 'like', "%{$search}%");
-            });
-        })
-        ->orderBy('id', 'desc')
-        ->paginate(10)
-        ->appends(['search' => $search]); // biar query search tetap ada di pagination link
+            ->orderBy('id', 'desc')
+            ->paginate(10); // ✅ FIXED: Ubah dari 1 menjadi 10
 
-    return view('pages.admin.cluster.index', compact('clusters', 'search'));
-}
+        $clusters->appends(['search' => $search]); // ✅ Preserve search param
 
+        return view('pages.admin.cluster.index', compact('clusters', 'search'));
+    }
 
     /**
      * Tampilkan form tambah cluster
