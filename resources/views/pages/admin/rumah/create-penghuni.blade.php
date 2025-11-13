@@ -1,7 +1,9 @@
 @extends('layouts.admin.admin')
-@section('content')
 
+@section('content')
 <div class="container-fluid py-4">
+
+    {{-- Header --}}
     <div class="page-header mb-4">
         <h2>Tambah Penghuni</h2>
         <p>Rumah: <strong>{{ $rumah->nomor_rumah }}</strong> - {{ $rumah->alamat_lengkap }}</p>
@@ -28,7 +30,7 @@
                     @enderror
                 </div>
 
-                {{-- Tipe Penghuni (BARU) --}}
+                {{-- Tipe Penghuni --}}
                 <div class="mb-3">
                     <label for="tipe_penghuni" class="form-label">Tipe Penghuni <span class="text-danger">*</span></label>
                     <select name="tipe_penghuni" id="tipe_penghuni" class="form-select @error('tipe_penghuni') is-invalid @enderror" required>
@@ -61,7 +63,9 @@
                 {{-- Tanggal Masuk --}}
                 <div class="mb-3">
                     <label for="tanggal_masuk" class="form-label">Tanggal Masuk <span class="text-danger">*</span></label>
-                    <input type="date" name="tanggal_masuk" id="tanggal_masuk" class="form-control @error('tanggal_masuk') is-invalid @enderror" value="{{ old('tanggal_masuk', date('Y-m-d')) }}" required>
+                    <input type="date" name="tanggal_masuk" id="tanggal_masuk" 
+                           class="form-control @error('tanggal_masuk') is-invalid @enderror" 
+                           value="{{ old('tanggal_masuk', date('Y-m-d')) }}" required>
                     @error('tanggal_masuk')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -81,13 +85,14 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-check-circle"></i> Simpan Penghuni
                     </button>
-                    <a href="{{ route('admin.rumah.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('admin.rumah.penghuni.show', $rumah->id) }}" class="btn btn-secondary">
                         <i class="bi bi-arrow-left"></i> Kembali
                     </a>
                 </div>
+
             </form>
         </div>
     </div>
-</div>
 
+</div>
 @endsection

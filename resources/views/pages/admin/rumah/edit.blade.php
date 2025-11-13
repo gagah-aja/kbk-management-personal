@@ -132,7 +132,7 @@
                                 @foreach($warga as $w)
                                     <option value="{{ $w->id }}" 
                                         {{ old('id_warga', $rumah->id_warga) == $w->id ? 'selected' : '' }}>
-                                        {{ $w->nama }} - {{ $w->nik }}
+                                        {{ $w->nama_lengkap }} - {{ $w->nik }}
                                     </option>
                                 @endforeach
                             </select>
