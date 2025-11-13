@@ -32,7 +32,7 @@ class ClusterController extends Controller
             });
         })
         ->orderBy('id', 'desc')
-        ->paginate(10)
+        ->paginate(1)
         ->appends(['search' => $search]); // biar query search tetap ada di pagination link
 
     return view('pages.admin.cluster.index', compact('clusters', 'search'));

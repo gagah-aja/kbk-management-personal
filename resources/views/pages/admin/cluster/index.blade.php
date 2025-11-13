@@ -43,11 +43,7 @@
                     <tbody>
                         @foreach($clusters as $index => $cluster)
                         <tr>
-                            <td class="text-center">
-                                <span class="badge-number">
-                                    {{ $clusters->firstItem() + $index }}
-                                </span>
-                            </td>
+                            <td class="text-center">{{ $clusters->firstItem() + $index }}</td>
                             <td>{{ $cluster->namaCluster->nama_cluster ?? 'N/A' }}</td>
                             <td class="text-muted">RT {{ $cluster->rt->nomor_rt ?? 'N/A' }}</td>
                             <td class="text-muted">{{ $cluster->blok->nama_blok ?? 'N/A' }}</td>
@@ -72,21 +68,20 @@
                     </tbody>
                 </table>
 
-                {{-- Pagination --}}
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 pt-3 border-top gap-3">
-                    <div class="text-muted small text-center text-md-start">
+                {{-- 📄 Pagination Final --}}
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="text-muted small">
                         Menampilkan <strong>{{ $clusters->firstItem() }}</strong> - 
                         <strong>{{ $clusters->lastItem() }}</strong> dari 
                         <strong>{{ $clusters->total() }}</strong> data
                     </div>
-
-                    <nav aria-label="Navigasi halaman cluster" class="d-flex justify-content-center">
-                        {{ $clusters->onEachSide(1)->links('pagination::bootstrap-5') }}
-                    </nav>
+                    <div>
+                        {{ $clusters->appends(['search' => request('search')])->links('pagination::bootstrap-5') }}
+                    </div>
                 </div>
 
             @else
-                <div class="empty-state">
+                <div class="empty-state text-center py-5">
                     <i class="bi bi-inbox"></i>
                     @if($search)
                         <h5>Tidak Ada Hasil</h5>
@@ -116,9 +111,6 @@ document.addEventListener('DOMContentLoaded', function() {
     @endif
     @if (session('error'))
         Swal.fire({ icon: 'error', title: 'Gagal!', text: '{{ session('error') }}', confirmButtonColor: '#ef4444' });
-    @endif
-    @if (session('info'))
-        Swal.fire({ icon: 'info', title: 'Info', text: '{{ session('info') }}', confirmButtonColor: '#3b82f6' });
     @endif
 
     document.querySelectorAll('.delete-form').forEach(form => {

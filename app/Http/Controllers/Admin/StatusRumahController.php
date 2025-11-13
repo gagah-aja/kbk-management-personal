@@ -18,7 +18,7 @@ class StatusRumahController extends Controller
             $query->where('nama_status', 'like', "%{$search}%");
         })
         ->orderBy('id', 'asc')
-        ->paginate(10)
+        ->paginate(1)
         ->withQueryString(); // Supaya query search terbawa saat pindah halaman
 
     return view('pages.admin.status-rumah.index', compact('statuses', 'search'));
