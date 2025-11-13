@@ -28,6 +28,20 @@
                     @enderror
                 </div>
 
+                {{-- Tipe Penghuni (BARU) --}}
+                <div class="mb-3">
+                    <label for="tipe_penghuni" class="form-label">Tipe Penghuni <span class="text-danger">*</span></label>
+                    <select name="tipe_penghuni" id="tipe_penghuni" class="form-select @error('tipe_penghuni') is-invalid @enderror" required>
+                        <option value="">-- Pilih Tipe --</option>
+                        <option value="Pemilik" {{ old('tipe_penghuni') == 'Pemilik' ? 'selected' : '' }}>🏠 Pemilik</option>
+                        <option value="Penyewa" {{ old('tipe_penghuni') == 'Penyewa' ? 'selected' : '' }}>🏘️ Penyewa</option>
+                    </select>
+                    <small class="text-muted">Pemilik: Pemilik rumah | Penyewa: Orang yang menyewa rumah</small>
+                    @error('tipe_penghuni')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
                 {{-- Status Penghuni --}}
                 <div class="mb-3">
                     <label for="status_penghuni" class="form-label">Status Penghuni <span class="text-danger">*</span></label>

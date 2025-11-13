@@ -167,11 +167,13 @@ class RumahController extends Controller
     {
         $validated = $request->validate([
             'id_warga' => 'required|exists:warga,id',
+            'tipe_penghuni' => 'required|in:Pemilik,Penyewa',
             'status_penghuni' => 'required|in:Kepala Keluarga,Istri/Suami,Anak,Orang Tua,Keluarga Lainnya',
             'tanggal_masuk' => 'required|date',
             'keterangan' => 'nullable|string',
         ], [
             'id_warga.required' => 'Warga wajib dipilih',
+            'tipe_penghuni.required' => 'Tipe penghuni wajib dipilih',
             'status_penghuni.required' => 'Status penghuni wajib dipilih',
             'tanggal_masuk.required' => 'Tanggal masuk wajib diisi',
         ]);
@@ -189,13 +191,14 @@ class RumahController extends Controller
         Penghuni::create([
             'id_rumah' => $id_rumah,
             'id_warga' => $validated['id_warga'],
+            'tipe_penghuni' => $validated['tipe_penghuni'],
             'status_penghuni' => $validated['status_penghuni'],
             'tanggal_masuk' => $validated['tanggal_masuk'],
             'keterangan' => $validated['keterangan'] ?? null,
             'is_active' => true,
         ]);
 
-        return redirect()->route('admin.rumah.index')
+        return redirect()->route('admin.rumah.penghuni.show', $id_rumah)
             ->with('success', 'Penghuni berhasil ditambahkan!');
     }
 

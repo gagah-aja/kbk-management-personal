@@ -14,6 +14,7 @@ class Penghuni extends Model
     protected $fillable = [
         'id_rumah',
         'id_warga',
+        'tipe_penghuni',
         'status_penghuni',
         'tanggal_masuk',
         'tanggal_keluar',

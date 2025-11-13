@@ -17,6 +17,8 @@
 .info-rumah h4 { margin:0; color:#1e293b; font-size:1.2rem; }
 .info-rumah p { margin:0.25rem 0 0 0; color:#64748b; font-size:0.9rem; word-break:break-word; }
 
+.badge-pemilik { background:#059669; color:#fff; padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem; white-space:nowrap; display:inline-block; font-weight:600; }
+.badge-penyewa { background:#0891b2; color:#fff; padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem; white-space:nowrap; display:inline-block; font-weight:600; }
 .badge-kk { background:#10b981; color:#fff; padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem; white-space:nowrap; display:inline-block; }
 .badge-istri { background:#3b82f6; color:#fff; padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem; white-space:nowrap; display:inline-block; }
 .badge-anak { background:#f59e0b; color:#fff; padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem; white-space:nowrap; display:inline-block; }
@@ -208,12 +210,13 @@
                     <table class="table table-hover mb-0">
                         <thead style="background:#f1f5f9;">
                             <tr>
-                                <th width="5%">No</th>
-                                <th width="25%">Nama Lengkap</th>
-                                <th width="15%">NIK</th>
-                                <th width="15%">Status</th>
-                                <th width="12%">Tanggal Masuk</th>
-                                <th width="12%">Tanggal Keluar</th>
+                                <th width="4%">No</th>
+                                <th width="18%">Nama Lengkap</th>
+                                <th width="12%">NIK</th>
+                                <th width="10%">Tipe</th>
+                                <th width="12%">Status</th>
+                                <th width="10%">Tanggal Masuk</th>
+                                <th width="10%">Tanggal Keluar</th>
                                 <th width="8%">Status Aktif</th>
                                 <th width="8%">Aksi</th>
                             </tr>
@@ -228,6 +231,13 @@
                                     <small class="text-muted">{{ $p->warga->jenis_kelamin }}</small>
                                 </td>
                                 <td>{{ $p->warga->nik }}</td>
+                                <td>
+                                    @if($p->tipe_penghuni == 'Pemilik')
+                                        <span class="badge-pemilik">🏠 Pemilik</span>
+                                    @else
+                                        <span class="badge-penyewa">🏘️ Penyewa</span>
+                                    @endif
+                                </td>
                                 <td>
                                     @php
                                         $badgeClass = [
@@ -300,6 +310,15 @@
                         
                         <div class="penghuni-detail">
                             <div class="penghuni-detail-item">
+                                <span class="penghuni-detail-label">Tipe</span>
+                                @if($p->tipe_penghuni == 'Pemilik')
+                                    <span class="badge-pemilik">🏠 Pemilik</span>
+                                @else
+                                    <span class="badge-penyewa">🏘️ Penyewa</span>
+                                @endif
+                            </div>
+                            
+                            <div class="penghuni-detail-item">
                                 <span class="penghuni-detail-label">Status</span>
                                 @php
                                     $badgeClass = [
@@ -348,13 +367,16 @@
                 {{-- Info Tambahan --}}
                 <div class="p-3 bg-light border-top">
                     <div class="row summary-stats">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <strong>Total Penghuni:</strong> {{ $penghuni->count() }} orang
                         </div>
-                        <div class="col-md-4">
-                            <strong>Penghuni Aktif:</strong> {{ $penghuni->where('is_active', true)->count() }} orang
+                        <div class="col-md-3">
+                            <strong>Pemilik:</strong> {{ $penghuni->where('is_active', true)->where('tipe_penghuni', 'Pemilik')->count() }} orang
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <strong>Penyewa:</strong> {{ $penghuni->where('is_active', true)->where('tipe_penghuni', 'Penyewa')->count() }} orang
+                        </div>
+                        <div class="col-md-3">
                             <strong>Sudah Keluar:</strong> {{ $penghuni->where('is_active', false)->count() }} orang
                         </div>
                     </div>

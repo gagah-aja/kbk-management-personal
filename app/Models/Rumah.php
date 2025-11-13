@@ -64,6 +64,26 @@ class Rumah extends Model
     }
 
     /**
+     * ⭐ Relasi ke Pemilik Aktif
+     */
+    public function pemilikAktif()
+    {
+        return $this->hasMany(Penghuni::class, 'id_rumah')
+            ->where('is_active', true)
+            ->where('tipe_penghuni', 'Pemilik');
+    }
+
+    /**
+     * ⭐ Relasi ke Penyewa Aktif
+     */
+    public function penyewaAktif()
+    {
+        return $this->hasMany(Penghuni::class, 'id_rumah')
+            ->where('is_active', true)
+            ->where('tipe_penghuni', 'Penyewa');
+    }
+
+    /**
      * ⭐ Helper: Cek apakah rumah punya penghuni aktif
      */
     public function hasPenghuniAktif()
