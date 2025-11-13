@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\NamaClusterController;
 use App\Http\Controllers\Admin\RumahController;
 use App\Http\Controllers\Admin\WargaController;
 use App\Http\Controllers\Admin\StatusRumahController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 
@@ -137,4 +138,9 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     // 🧾 Status Rumah
     // =====================================================
     Route::resource('status-rumah', StatusRumahController::class)->except(['show']);
+
+    // settings
+    // =====================================================
+    Route::get('/setting', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('setting.index');
+    Route::post('/setting/update', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('setting.update');
 });

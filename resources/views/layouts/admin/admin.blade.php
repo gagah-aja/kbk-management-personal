@@ -225,6 +225,12 @@
                     </a>
                 </li>
 
+                <li class="nav-item">
+                    <a href="{{ route('admin.setting.index') }}" class="nav-link {{ request()->is('admin/setting*') ? 'active' : '' }}">
+                        <i class="bi bi-gear-fill"></i> Setting
+                    </a>
+                </li>
+
                 {{-- 🔹 Tombol Logout dengan Konfirmasi --}}
                 <li class="nav-item">
                     <a href="#" class="nav-link logout-btn" id="logoutButton">

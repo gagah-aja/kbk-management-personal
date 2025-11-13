@@ -108,7 +108,7 @@
                                 {{ $r->warga->nama_lengkap ?? 'Belum ada pemilik' }}
                             </h5>
                         </div>
-
+                        
                         {{-- 🏠 Nomor Rumah --}}
                         <h4 class="fw-semibold">{{ $r->nomor_rumah }}</h4>
 
