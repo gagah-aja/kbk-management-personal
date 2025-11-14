@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container-fluid py-4">
+
     {{-- Header --}}
     <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
@@ -25,11 +26,14 @@
                 <button class="btn btn-primary" type="submit">
                     <i class="bi bi-search"></i> Cari
                 </button>
-                @if ($search)
-                    <a href="{{ route('admin.status-rumah.index') }}" class="btn btn-secondary">
-                        <i class="bi bi-x-circle"></i> Reset
+
+                {{-- @if ($search)
+                    <a href="{{ route('admin.status-rumah.index') }}" 
+                       class="btn btn-outline-secondary btn-sm mt-2 px-3 py-1"
+                       style="font-size: 14px;">
+                        Reset
                     </a>
-                @endif
+                @endif --}}
             </div>
         </form>
     </div>
@@ -59,10 +63,12 @@
                             </td>
                             <td>
                                 <div class="btn-group-actions d-flex justify-content-center gap-2">
+                                    {{-- Edit --}}
                                     <a href="{{ route('admin.status-rumah.edit', $status->id) }}" class="btn-action btn-edit">
                                         <i class="bi bi-pencil"></i> Edit
                                     </a>
 
+                                    {{-- Delete --}}
                                     <form action="{{ route('admin.status-rumah.destroy', $status->id) }}" method="POST" class="delete-form d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -78,8 +84,8 @@
                     </tbody>
                 </table>
 
-                {{-- ✅ Pagination dengan Custom Style --}}
-                <div class="pagination-wrapper">
+                {{-- Pagination --}}
+                <div class="pagination-wrapper mt-3">
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                         <div class="text-muted small">
                             Menampilkan {{ $statuses->firstItem() }} - {{ $statuses->lastItem() }}
@@ -101,16 +107,15 @@
                         <p class="text-muted">
                             Tidak ditemukan hasil untuk "<strong>{{ $search }}</strong>"
                         </p>
-
-                        <a href="{{ route('admin.status-rumah.index') }}" class="btn btn-outline-secondary mt-2">
-                            <i class="bi bi-arrow-clockwise"></i> Reset
+                        <a href="{{ route('admin.status-rumah.index') }}" 
+                           class="btn btn-outline-secondary btn-sm mt-2 px-3 py-1"
+                           style="font-size: 14px;">
+                            Reset
                         </a>
-
                     @else
                         <h5 class="mt-3 fw-bold">Belum Ada Data</h5>
-                        <p class="text-muted">Mulai tambahkan data RT pertama.</p>
-
-                        <a href="{{ route('admin.rt.create') }}" class="btn btn-primary mt-2">
+                        <p class="text-muted">Mulai tambahkan data status rumah pertama.</p>
+                        <a href="{{ route('admin.status-rumah.create') }}" class="btn btn-primary mt-2">
                             <i class="bi bi-plus"></i> Tambah Data
                         </a>
                     @endif
@@ -124,6 +129,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Success Alert
     @if (session('success'))
         Swal.fire({
             icon: 'success',
@@ -134,6 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     @endif
 
+    // Error Alert
     @if (session('error'))
         Swal.fire({
             icon: 'error',
@@ -143,6 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     @endif
 
+    // Delete Confirmation
     document.querySelectorAll('.delete-form').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();

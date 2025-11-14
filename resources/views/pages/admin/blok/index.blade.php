@@ -25,11 +25,11 @@
                 <button class="btn btn-primary" type="submit">
                     <i class="bi bi-search"></i> Cari
                 </button>
-                @if ($search)
+                {{-- @if ($search)
                     <a href="{{ route('admin.blok.index') }}" class="btn btn-secondary">
                         <i class="bi bi-x-circle"></i> Reset
                     </a>
-                @endif
+                @endif --}}
             </div>
         </form>
     </div>
@@ -96,8 +96,10 @@
                             Tidak ditemukan hasil untuk "<strong>{{ $search }}</strong>"
                         </p>
 
-                        <a href="{{ route('admin.blok.index') }}" class="btn btn-outline-secondary mt-2">
-                            <i class="bi bi-arrow-clockwise"></i> Reset
+                        <a href="{{ route('admin.blok.index') }}" 
+                           class="btn btn-outline-secondary btn-sm mt-2 px-3 py-1"
+                           style="font-size: 14px;">
+                            Reset
                         </a>
 
                     @else

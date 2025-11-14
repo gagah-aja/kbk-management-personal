@@ -9,6 +9,7 @@
             <h2>Data Nama Cluster</h2>
             <p>Kelola data nama cluster perumahan</p>
         </div>
+
         <a href="{{ route('admin.nama-cluster.create') }}" class="btn-add">
             <i class="bi bi-plus"></i> Tambah Nama Cluster
         </a>
@@ -18,24 +19,22 @@
     <div class="data-card mb-3">
         <form action="{{ route('admin.nama-cluster.index') }}" method="GET">
             <div class="input-group">
+
                 <span class="input-group-text bg-white border-end-0">
                     <i class="bi bi-search"></i>
                 </span>
 
-                <input type="text" name="search"
-                       class="form-control border-start-0"
-                       placeholder="Cari nama cluster..."
-                       value="{{ $search ?? '' }}">
+                <input 
+                    type="text"
+                    name="search"
+                    class="form-control border-start-0"
+                    placeholder="Cari nama cluster..."
+                    value="{{ $search ?? '' }}"
+                >
 
                 <button class="btn btn-primary" type="submit">
                     <i class="bi bi-search"></i> Cari
                 </button>
-
-                @if ($search)
-                    <a href="{{ route('admin.nama-cluster.index') }}" class="btn btn-secondary">
-                        <i class="bi bi-x-circle"></i> Reset
-                    </a>
-                @endif
             </div>
         </form>
     </div>
@@ -44,7 +43,7 @@
     <div class="data-card">
         <div class="table-container">
 
-            @if($namaClusters->count() > 0)
+            @if ($namaClusters->count() > 0)
 
                 <table class="table-minimal">
                     <thead>
@@ -54,41 +53,48 @@
                             <th width="200" class="text-center">AKSI</th>
                         </tr>
                     </thead>
+
                     <tbody>
-                        @foreach($namaClusters as $index => $cluster)
-                        <tr>
-                            <td class="text-center">
-                                {{ $namaClusters->firstItem() + $index }}
-                            </td>
+                        @foreach ($namaClusters as $index => $cluster)
+                            <tr>
+                                <td class="text-center">
+                                    {{ $namaClusters->firstItem() + $index }}
+                                </td>
 
-                            <td>{{ $cluster->nama_cluster }}</td>
+                                <td>{{ $cluster->nama_cluster }}</td>
 
-                            <td>
-                                <div class="btn-group-actions d-flex justify-content-center gap-2">
+                                <td>
+                                    <div class="btn-group-actions d-flex justify-content-center gap-2">
 
-                                    {{-- Edit --}}
-                                    <a href="{{ route('admin.nama-cluster.edit', $cluster->id) }}"
-                                       class="btn-action btn-edit">
-                                        <i class="bi bi-pencil"></i> Edit
-                                    </a>
+                                        {{-- Edit --}}
+                                        <a 
+                                            href="{{ route('admin.nama-cluster.edit', $cluster->id) }}"
+                                            class="btn-action btn-edit"
+                                        >
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
 
-                                    {{-- Delete --}}
-                                    <form action="{{ route('admin.nama-cluster.destroy', $cluster->id) }}"
-                                          method="POST"
-                                          class="delete-form d-inline">
-                                        @csrf
-                                        @method('DELETE')
+                                        {{-- Delete --}}
+                                        <form 
+                                            action="{{ route('admin.nama-cluster.destroy', $cluster->id) }}"
+                                            method="POST"
+                                            class="delete-form d-inline"
+                                        >
+                                            @csrf
+                                            @method('DELETE')
 
-                                        <button type="submit"
+                                            <button 
+                                                type="submit"
                                                 class="btn-action btn-delete"
-                                                data-nama="{{ $cluster->nama_cluster }}">
-                                            <i class="bi bi-trash"></i> Hapus
-                                        </button>
-                                    </form>
+                                                data-nama="{{ $cluster->nama_cluster }}"
+                                            >
+                                                <i class="bi bi-trash"></i> Hapus
+                                            </button>
+                                        </form>
 
-                                </div>
-                            </td>
-                        </tr>
+                                    </div>
+                                </td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -98,7 +104,7 @@
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
 
                         <div class="text-muted small">
-                            Menampilkan
+                            Menampilkan 
                             {{ $namaClusters->firstItem() }} -
                             {{ $namaClusters->lastItem() }}
                             dari {{ $namaClusters->total() }} data
@@ -117,20 +123,23 @@
                 <div class="empty-state text-center py-5">
                     <i class="bi bi-inbox" style="font-size: 3rem; color: #6c757d;"></i>
 
-                    @if($search)
+                    @if ($search)
                         <h5 class="mt-3 fw-bold">Tidak Ada Hasil</h5>
                         <p class="text-muted">
                             Tidak ditemukan hasil untuk "<strong>{{ $search }}</strong>"
                         </p>
-                        <a href="{{ route('admin.nama-cluster.index') }}"
-                           class="btn btn-outline-secondary mt-2">
-                            <i class="bi bi-arrow-clockwise"></i> Reset
+
+                        <a href="{{ route('admin.nama-cluster.index') }}" 
+                           class="btn btn-outline-secondary btn-sm mt-2 px-3 py-1"
+                           style="font-size: 14px;">
+                            Reset
                         </a>
+
                     @else
                         <h5 class="mt-3 fw-bold">Belum Ada Data</h5>
                         <p class="text-muted">Mulai tambahkan data nama cluster pertama.</p>
-                        <a href="{{ route('admin.nama-cluster.create') }}"
-                           class="btn btn-primary mt-2">
+
+                        <a href="{{ route('admin.nama-cluster.create') }}" class="btn btn-primary mt-2">
                             <i class="bi bi-plus"></i> Tambah Data
                         </a>
                     @endif
@@ -140,13 +149,14 @@
 
         </div>
     </div>
+
 </div>
 
 {{-- SweetAlert --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 
     @if (session('success'))
         Swal.fire({
@@ -167,9 +177,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     @endif
 
-    // Delete Confirmation
+    // Delete confirmation
     document.querySelectorAll('.delete-form').forEach(form => {
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function (e) {
             e.preventDefault();
 
             const nama = this.querySelector('button').dataset.nama;
@@ -184,14 +194,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmButtonText: 'Ya, Hapus!',
                 cancelButtonText: 'Batal',
                 reverseButtons: true
-            }).then((result) => {
+            }).then(result => {
                 if (result.isConfirmed) form.submit();
             });
-
         });
     });
 
 });
 </script>
-
 @endsection

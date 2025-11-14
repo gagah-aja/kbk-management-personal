@@ -30,12 +30,6 @@
                 <button class="btn btn-primary" type="submit">
                     <i class="bi bi-search"></i> Cari
                 </button>
-
-                @if ($search)
-                    <a href="{{ route('admin.warga.index') }}" class="btn btn-secondary">
-                        <i class="bi bi-x-circle"></i> Reset
-                    </a>
-                @endif
             </div>
         </form>
     </div>
@@ -286,9 +280,11 @@
                 @if ($search)
                     <h5 class="mt-3 fw-bold">Tidak Ada Hasil</h5>
                     <p class="text-muted">Pencarian untuk "<strong>{{ $search }}</strong>" tidak ditemukan.</p>
-                    <a href="{{ route('admin.warga.index') }}" class="btn btn-outline-secondary mt-2 px-4">
-                        <i class="bi bi-arrow-clockwise"></i> Reset
-                    </a>
+                    <a href="{{ route('admin.warga.index') }}" 
+                           class="btn btn-outline-secondary btn-sm mt-2 px-3 py-1"
+                           style="font-size: 14px;">
+                            Reset
+                        </a>
                 @else
                     <h5 class="mt-3 fw-bold">Belum Ada Data</h5>
                     <p class="text-muted">Silakan tambahkan data warga pertama Anda.</p>
