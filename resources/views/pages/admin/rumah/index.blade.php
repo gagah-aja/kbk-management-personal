@@ -67,30 +67,49 @@
     cursor:not-allowed;
 }
 @media(max-width:576px){
-    .pagination .page-item .page-link { width:34px; height:34px; font-size:.85rem; }
+    .pagination .page-item .page-link {
+        width:34px;
+        height:34px;
+        font-size:.85rem;
+    }
 }
 </style>
 
 <div class="container-fluid py-4">
+
     {{-- Header --}}
     <div class="page-header d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <div>
             <h2>Data Rumah</h2>
             <p>Kelola data rumah perumahan</p>
         </div>
+
         <a href="{{ route('admin.rumah.create') }}" class="btn btn-primary">
             <i class="bi bi-plus"></i> Tambah Rumah
         </a>
     </div>
 
     {{-- Pencarian --}}
-    <form method="GET" action="{{ route('admin.rumah.index') }}" class="mb-4 d-flex gap-2 flex-wrap">
-        <input type="text" name="search" value="{{ request('search') }}" class="form-control"
-            placeholder="Cari rumah / cluster / penghuni...">
-        <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Cari</button>
-        @if(request('search'))
-            <a href="{{ route('admin.rumah.index') }}" class="btn btn-secondary">Reset</a>
-        @endif
+    <form method="GET" action="{{ route('admin.rumah.index') }}" class="mb-4">
+        <div class="input-group">
+            <input 
+                type="text" 
+                name="search" 
+                value="{{ request('search') }}" 
+                class="form-control" 
+                placeholder="Cari rumah / cluster / penghuni..."
+            >
+
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i> Cari
+            </button>
+
+            @if(request('search'))
+                <a href="{{ route('admin.rumah.index') }}" class="btn btn-secondary">
+                    Reset
+                </a>
+            @endif
+        </div>
     </form>
 
     {{-- Daftar Rumah --}}
@@ -99,20 +118,24 @@
             <div class="row g-4">
                 @foreach($rumah as $r)
                 <div class="col-md-4 mb-4">
+
                     <div class="card-rumah p-3 h-100">
-                        
-                        {{-- 👤 Pemilik Rumah --}}
+
+                        {{-- Pemilik Rumah --}}
                         <div class="mb-2">
-                            <p class="text-muted mb-0"><i class="bi bi-person"></i> Pemilik Rumah</p>
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-person"></i> Pemilik Rumah
+                            </p>
+
                             <h5 class="fw-bold text-primary text-capitalize">
                                 {{ $r->warga->nama_lengkap ?? 'Belum ada pemilik' }}
                             </h5>
                         </div>
-                        
-                        {{-- 🏠 Nomor Rumah --}}
+
+                        {{-- Nomor Rumah --}}
                         <h4 class="fw-semibold">{{ $r->nomor_rumah }}</h4>
 
-                        {{-- 🏘️ Cluster --}}
+                        {{-- Cluster --}}
                         <p class="mb-1">
                             Cluster <strong>{{ $r->cluster->namaCluster->nama_cluster ?? '-' }}</strong><br>
                             RT {{ $r->cluster->rt->nomor_rt ?? '-' }} • 
@@ -131,13 +154,17 @@
                         {{-- Penghuni --}}
                         <div class="mt-2">
                             @if ($r->penghuni && $r->penghuni->count() > 0)
-                                <span class="text-dark fw-semibold">{{ $r->penghuni->count() }} Orang</span>
+                                <span class="text-dark fw-semibold">
+                                    {{ $r->penghuni->count() }} Orang
+                                </span>
+
                                 <a href="{{ route('admin.rumah.penghuni.show', $r->id) }}"
                                    class="btn btn-outline-info btn-sm ms-2">
                                     <i class="bi bi-eye"></i> Lihat Semua
                                 </a>
                             @else
                                 <p class="text-muted mb-1">Belum ada penghuni</p>
+
                                 <a href="{{ route('admin.rumah.penghuni.create', $r->id) }}"
                                    class="btn btn-outline-primary btn-sm w-100">
                                     <i class="bi bi-person-plus"></i> Tambah Penghuni
@@ -147,13 +174,15 @@
 
                         {{-- Tombol Aksi --}}
                         <div class="mt-3 d-flex flex-wrap gap-2">
-                            <a href="https://www.google.com/maps?q={{ $r->latitude }},{{ $r->longitude }}" 
-                               target="_blank" class="btn btn-outline-success btn-sm w-100">
+
+                            <a href="https://www.google.com/maps?q={{ $r->latitude }},{{ $r->longitude }}"
+                               target="_blank"
+                               class="btn btn-outline-success btn-sm w-100">
                                 <i class="bi bi-geo"></i> Lihat di Maps
                             </a>
 
                             @if ($r->gambar)
-                                <a href="{{ asset('storage/'.$r->gambar) }}" target="_blank" 
+                                <a href="{{ asset('storage/'.$r->gambar) }}" target="_blank"
                                    class="btn btn-outline-primary btn-sm w-100">
                                     <i class="bi bi-image"></i> Buka Gambar
                                 </a>
@@ -164,17 +193,24 @@
                                    class="btn btn-outline-warning btn-sm flex-fill">
                                     <i class="bi bi-pencil"></i> Edit
                                 </a>
-                                <form action="{{ route('admin.rumah.destroy', $r->id) }}" method="POST" class="flex-fill">
+
+                                <form action="{{ route('admin.rumah.destroy', $r->id) }}" 
+                                      method="POST" 
+                                      class="flex-fill">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-outline-danger btn-sm w-100"
-                                        onclick="return confirm('Yakin ingin menghapus rumah ini?')">
+
+                                    <button type="submit"
+                                            class="btn btn-outline-danger btn-sm w-100"
+                                            onclick="return confirm('Yakin ingin menghapus rumah ini?')">
                                         <i class="bi bi-trash"></i> Hapus
                                     </button>
                                 </form>
                             </div>
+
                         </div>
                     </div>
+
                 </div>
                 @endforeach
             </div>
@@ -187,14 +223,19 @@
             @endif
 
         @else
+
+            {{-- Empty State --}}
             <div class="empty-state text-center py-5">
                 <i class="bi bi-inbox mb-2" style="font-size:2rem;"></i>
+
                 <h5>Belum Ada Data</h5>
                 <p>Mulai tambahkan data rumah pertama</p>
+
                 <a href="{{ route('admin.rumah.create') }}" class="btn btn-primary">
                     <i class="bi bi-plus"></i> Tambah Data
                 </a>
             </div>
+
         @endif
     </div>
 </div>
@@ -203,6 +244,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
     @if(session('success'))
         Swal.fire({
             icon:'success',
@@ -212,6 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
             timer:2000
         });
     @endif
+
     @if(session('error'))
         Swal.fire({
             icon:'error',
@@ -219,6 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
             text:'{{ session('error') }}'
         });
     @endif
+
 });
 </script>
 @endsection
