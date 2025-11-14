@@ -127,10 +127,12 @@
 
                             {{-- Status Rumah --}}
                             <div class="mb-2">
-                                @if ($r->statusRumah && $r->statusRumah->nama_status == 'Terisi')
+                                @if ($r->statusRumah && $r->statusRumah->id == 1)
                                     <span class="badge bg-primary">TERISI</span>
-                                @else
+                                @elseif($r->statusRumah && $r->statusRumah->id == 2)
                                     <span class="badge bg-success">TERSEDIA</span>
+                                    @else
+                                    <span class="badge bg-warning">DISEWAKAN</span>
                                 @endif
                             </div>
 

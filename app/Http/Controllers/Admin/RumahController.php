@@ -87,29 +87,48 @@ class RumahController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $rumah = Rumah::findOrFail($id);
-        $validated = $request->validate([
-            'nomor_rumah' => 'required|string|max:50|unique:rumah,nomor_rumah,' . $rumah->id,
-            'alamat_lengkap' => 'required|string',
-            'id_status_rumah' => 'required|exists:status_rumah,id',
-            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180',
-            'id_cluster' => 'required|exists:cluster,id',
-            'id_warga' => 'nullable|exists:warga,id',
-        ]);
+{
+    $rumah = Rumah::findOrFail($id);
 
-        if ($request->hasFile('gambar')) {
-            if ($rumah->gambar) {
-                Storage::disk('public')->delete($rumah->gambar);
-            }
-            $validated['gambar'] = $request->file('gambar')->store('rumah', 'public');
+    // Validasi input
+    $validated = $request->validate([
+        'nomor_rumah' => 'required|string|max:50',
+        'id_status_rumah' => 'required|exists:status_rumah,id',
+        'alamat_lengkap' => 'required|string',
+        'id_cluster' => 'required|exists:cluster,id',
+        'id_warga' => 'nullable|exists:warga,id',
+        'latitude' => 'nullable|string',
+        'longitude' => 'nullable|string',
+        'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
+
+    // Update data rumah
+    $rumah->update([
+        'nomor_rumah' => $validated['nomor_rumah'],
+        'id_status_rumah' => $validated['id_status_rumah'],
+        'alamat_lengkap' => $validated['alamat_lengkap'],
+        'id_cluster' => $validated['id_cluster'],
+        'id_warga' => $validated['id_warga'] ?? null,
+        'latitude' => $validated['latitude'] ?? null,
+        'longitude' => $validated['longitude'] ?? null,
+    ]);
+
+    // Upload gambar baru jika ada
+    if ($request->hasFile('gambar')) {
+        // Hapus gambar lama jika ada
+        if ($rumah->gambar && Storage::disk('public')->exists($rumah->gambar)) {
+            Storage::disk('public')->delete($rumah->gambar);
         }
 
-        $rumah->update($validated);
-        return redirect()->route('admin.rumah.index')->with('success', 'Data rumah berhasil diperbarui!');
+        // Simpan gambar baru
+        $path = $request->file('gambar')->store('rumah', 'public');
+        $rumah->gambar = $path;
+        $rumah->save();
     }
+
+    return redirect()->route('admin.rumah.index')
+                     ->with('success', 'Data rumah berhasil diperbarui!');
+}
 
     public function destroy($id)
     {

@@ -94,11 +94,11 @@ class BlokController extends Controller
         try {
             $blok = Blok::findOrFail($id);
             
-            // Cek apakah blok sedang digunakan
-            if ($blok->clusters()->count() > 0) {
-                return redirect()->route('admin.blok.index')
-                    ->with('error', 'Blok tidak dapat dihapus karena masih digunakan oleh cluster.');
-            }
+            // // Cek apakah blok sedang digunakan
+            // if ($blok->clusters()->count() > 0) {
+            //     return redirect()->route('admin.blok.index')
+            //         ->with('error', 'Blok tidak dapat dihapus karena masih digunakan oleh cluster.');
+            // }
             
             $blok->delete();
 
