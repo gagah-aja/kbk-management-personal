@@ -123,7 +123,7 @@
             display: none;
             position: fixed;
             top: 20px;
-            left: 20px;
+            right: 20px;
             width: 50px;
             height: 50px;
             background: white;

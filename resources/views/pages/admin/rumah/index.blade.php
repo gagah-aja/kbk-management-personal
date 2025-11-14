@@ -83,7 +83,7 @@
             <h2>Data Rumah</h2>
             <p>Kelola data rumah perumahan</p>
         </div>
-        <a href="{{ route('admin.rumah.create') }}" class="btn btn-primary">
+        <a href="{{ route('admin.rumah.create') }}" class="btn btn-dark">
             <i class="bi bi-plus"></i> Tambah Rumah
         </a>
     </div>

@@ -4,15 +4,18 @@
 <div class="container-fluid py-4">
 
     {{-- Header --}}
-    <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <div>
-            <h2>Data RW</h2>
-            <p>Kelola data Rukun Warga (RW)</p>
-        </div>
-        <a href="{{ route('admin.rw.create') }}" class="btn-add">
+    <div class="page-header mb-3">
+    <div>
+        <h2>Data RW</h2>
+        <p>Kelola data Rukun Warga (RW)</p>
+
+        {{-- Tombol Tambah RW --}}
+        <a href="{{ route('admin.rw.create') }}" class="btn-add mt-2 d-inline-flex align-items-center">
             <i class="bi bi-plus"></i> Tambah RW
         </a>
     </div>
+</div>
+
 
     {{-- Search Box --}}
     <div class="data-card mb-3">
