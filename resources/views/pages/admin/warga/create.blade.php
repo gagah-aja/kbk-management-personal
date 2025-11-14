@@ -7,9 +7,6 @@
             <h2>Tambah Data Warga</h2>
             <p>Tambahkan data warga baru</p>
         </div>
-        {{-- <a href="{{ route('admin.warga.index') }}" class="btn-back">
-            <i class="bi bi-arrow-left"></i> Kembali
-        </a> --}}
     </div>
 
     @if ($errors->any())
@@ -321,22 +318,23 @@
                                 @enderror
                             </div>
 
+                            {{-- Input Gaji dengan format ribuan --}}
                             <div class="col-12">
                                 <label for="gaji" class="form-label">Gaji/Penghasilan</label>
                                 <div class="input-group">
                                     <span class="input-group-text">Rp</span>
-                                    <input type="number" 
+                                    <input type="text" 
                                            name="gaji" 
                                            id="gaji"
                                            class="form-control @error('gaji') is-invalid @enderror" 
                                            placeholder="0"
-                                           min="0"
-                                           value="{{ old('gaji') }}">
+                                           value="{{ old('gaji') ? number_format(old('gaji'),0,'.','.') : '' }}">
                                 </div>
                                 @error('gaji')
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -379,6 +377,19 @@ function previewKTP(event) {
         reader.readAsDataURL(event.target.files[0]);
     }
 }
+
+// Format Gaji ribuan
+const gajiInput = document.getElementById('gaji');
+gajiInput.addEventListener('input', function() {
+    let value = this.value.replace(/\D/g,'');
+    if(value) this.value = new Intl.NumberFormat('id-ID').format(value);
+    else this.value = '';
+});
+
+// Hapus titik saat submit agar backend menerima angka murni
+gajiInput.form.addEventListener('submit', function() {
+    gajiInput.value = gajiInput.value.replace(/\./g,'');
+});
 </script>
 
 <style>

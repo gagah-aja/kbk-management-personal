@@ -92,18 +92,25 @@
                 </div>
 
             @else
-                <div class="empty-state">
-                    <i class="bi bi-inbox"></i>
-                    @if($search)
-                        <h5>Tidak Ada Hasil</h5>
-                        <p>Tidak ditemukan hasil untuk "{{ $search }}"</p>
-                        <a href="{{ route('admin.status-rumah.index') }}" class="btn-secondary">
-                            <i class="bi bi-arrow-left"></i> Kembali
+                {{-- Empty State --}}
+                <div class="empty-state text-center py-5">
+                    <i class="bi bi-inbox" style="font-size: 3rem; color: #6c757d;"></i>
+
+                    @if ($search)
+                        <h5 class="mt-3 fw-bold">Tidak Ada Hasil</h5>
+                        <p class="text-muted">
+                            Tidak ditemukan hasil untuk "<strong>{{ $search }}</strong>"
+                        </p>
+
+                        <a href="{{ route('admin.status-rumah.index') }}" class="btn btn-outline-secondary mt-2">
+                            <i class="bi bi-arrow-clockwise"></i> Reset
                         </a>
+
                     @else
-                        <h5>Belum Ada Data</h5>
-                        <p>Mulai tambahkan data status rumah pertama</p>
-                        <a href="{{ route('admin.status-rumah.create') }}" class="btn-add">
+                        <h5 class="mt-3 fw-bold">Belum Ada Data</h5>
+                        <p class="text-muted">Mulai tambahkan data RT pertama.</p>
+
+                        <a href="{{ route('admin.rt.create') }}" class="btn btn-primary mt-2">
                             <i class="bi bi-plus"></i> Tambah Data
                         </a>
                     @endif

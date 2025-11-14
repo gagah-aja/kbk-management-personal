@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container-fluid py-4">
+
     {{-- Header --}}
     <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
@@ -13,18 +14,23 @@
         </a>
     </div>
 
-    {{-- 🔍 Search Box --}}
+    {{-- Search Box --}}
     <div class="data-card mb-3">
         <form action="{{ route('admin.nama-cluster.index') }}" method="GET">
             <div class="input-group">
                 <span class="input-group-text bg-white border-end-0">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="text" name="search" class="form-control border-start-0"
-                    placeholder="Cari nama cluster..." value="{{ $search ?? '' }}">
+
+                <input type="text" name="search"
+                       class="form-control border-start-0"
+                       placeholder="Cari nama cluster..."
+                       value="{{ $search ?? '' }}">
+
                 <button class="btn btn-primary" type="submit">
                     <i class="bi bi-search"></i> Cari
                 </button>
+
                 @if ($search)
                     <a href="{{ route('admin.nama-cluster.index') }}" class="btn btn-secondary">
                         <i class="bi bi-x-circle"></i> Reset
@@ -34,10 +40,12 @@
         </form>
     </div>
 
-    {{-- Tabel Data --}}
+    {{-- Data Table --}}
     <div class="data-card">
         <div class="table-container">
+
             @if($namaClusters->count() > 0)
+
                 <table class="table-minimal">
                     <thead>
                         <tr>
@@ -49,22 +57,35 @@
                     <tbody>
                         @foreach($namaClusters as $index => $cluster)
                         <tr>
-                            <td class="text-center">{{ $namaClusters->firstItem() + $index }}</td>
+                            <td class="text-center">
+                                {{ $namaClusters->firstItem() + $index }}
+                            </td>
+
                             <td>{{ $cluster->nama_cluster }}</td>
+
                             <td>
                                 <div class="btn-group-actions d-flex justify-content-center gap-2">
-                                    <a href="{{ route('admin.nama-cluster.edit', $cluster->id) }}" class="btn-action btn-edit">
+
+                                    {{-- Edit --}}
+                                    <a href="{{ route('admin.nama-cluster.edit', $cluster->id) }}"
+                                       class="btn-action btn-edit">
                                         <i class="bi bi-pencil"></i> Edit
                                     </a>
 
-                                    <form action="{{ route('admin.nama-cluster.destroy', $cluster->id) }}" method="POST" class="delete-form d-inline">
+                                    {{-- Delete --}}
+                                    <form action="{{ route('admin.nama-cluster.destroy', $cluster->id) }}"
+                                          method="POST"
+                                          class="delete-form d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn-action btn-delete"
-                                            data-nama="{{ $cluster->nama_cluster }}">
+
+                                        <button type="submit"
+                                                class="btn-action btn-delete"
+                                                data-nama="{{ $cluster->nama_cluster }}">
                                             <i class="bi bi-trash"></i> Hapus
                                         </button>
                                     </form>
+
                                 </div>
                             </td>
                         </tr>
@@ -72,45 +93,61 @@
                     </tbody>
                 </table>
 
-                {{-- ✅ Pagination dengan Custom Style --}}
+                {{-- Pagination --}}
                 <div class="pagination-wrapper">
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
                         <div class="text-muted small">
-                            Menampilkan {{ $namaClusters->firstItem() }} - {{ $namaClusters->lastItem() }}
+                            Menampilkan
+                            {{ $namaClusters->firstItem() }} -
+                            {{ $namaClusters->lastItem() }}
                             dari {{ $namaClusters->total() }} data
                         </div>
+
                         <div>
                             {{ $namaClusters->appends(request()->except('page'))->links('vendor.pagination.bootstrap-5') }}
                         </div>
+
                     </div>
                 </div>
 
             @else
-                <div class="empty-state">
-                    <i class="bi bi-inbox"></i>
+
+                {{-- Empty State --}}
+                <div class="empty-state text-center py-5">
+                    <i class="bi bi-inbox" style="font-size: 3rem; color: #6c757d;"></i>
+
                     @if($search)
-                        <h5>Tidak Ada Hasil</h5>
-                        <p>Tidak ditemukan hasil untuk "{{ $search }}"</p>
-                        <a href="{{ route('admin.nama-cluster.index') }}" class="btn-secondary">
-                            <i class="bi bi-arrow-left"></i> Kembali
+                        <h5 class="mt-3 fw-bold">Tidak Ada Hasil</h5>
+                        <p class="text-muted">
+                            Tidak ditemukan hasil untuk "<strong>{{ $search }}</strong>"
+                        </p>
+                        <a href="{{ route('admin.nama-cluster.index') }}"
+                           class="btn btn-outline-secondary mt-2">
+                            <i class="bi bi-arrow-clockwise"></i> Reset
                         </a>
                     @else
-                        <h5>Belum Ada Data</h5>
-                        <p>Mulai tambahkan data nama cluster pertama</p>
-                        <a href="{{ route('admin.nama-cluster.create') }}" class="btn-add">
+                        <h5 class="mt-3 fw-bold">Belum Ada Data</h5>
+                        <p class="text-muted">Mulai tambahkan data nama cluster pertama.</p>
+                        <a href="{{ route('admin.nama-cluster.create') }}"
+                           class="btn btn-primary mt-2">
                             <i class="bi bi-plus"></i> Tambah Data
                         </a>
                     @endif
                 </div>
+
             @endif
+
         </div>
     </div>
 </div>
 
 {{-- SweetAlert --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
     @if (session('success'))
         Swal.fire({
             icon: 'success',
@@ -130,9 +167,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     @endif
 
+    // Delete Confirmation
     document.querySelectorAll('.delete-form').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+
             const nama = this.querySelector('button').dataset.nama;
 
             Swal.fire({
@@ -146,12 +185,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 cancelButtonText: 'Batal',
                 reverseButtons: true
             }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
+                if (result.isConfirmed) form.submit();
             });
+
         });
     });
+
 });
 </script>
+
 @endsection
