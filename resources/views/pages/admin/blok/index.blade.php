@@ -13,7 +13,7 @@
         </a>
     </div>
 
-    {{-- 🔍 Search Box --}}
+    {{-- Search Box --}}
     <div class="data-card mb-3">
         <form action="{{ route('admin.blok.index') }}" method="GET">
             <div class="input-group">
@@ -23,13 +23,10 @@
                 <input type="text" name="search" class="form-control border-start-0"
                     placeholder="Cari nama blok..." value="{{ $search ?? '' }}">
                 <button class="btn btn-primary" type="submit">
-                    <i class="bi bi-search"></i> Cari
+                    <i class="bi bi-search d-none d-sm-inline"></i> 
+                    <span class="d-none d-sm-inline">Cari</span>
+                    <i class="bi bi-search d-sm-none"></i>
                 </button>
-                {{-- @if ($search)
-                    <a href="{{ route('admin.blok.index') }}" class="btn btn-secondary">
-                        <i class="bi bi-x-circle"></i> Reset
-                    </a>
-                @endif --}}
             </div>
         </form>
     </div>
@@ -38,41 +35,83 @@
     <div class="data-card">
         <div class="table-container">
             @if($bloks->count() > 0)
-                <table class="table-minimal">
-                    <thead>
-                        <tr>
-                            <th width="80" class="text-center">NO</th>
-                            <th>NAMA BLOK</th>
-                            <th width="200" class="text-center">AKSI</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($bloks as $index => $blok)
-                        <tr>
-                            <td class="text-center">{{ $bloks->firstItem() + $index }}</td>
-                            <td>{{ $blok->nama_blok }}</td>
-                            <td>
-                                <div class="btn-group-actions d-flex justify-content-center gap-2">
-                                    <a href="{{ route('admin.blok.edit', $blok->id) }}" class="btn-action btn-edit">
-                                        <i class="bi bi-pencil"></i> Edit
-                                    </a>
+                
+                {{-- Desktop Table View --}}
+                <div class="d-none d-md-block">
+                    <table class="table-minimal">
+                        <thead>
+                            <tr>
+                                <th width="80" class="text-center">NO</th>
+                                <th>NAMA BLOK</th>
+                                <th width="200" class="text-center">AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($bloks as $index => $blok)
+                            <tr>
+                                <td class="text-center">{{ $bloks->firstItem() + $index }}</td>
+                                <td>{{ $blok->nama_blok }}</td>
+                                <td>
+                                    <div class="btn-group-actions d-flex justify-content-center gap-2">
+                                        <a href="{{ route('admin.blok.edit', $blok->id) }}" class="btn-action btn-edit">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
 
-                                    <form action="{{ route('admin.blok.destroy', $blok->id) }}" method="POST" class="delete-form d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-action btn-delete"
+                                        <form action="{{ route('admin.blok.destroy', $blok->id) }}" method="POST" class="delete-form d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-action btn-delete"
+                                                data-nama="{{ $blok->nama_blok }}">
+                                                <i class="bi bi-trash"></i> Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Mobile Card View --}}
+                <div class="d-md-none">
+                    @foreach($bloks as $index => $blok)
+                    <div class="card mb-3 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <span class="badge bg-secondary small">No. {{ $bloks->firstItem() + $index }}</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted d-block">Nama Blok</small>
+                                <strong>{{ $blok->nama_blok }}</strong>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                {{-- Edit --}}
+                                <a href="{{ route('admin.blok.edit', $blok->id) }}" 
+                                   class="btn btn-warning btn-sm flex-fill">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+
+                                {{-- Delete --}}
+                                <form action="{{ route('admin.blok.destroy', $blok->id) }}" 
+                                      method="POST" class="delete-form flex-fill">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" 
+                                            class="btn btn-danger btn-sm w-100"
                                             data-nama="{{ $blok->nama_blok }}">
-                                            <i class="bi bi-trash"></i> Hapus
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                        <i class="bi bi-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
 
-                {{-- ✅ Pagination dengan Custom Style --}}
+                {{-- Pagination dengan Custom Style --}}
                 <div class="pagination-wrapper">
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                         <div class="text-muted small">
@@ -104,9 +143,9 @@
 
                     @else
                         <h5 class="mt-3 fw-bold">Belum Ada Data</h5>
-                        <p class="text-muted">Mulai tambahkan data RT pertama.</p>
+                        <p class="text-muted">Mulai tambahkan data blok pertama.</p>
 
-                        <a href="{{ route('admin.rt.create') }}" class="btn btn-primary mt-2">
+                        <a href="{{ route('admin.blok.create') }}" class="btn btn-primary mt-2">
                             <i class="bi bi-plus"></i> Tambah Data
                         </a>
                     @endif
@@ -163,4 +202,22 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<style>
+/* Mobile Card Styling */
+@media (max-width: 767.98px) {
+    .card {
+        border-radius: 12px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn-sm {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+}
+</style>
 @endsection

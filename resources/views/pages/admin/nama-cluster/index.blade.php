@@ -33,7 +33,9 @@
                 >
 
                 <button class="btn btn-primary" type="submit">
-                    <i class="bi bi-search"></i> Cari
+                    <i class="bi bi-search d-none d-sm-inline"></i> 
+                    <span class="d-none d-sm-inline">Cari</span>
+                    <i class="bi bi-search d-sm-none"></i>
                 </button>
             </div>
         </form>
@@ -45,59 +47,100 @@
 
             @if ($namaClusters->count() > 0)
 
-                <table class="table-minimal">
-                    <thead>
-                        <tr>
-                            <th width="80" class="text-center">NO</th>
-                            <th>NAMA CLUSTER</th>
-                            <th width="200" class="text-center">AKSI</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @foreach ($namaClusters as $index => $cluster)
+                {{-- Desktop Table View --}}
+                <div class="d-none d-md-block">
+                    <table class="table-minimal">
+                        <thead>
                             <tr>
-                                <td class="text-center">
-                                    {{ $namaClusters->firstItem() + $index }}
-                                </td>
-
-                                <td>{{ $cluster->nama_cluster }}</td>
-
-                                <td>
-                                    <div class="btn-group-actions d-flex justify-content-center gap-2">
-
-                                        {{-- Edit --}}
-                                        <a 
-                                            href="{{ route('admin.nama-cluster.edit', $cluster->id) }}"
-                                            class="btn-action btn-edit"
-                                        >
-                                            <i class="bi bi-pencil"></i> Edit
-                                        </a>
-
-                                        {{-- Delete --}}
-                                        <form 
-                                            action="{{ route('admin.nama-cluster.destroy', $cluster->id) }}"
-                                            method="POST"
-                                            class="delete-form d-inline"
-                                        >
-                                            @csrf
-                                            @method('DELETE')
-
-                                            <button 
-                                                type="submit"
-                                                class="btn-action btn-delete"
-                                                data-nama="{{ $cluster->nama_cluster }}"
-                                            >
-                                                <i class="bi bi-trash"></i> Hapus
-                                            </button>
-                                        </form>
-
-                                    </div>
-                                </td>
+                                <th width="80" class="text-center">NO</th>
+                                <th>NAMA CLUSTER</th>
+                                <th width="200" class="text-center">AKSI</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+
+                        <tbody>
+                            @foreach ($namaClusters as $index => $cluster)
+                                <tr>
+                                    <td class="text-center">
+                                        {{ $namaClusters->firstItem() + $index }}
+                                    </td>
+
+                                    <td>{{ $cluster->nama_cluster }}</td>
+
+                                    <td>
+                                        <div class="btn-group-actions d-flex justify-content-center gap-2">
+
+                                            {{-- Edit --}}
+                                            <a 
+                                                href="{{ route('admin.nama-cluster.edit', $cluster->id) }}"
+                                                class="btn-action btn-edit"
+                                            >
+                                                <i class="bi bi-pencil"></i> Edit
+                                            </a>
+
+                                            {{-- Delete --}}
+                                            <form 
+                                                action="{{ route('admin.nama-cluster.destroy', $cluster->id) }}"
+                                                method="POST"
+                                                class="delete-form d-inline"
+                                            >
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <button 
+                                                    type="submit"
+                                                    class="btn-action btn-delete"
+                                                    data-nama="{{ $cluster->nama_cluster }}"
+                                                >
+                                                    <i class="bi bi-trash"></i> Hapus
+                                                </button>
+                                            </form>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Mobile Card View --}}
+                <div class="d-md-none">
+                    @foreach ($namaClusters as $index => $cluster)
+                    <div class="card mb-3 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <span class="badge bg-secondary small">No. {{ $namaClusters->firstItem() + $index }}</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted d-block">Nama Cluster</small>
+                                <strong>{{ $cluster->nama_cluster }}</strong>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                {{-- Edit --}}
+                                <a href="{{ route('admin.nama-cluster.edit', $cluster->id) }}" 
+                                   class="btn btn-warning btn-sm flex-fill">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+
+                                {{-- Delete --}}
+                                <form action="{{ route('admin.nama-cluster.destroy', $cluster->id) }}" 
+                                      method="POST" class="delete-form flex-fill">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" 
+                                            class="btn btn-danger btn-sm w-100"
+                                            data-nama="{{ $cluster->nama_cluster }}">
+                                        <i class="bi bi-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
 
                 {{-- Pagination --}}
                 <div class="pagination-wrapper">
@@ -202,4 +245,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
+
+<style>
+/* Mobile Card Styling */
+@media (max-width: 767.98px) {
+    .card {
+        border-radius: 12px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn-sm {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+}
+</style>
 @endsection

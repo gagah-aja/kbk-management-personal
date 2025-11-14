@@ -4,18 +4,17 @@
 <div class="container-fluid py-4">
 
     {{-- Header --}}
-    <div class="page-header mb-3">
-    <div>
-        <h2>Data RW</h2>
-        <p>Kelola data Rukun Warga (RW)</p>
-
+    <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div>
+            <h2>Data RW</h2>
+            <p>Kelola data Rukun Warga (RW)</p>
+        </div>
+        
         {{-- Tombol Tambah RW --}}
-        <a href="{{ route('admin.rw.create') }}" class="btn-add mt-2 d-inline-flex align-items-center">
+        <a href="{{ route('admin.rw.create') }}" class="btn-add">
             <i class="bi bi-plus"></i> Tambah RW
         </a>
     </div>
-</div>
-
 
     {{-- Search Box --}}
     <div class="data-card mb-3">
@@ -28,7 +27,9 @@
                        placeholder="Cari nomor RW, nama ketua, atau NIK..."
                        value="{{ $search ?? '' }}">
                 <button class="btn btn-primary" type="submit">
-                    <i class="bi bi-search"></i> Cari
+                    <i class="bi bi-search d-none d-sm-inline"></i> 
+                    <span class="d-none d-sm-inline">Cari</span>
+                    <i class="bi bi-search d-sm-none"></i>
                 </button>
             </div>
         </form>
@@ -38,47 +39,96 @@
     <div class="data-card">
         <div class="table-container">
             @if($dataRW->count() > 0)
-                <table class="table-minimal">
-                    <thead>
-                        <tr>
-                            <th width="80" class="text-center">NO</th>
-                            <th>NOMOR RW</th>
-                            <th>NIK KETUA RW</th>
-                            <th>KETUA RW</th>
-                            <th width="200" class="text-center">AKSI</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($dataRW as $index => $rw)
-                        <tr>
-                            <td class="text-center">{{ $dataRW->firstItem() + $index }}</td>
-                            <td><span class="badge bg-primary">RW {{ $rw->nomor_rw }}</span></td>
-                            <td class="text-muted">{{ $rw->warga->nik ?? 'N/A' }}</td>
-                            <td>{{ $rw->warga->nama_lengkap ?? 'N/A' }}</td>
-                            <td>
-                                <div class="btn-group-actions d-flex justify-content-center gap-2">
-                                    {{-- Edit --}}
-                                    <a href="{{ route('admin.rw.edit', $rw->id) }}" class="btn-action btn-edit">
-                                        <i class="bi bi-pencil"></i> Edit
-                                    </a>
+                {{-- Desktop Table View --}}
+                <div class="d-none d-md-block">
+                    <table class="table-minimal">
+                        <thead>
+                            <tr>
+                                <th width="80" class="text-center">NO</th>
+                                <th>NOMOR RW</th>
+                                <th>NIK KETUA RW</th>
+                                <th>KETUA RW</th>
+                                <th width="200" class="text-center">AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($dataRW as $index => $rw)
+                            <tr>
+                                <td class="text-center">{{ $dataRW->firstItem() + $index }}</td>
+                                <td><span class="badge bg-primary">RW {{ $rw->nomor_rw }}</span></td>
+                                <td class="text-muted">{{ $rw->warga->nik ?? 'N/A' }}</td>
+                                <td>{{ $rw->warga->nama_lengkap ?? 'N/A' }}</td>
+                                <td>
+                                    <div class="btn-group-actions d-flex justify-content-center gap-2">
+                                        {{-- Edit --}}
+                                        <a href="{{ route('admin.rw.edit', $rw->id) }}" class="btn-action btn-edit">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
 
-                                    {{-- Delete --}}
-                                    <form action="{{ route('admin.rw.destroy', $rw->id) }}" 
-                                          method="POST" class="delete-form d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" 
-                                                class="btn-action btn-delete"
-                                                data-nama="RW {{ $rw->nomor_rw }} - {{ $rw->warga->nama_lengkap ?? 'RW' }}">
-                                            <i class="bi bi-trash"></i> Hapus
-                                        </button>
-                                    </form>
+                                        {{-- Delete --}}
+                                        <form action="{{ route('admin.rw.destroy', $rw->id) }}" 
+                                              method="POST" class="delete-form d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" 
+                                                    class="btn-action btn-delete"
+                                                    data-nama="RW {{ $rw->nomor_rw }} - {{ $rw->warga->nama_lengkap ?? 'RW' }}">
+                                                <i class="bi bi-trash"></i> Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Mobile Card View --}}
+                <div class="d-md-none">
+                    @foreach($dataRW as $index => $rw)
+                    <div class="card mb-3 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <span class="badge bg-secondary small">No. {{ $dataRW->firstItem() + $index }}</span>
                                 </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                <span class="badge bg-primary">RW {{ $rw->nomor_rw }}</span>
+                            </div>
+                            
+                            <div class="mb-2">
+                                <small class="text-muted d-block">NIK Ketua RW</small>
+                                <strong>{{ $rw->warga->nik ?? 'N/A' }}</strong>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted d-block">Ketua RW</small>
+                                <strong>{{ $rw->warga->nama_lengkap ?? 'N/A' }}</strong>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                {{-- Edit --}}
+                                <a href="{{ route('admin.rw.edit', $rw->id) }}" 
+                                   class="btn btn-warning btn-sm flex-fill">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+
+                                {{-- Delete --}}
+                                <form action="{{ route('admin.rw.destroy', $rw->id) }}" 
+                                      method="POST" class="delete-form flex-fill">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" 
+                                            class="btn btn-danger btn-sm w-100"
+                                            data-nama="RW {{ $rw->nomor_rw }} - {{ $rw->warga->nama_lengkap ?? 'RW' }}">
+                                        <i class="bi bi-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
 
                 {{-- Pagination --}}
                 <div class="pagination-wrapper mt-3">
@@ -164,4 +214,22 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<style>
+/* Mobile Card Styling */
+@media (max-width: 767.98px) {
+    .card {
+        border-radius: 12px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn-sm {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+}
+</style>
 @endsection
