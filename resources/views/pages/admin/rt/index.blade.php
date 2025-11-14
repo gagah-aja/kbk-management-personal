@@ -30,14 +30,10 @@
                        value="{{ $search ?? '' }}">
 
                 <button class="btn btn-primary" type="submit">
-                    <i class="bi bi-search"></i> Cari
+                    <i class="bi bi-search d-none d-sm-inline"></i> 
+                    <span class="d-none d-sm-inline">Cari</span>
+                    <i class="bi bi-search d-sm-none"></i>
                 </button>
-
-                {{-- @if ($search)
-                    <a href="{{ route('admin.rt.index') }}" class="btn btn-secondary">
-                        <i class="bi bi-x-circle"></i> Reset
-                    </a>
-                @endif --}}
 
             </div>
         </form>
@@ -49,61 +45,108 @@
 
             @if ($dataRT->count() > 0)
 
-                <table class="table-minimal">
-                    <thead>
-                        <tr>
-                            <th width="80" class="text-center">NO</th>
-                            <th>NOMOR RT</th>
-                            <th>KETUA RT</th>
-                            <th>RW</th>
-                            <th width="200" class="text-center">AKSI</th>
-                        </tr>
-                    </thead>
+                {{-- Desktop Table View --}}
+                <div class="d-none d-md-block">
+                    <table class="table-minimal">
+                        <thead>
+                            <tr>
+                                <th width="80" class="text-center">NO</th>
+                                <th>NOMOR RT</th>
+                                <th>KETUA RT</th>
+                                <th>RW</th>
+                                <th width="200" class="text-center">AKSI</th>
+                            </tr>
+                        </thead>
 
-                    <tbody>
-                        @foreach ($dataRT as $index => $rt)
-                        <tr>
-                            <td class="text-center">{{ $dataRT->firstItem() + $index }}</td>
+                        <tbody>
+                            @foreach ($dataRT as $index => $rt)
+                            <tr>
+                                <td class="text-center">{{ $dataRT->firstItem() + $index }}</td>
 
-                            <td>
+                                <td>
+                                    <span class="badge bg-success">RT {{ $rt->nomor_rt }}</span>
+                                </td>
+
+                                <td>{{ $rt->warga->nama_lengkap ?? 'N/A' }}</td>
+
+                                <td>
+                                    <span class="badge bg-primary">
+                                        RW {{ $rt->rw->nomor_rw ?? 'N/A' }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="btn-group-actions d-flex justify-content-center gap-2">
+
+                                        {{-- Edit --}}
+                                        <a href="{{ route('admin.rt.edit', $rt->id) }}" class="btn-action btn-edit">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
+
+                                        {{-- Delete --}}
+                                        <form action="{{ route('admin.rt.destroy', $rt->id) }}" 
+                                              method="POST" class="delete-form d-inline">
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit" 
+                                                    class="btn-action btn-delete"
+                                                    data-nama="RT {{ $rt->nomor_rt }} - {{ $rt->warga->nama_lengkap ?? 'RT' }}">
+                                                <i class="bi bi-trash"></i> Hapus
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Mobile Card View --}}
+                <div class="d-md-none">
+                    @foreach ($dataRT as $index => $rt)
+                    <div class="card mb-3 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <span class="badge bg-secondary small">No. {{ $dataRT->firstItem() + $index }}</span>
                                 <span class="badge bg-success">RT {{ $rt->nomor_rt }}</span>
-                            </td>
+                            </div>
+                            
+                            <div class="mb-2">
+                                <small class="text-muted d-block">Ketua RT</small>
+                                <strong>{{ $rt->warga->nama_lengkap ?? 'N/A' }}</strong>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted d-block">RW</small>
+                                <span class="badge bg-primary">RW {{ $rt->rw->nomor_rw ?? 'N/A' }}</span>
+                            </div>
 
-                            <td>{{ $rt->warga->nama_lengkap ?? 'N/A' }}</td>
+                            <div class="d-flex gap-2">
+                                {{-- Edit --}}
+                                <a href="{{ route('admin.rt.edit', $rt->id) }}" 
+                                   class="btn btn-warning btn-sm flex-fill">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
 
-                            <td>
-                                <span class="badge bg-primary">
-                                    RW {{ $rt->rw->nomor_rw ?? 'N/A' }}
-                                </span>
-                            </td>
-
-                            <td>
-                                <div class="btn-group-actions d-flex justify-content-center gap-2">
-
-                                    {{-- Edit --}}
-                                    <a href="{{ route('admin.rt.edit', $rt->id) }}" class="btn-action btn-edit">
-                                        <i class="bi bi-pencil"></i> Edit
-                                    </a>
-
-                                    {{-- Delete --}}
-                                    <form action="{{ route('admin.rt.destroy', $rt->id) }}" 
-                                          method="POST" class="delete-form d-inline">
-                                        @csrf
-                                        @method('DELETE')
-
-                                        <button type="submit" 
-                                                class="btn-action btn-delete"
-                                                data-nama="RT {{ $rt->nomor_rt }} - {{ $rt->warga->nama_lengkap ?? 'RT' }}">
-                                            <i class="bi bi-trash"></i> Hapus
-                                        </button>
-                                    </form>
-
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                {{-- Delete --}}
+                                <form action="{{ route('admin.rt.destroy', $rt->id) }}" 
+                                      method="POST" class="delete-form flex-fill">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" 
+                                            class="btn btn-danger btn-sm w-100"
+                                            data-nama="RT {{ $rt->nomor_rt }} - {{ $rt->warga->nama_lengkap ?? 'RT' }}">
+                                        <i class="bi bi-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
 
                 {{-- Pagination --}}
                 <div class="pagination-wrapper mt-3">
@@ -204,4 +247,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
+
+<style>
+/* Mobile Card Styling */
+@media (max-width: 767.98px) {
+    .card {
+        border-radius: 12px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn-sm {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+}
+</style>
 @endsection

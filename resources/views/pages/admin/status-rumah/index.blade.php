@@ -14,7 +14,7 @@
         </a>
     </div>
 
-    {{-- 🔍 Search Box --}}
+    {{-- Search Box --}}
     <div class="data-card mb-3">
         <form action="{{ route('admin.status-rumah.index') }}" method="GET">
             <div class="input-group">
@@ -24,16 +24,10 @@
                 <input type="text" name="search" class="form-control border-start-0"
                     placeholder="Cari nama status..." value="{{ $search ?? '' }}">
                 <button class="btn btn-primary" type="submit">
-                    <i class="bi bi-search"></i> Cari
+                    <i class="bi bi-search d-none d-sm-inline"></i> 
+                    <span class="d-none d-sm-inline">Cari</span>
+                    <i class="bi bi-search d-sm-none"></i>
                 </button>
-
-                {{-- @if ($search)
-                    <a href="{{ route('admin.status-rumah.index') }}" 
-                       class="btn btn-outline-secondary btn-sm mt-2 px-3 py-1"
-                       style="font-size: 14px;">
-                        Reset
-                    </a>
-                @endif --}}
             </div>
         </form>
     </div>
@@ -42,47 +36,90 @@
     <div class="data-card">
         <div class="table-container">
             @if($statuses->count() > 0)
-                <table class="table-minimal">
-                    <thead>
-                        <tr>
-                            <th width="80" class="text-center">NO</th>
-                            <th>NAMA STATUS</th>
-                            <th width="150" class="text-center">DIGUNAKAN</th>
-                            <th width="200" class="text-center">AKSI</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($statuses as $index => $status)
-                        <tr>
-                            <td class="text-center">{{ $statuses->firstItem() + $index }}</td>
-                            <td>{{ $status->nama_status }}</td>
-                            <td class="text-center">
-                                <span class="badge bg-info">
-                                    {{ $status->rumah_count }} Rumah
-                                </span>
-                            </td>
-                            <td>
-                                <div class="btn-group-actions d-flex justify-content-center gap-2">
-                                    {{-- Edit --}}
-                                    <a href="{{ route('admin.status-rumah.edit', $status->id) }}" class="btn-action btn-edit">
-                                        <i class="bi bi-pencil"></i> Edit
-                                    </a>
+                
+                {{-- Desktop Table View --}}
+                <div class="d-none d-md-block">
+                    <table class="table-minimal">
+                        <thead>
+                            <tr>
+                                <th width="80" class="text-center">NO</th>
+                                <th>NAMA STATUS</th>
+                                <th width="150" class="text-center">DIGUNAKAN</th>
+                                <th width="200" class="text-center">AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($statuses as $index => $status)
+                            <tr>
+                                <td class="text-center">{{ $statuses->firstItem() + $index }}</td>
+                                <td>{{ $status->nama_status }}</td>
+                                <td class="text-center">
+                                    <span class="badge bg-info">
+                                        {{ $status->rumah_count }} Rumah
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group-actions d-flex justify-content-center gap-2">
+                                        {{-- Edit --}}
+                                        <a href="{{ route('admin.status-rumah.edit', $status->id) }}" class="btn-action btn-edit">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
 
-                                    {{-- Delete --}}
-                                    <form action="{{ route('admin.status-rumah.destroy', $status->id) }}" method="POST" class="delete-form d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-action btn-delete"
+                                        {{-- Delete --}}
+                                        <form action="{{ route('admin.status-rumah.destroy', $status->id) }}" method="POST" class="delete-form d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-action btn-delete"
+                                                data-nama="{{ $status->nama_status }}">
+                                                <i class="bi bi-trash"></i> Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Mobile Card View --}}
+                <div class="d-md-none">
+                    @foreach($statuses as $index => $status)
+                    <div class="card mb-3 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <span class="badge bg-secondary small">No. {{ $statuses->firstItem() + $index }}</span>
+                                <span class="badge bg-info">{{ $status->rumah_count }} Rumah</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted d-block">Nama Status</small>
+                                <strong>{{ $status->nama_status }}</strong>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                {{-- Edit --}}
+                                <a href="{{ route('admin.status-rumah.edit', $status->id) }}" 
+                                   class="btn btn-warning btn-sm flex-fill">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+
+                                {{-- Delete --}}
+                                <form action="{{ route('admin.status-rumah.destroy', $status->id) }}" 
+                                      method="POST" class="delete-form flex-fill">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" 
+                                            class="btn btn-danger btn-sm w-100"
                                             data-nama="{{ $status->nama_status }}">
-                                            <i class="bi bi-trash"></i> Hapus
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                        <i class="bi bi-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
 
                 {{-- Pagination --}}
                 <div class="pagination-wrapper mt-3">
@@ -175,4 +212,22 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<style>
+/* Mobile Card Styling */
+@media (max-width: 767.98px) {
+    .card {
+        border-radius: 12px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn-sm {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+}
+</style>
 @endsection
