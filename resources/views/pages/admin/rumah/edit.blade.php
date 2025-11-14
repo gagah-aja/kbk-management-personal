@@ -9,9 +9,9 @@
             <h2>Edit Data Rumah</h2>
             <p>Perbarui data rumah sesuai kebutuhan</p>
         </div>
-        <a href="{{ route('admin.rumah.index') }}" class="btn-back">
+        {{-- <a href="{{ route('admin.rumah.index') }}" class="btn-back">
             <i class="bi bi-arrow-left"></i> Kembali
-        </a>
+        </a> --}}
     </div>
 
     {{-- Notifikasi error --}}

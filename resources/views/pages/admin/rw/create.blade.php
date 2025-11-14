@@ -7,9 +7,9 @@
             <h2>Tambah RW</h2>
             <p>Tambahkan data Rukun Warga baru</p>
         </div>
-        <a href="{{ route('admin.rw.index') }}" class="btn-back">
+        {{-- <a href="{{ route('admin.rw.index') }}" class="btn-back">
             <i class="bi bi-arrow-left"></i> Kembali
-        </a>
+        </a> --}}
     </div>
 
     @if ($errors->any())

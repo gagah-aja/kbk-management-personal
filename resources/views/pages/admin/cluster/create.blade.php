@@ -7,9 +7,9 @@
             <h2>Tambah Cluster</h2>
             <p>Tambahkan data cluster baru</p>
         </div>
-        <a href="{{ route('admin.cluster.index') }}" class="btn-back">
+        {{-- <a href="{{ route('admin.cluster.index') }}" class="btn-back">
             <i class="bi bi-arrow-left"></i> Kembali
-        </a>
+        </a> --}}
     </div>
 
     @if ($errors->any())

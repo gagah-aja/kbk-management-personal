@@ -7,9 +7,9 @@
             <h2>Edit Blok</h2>
             <p>Perbarui data blok</p>
         </div>
-        <a href="{{ route('admin.blok.index') }}" class="btn-back">
+        {{-- <a href="{{ route('admin.blok.index') }}" class="btn-back">
             <i class="bi bi-arrow-left"></i> Kembali
-        </a>
+        </a> --}}
     </div>
 
     @if ($errors->any())
@@ -58,7 +58,7 @@
 
                     <div class="d-flex gap-2 pt-3">
                         <a href="{{ route('admin.blok.index') }}" class="btn-cancel">
-                            <i class="bi bi-x"></i> Batal
+                            <i class="bi bi-x"></i> Kembali
                         </a>
                         <button type="submit" class="btn-submit">
                             <i class="bi bi-check"></i> Update Data

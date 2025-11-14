@@ -7,9 +7,9 @@
             <h2>Tambah Data Warga</h2>
             <p>Tambahkan data warga baru</p>
         </div>
-        <a href="{{ route('admin.warga.index') }}" class="btn-back">
+        {{-- <a href="{{ route('admin.warga.index') }}" class="btn-back">
             <i class="bi bi-arrow-left"></i> Kembali
-        </a>
+        </a> --}}
     </div>
 
     @if ($errors->any())
