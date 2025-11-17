@@ -21,12 +21,9 @@
                 <span class="input-group-text bg-white border-end-0">
                     <i class="bi bi-search"></i>
                 </span>
-
-                <input type="text" name="search"
-                       class="form-control border-start-0"
+                <input type="text" name="search" class="form-control border-start-0"
                        placeholder="Cari nama, NIK, atau no telepon..."
                        value="{{ $search ?? '' }}">
-
                 <button class="btn btn-primary" type="submit">
                     <i class="bi bi-search"></i> Cari
                 </button>
@@ -37,12 +34,10 @@
     {{-- Data List --}}
     <div class="data-card">
         @if ($dataWarga->count() > 0)
-
             {{-- Accordion --}}
             <div class="accordion" id="accordionWarga">
                 @foreach ($dataWarga as $index => $warga)
                     <div class="accordion-item">
-
                         {{-- Accordion Header --}}
                         <h2 class="accordion-header">
                             <button class="accordion-button collapsed"
@@ -69,7 +64,6 @@
                                         <strong>{{ $warga->nama_lengkap }}</strong>
                                         <small class="text-muted d-block">
                                             <i class="bi bi-card-text"></i> {{ $warga->nik }}
-
                                             @if ($warga->jenis_kelamin == 'Laki-laki')
                                                 <span class="badge bg-info ms-2">
                                                     <i class="bi bi-gender-male"></i> L
@@ -90,51 +84,43 @@
                             </button>
                         </h2>
 
-                        {{-- Content --}}
+                        {{-- Accordion Content --}}
                         <div id="collapse{{ $warga->id }}"
                              class="accordion-collapse collapse"
                              data-bs-parent="#accordionWarga">
                             <div class="accordion-body">
-
                                 <div class="row g-3">
 
                                     {{-- Kolom Kiri --}}
                                     <div class="col-md-6">
-
                                         {{-- Data Pribadi --}}
                                         <div class="detail-section">
                                             <h6 class="detail-section-title">
                                                 <i class="bi bi-person-badge"></i> Data Pribadi
                                             </h6>
-
                                             <div class="detail-grid">
                                                 <div class="detail-item">
                                                     <span class="detail-label">NIK</span>
                                                     <span class="detail-value">{{ $warga->nik }}</span>
                                                 </div>
-
                                                 <div class="detail-item">
                                                     <span class="detail-label">Nama Lengkap</span>
                                                     <span class="detail-value">{{ $warga->nama_lengkap }}</span>
                                                 </div>
-
                                                 <div class="detail-item">
                                                     <span class="detail-label">Jenis Kelamin</span>
                                                     <span class="detail-value">{{ $warga->jenis_kelamin }}</span>
                                                 </div>
-
                                                 <div class="detail-item">
                                                     <span class="detail-label">Tanggal Lahir</span>
                                                     <span class="detail-value">
                                                         {{ \Carbon\Carbon::parse($warga->tanggal_lahir)->format('d/m/Y') }}
                                                     </span>
                                                 </div>
-
                                                 <div class="detail-item">
                                                     <span class="detail-label">Agama</span>
                                                     <span class="detail-value">{{ $warga->agama }}</span>
                                                 </div>
-
                                                 <div class="detail-item">
                                                     <span class="detail-label">Golongan Darah</span>
                                                     <span class="detail-value">{{ $warga->gol_darah ?? '-' }}</span>
@@ -147,13 +133,11 @@
                                             <h6 class="detail-section-title">
                                                 <i class="bi bi-telephone"></i> Data Kontak
                                             </h6>
-
                                             <div class="detail-grid">
                                                 <div class="detail-item">
                                                     <span class="detail-label">No. Telepon</span>
                                                     <span class="detail-value">{{ $warga->no_telp ?? '-' }}</span>
                                                 </div>
-
                                                 <div class="detail-item">
                                                     <span class="detail-label">Email</span>
                                                     <span class="detail-value">{{ $warga->email ?? '-' }}</span>
@@ -167,7 +151,6 @@
                                                 <h6 class="detail-section-title">
                                                     <i class="bi bi-card-image"></i> Foto KTP
                                                 </h6>
-
                                                 <img src="{{ asset('storage/' . $warga->foto_ktp) }}"
                                                      alt="KTP {{ $warga->nama_lengkap }}"
                                                      class="img-thumbnail"
@@ -178,22 +161,23 @@
 
                                     {{-- Kolom Kanan --}}
                                     <div class="col-md-6">
-
                                         {{-- Data Rumah --}}
                                         <div class="detail-section">
                                             <h6 class="detail-section-title">
                                                 <i class="bi bi-house"></i> Data Keluarga & Rumah
                                             </h6>
-
                                             <div class="detail-grid">
                                                 <div class="detail-item">
                                                     <span class="detail-label">Hubungan Keluarga</span>
                                                     <span class="detail-value">{{ $warga->hubungan }}</span>
                                                 </div>
-
                                                 <div class="detail-item">
                                                     <span class="detail-label">Alamat Rumah</span>
-                                                    <span class="detail-value">{{ $warga->rumah->alamat ?? '-' }}</span>
+                                                    <span class="detail-value">
+                                                        {{ $warga->rumah->warga->nama_lengkap ?? '-' }}
+                                                        - {{ $warga->rumah->cluster->namaCluster->nama_cluster ?? '-' }}
+                                                        - {{ $warga->rumah->nomor_rumah ?? '-' }}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -203,20 +187,15 @@
                                             <h6 class="detail-section-title">
                                                 <i class="bi bi-briefcase"></i> Data Pekerjaan & Pendidikan
                                             </h6>
-
                                             <div class="detail-grid">
                                                 <div class="detail-item">
                                                     <span class="detail-label">Pendidikan Terakhir</span>
-                                                    <span class="detail-value">
-                                                        {{ $warga->pendidikan_terakhir ?? '-' }}
-                                                    </span>
+                                                    <span class="detail-value">{{ $warga->pendidikan_terakhir ?? '-' }}</span>
                                                 </div>
-
                                                 <div class="detail-item">
                                                     <span class="detail-label">Pekerjaan</span>
                                                     <span class="detail-value">{{ $warga->pekerjaan ?? '-' }}</span>
                                                 </div>
-
                                                 <div class="detail-item">
                                                     <span class="detail-label">Gaji</span>
                                                     <span class="detail-value">
@@ -233,10 +212,8 @@
                                                    class="btn-action btn-edit flex-fill">
                                                     <i class="bi bi-pencil"></i> Edit
                                                 </a>
-
                                                 <form action="{{ route('admin.warga.destroy', $warga->id) }}"
-                                                      method="POST"
-                                                      class="form-hapus flex-fill">
+                                                      method="POST" class="form-hapus flex-fill">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
@@ -248,12 +225,11 @@
                                             </div>
                                         </div>
 
-                                    </div>
+                                    </div> {{-- End Kolom Kanan --}}
 
-                                </div>
-                            </div>
+                                </div> {{-- End Row --}}
+                            </div> {{-- End Accordion Body --}}
                         </div>
-
                     </div>
                 @endforeach
             </div>
@@ -272,19 +248,15 @@
             </div>
 
         @else
-
             {{-- Empty State --}}
             <div class="empty-state text-center py-5">
                 <i class="bi bi-inbox display-4 text-muted"></i>
-
                 @if ($search)
                     <h5 class="mt-3 fw-bold">Tidak Ada Hasil</h5>
                     <p class="text-muted">Pencarian untuk "<strong>{{ $search }}</strong>" tidak ditemukan.</p>
                     <a href="{{ route('admin.warga.index') }}" 
-                           class="btn btn-outline-secondary btn-sm mt-2 px-3 py-1"
-                           style="font-size: 14px;">
-                            Reset
-                        </a>
+                       class="btn btn-outline-secondary btn-sm mt-2 px-3 py-1"
+                       style="font-size: 14px;">Reset</a>
                 @else
                     <h5 class="mt-3 fw-bold">Belum Ada Data</h5>
                     <p class="text-muted">Silakan tambahkan data warga pertama Anda.</p>
@@ -293,7 +265,6 @@
                     </a>
                 @endif
             </div>
-
         @endif
     </div>
 </div>
@@ -302,7 +273,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-
     @if (session('success'))
         Swal.fire({
             icon: 'success',
@@ -343,88 +313,87 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
-
 });
 </script>
 
 {{-- Styles --}}
 <style>
-    .accordion-item {
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        margin-bottom: 1rem;
-        overflow: hidden;
-    }
+.accordion-item {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
 
-    .accordion-button {
-        background: #fff;
-        padding: 1rem 1.25rem;
-        font-size: 0.95rem;
-    }
+.accordion-button {
+    background: #fff;
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+}
 
-    .accordion-button:not(.collapsed) {
-        background: #f8fafc;
-        color: #1e293b;
-        box-shadow: none;
-    }
+.accordion-button:not(.collapsed) {
+    background: #f8fafc;
+    color: #1e293b;
+    box-shadow: none;
+}
 
-    .accordion-button:focus {
-        box-shadow: none;
-        border-color: #e2e8f0;
-    }
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: #e2e8f0;
+}
 
-    .avatar-circle {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: 1.2rem;
-    }
+.avatar-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
 
-    .detail-section {
-        background: #f8fafc;
-        padding: 1rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-    }
+.detail-section {
+    background: #f8fafc;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
 
-    .detail-section-title {
-        font-size: .9rem;
-        font-weight: 600;
-        color: #475569;
-        margin-bottom: .75rem;
-        border-bottom: 2px solid #e2e8f0;
-        padding-bottom: .5rem;
-    }
+.detail-section-title {
+    font-size: .9rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: .75rem;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: .5rem;
+}
 
-    .detail-grid {
-        display: grid;
-        gap: .75rem;
-    }
+.detail-grid {
+    display: grid;
+    gap: .75rem;
+}
 
-    .detail-item .detail-label {
-        font-size: .75rem;
-        color: #64748b;
-        text-transform: uppercase;
-        margin-bottom: .25rem;
-    }
+.detail-item .detail-label {
+    font-size: .75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    margin-bottom: .25rem;
+}
 
-    .detail-item .detail-value {
-        font-size: .9rem;
-        color: #1e293b;
-    }
+.detail-item .detail-value {
+    font-size: .9rem;
+    color: #1e293b;
+}
 
-    @media (max-width: 768px) {
-        .accordion-button .d-flex {
-            flex-direction: column;
-            align-items: flex-start !important;
-        }
+@media (max-width: 768px) {
+    .accordion-button .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
     }
+}
 </style>
 
 @endsection

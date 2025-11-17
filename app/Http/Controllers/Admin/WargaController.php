@@ -29,7 +29,7 @@ class WargaController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->appends(['search' => $search]);
-
+            // dd($dataWarga);
         return view('pages.admin.warga.index', compact('dataWarga', 'search'));
     }
 
@@ -37,10 +37,13 @@ class WargaController extends Controller
      * Menampilkan form tambah warga
      */
     public function create()
-    {
-        $rumahList = Rumah::all();
-        return view('pages.admin.warga.create', compact('rumahList'));
-    }
+{
+    $rumahList = Rumah::with('warga', 'cluster','cluster.namaCluster', 'cluster.blok')->get();
+        
+    return view('pages.admin.warga.create', compact('rumahList'));
+}
+
+
 
     /**
      * Menyimpan data warga baru
@@ -57,7 +60,7 @@ class WargaController extends Controller
             'tanggal_lahir' => 'required|date',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'hubungan' => 'required|string|max:255',
-            'id_rumah' => 'nullable|exists:rumah,id',
+            'id_rumah' => 'required|exists:rumah,id',
             'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'foto_ktp' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'email' => 'nullable|email|max:255',
@@ -99,19 +102,38 @@ class WargaController extends Controller
     /**
      * Form edit warga
      */
-    public function edit($id)
-    {
-        $warga = Warga::with('rumah')->findOrFail($id);
-        $rumahList = Rumah::all();
+   public function edit($id)
+{
+    $warga = Warga::with('rumah')->findOrFail($id);
 
-        return view('pages.admin.warga.edit', compact('warga', 'rumahList'));
-    }
+
+    // $rumahList = Rumah::leftJoin('warga', 'warga.id_rumah', '=', 'rumah.id')
+    //     ->leftJoin('nama_cluster', 'nama_cluster.id', '=', 'rumah.id_cluster')
+    //     ->select(
+    //         'rumah.id', // ID rumah
+    //         'warga.nama_lengkap as pemilik',
+    //         'nama_cluster.nama_cluster',
+    //         'rumah.nomor_rumah'
+    //     )
+    //     ->get();
+
+
+    $rumahList = Rumah::with('warga', 'cluster','cluster.namaCluster', 'cluster.blok')->get();
+    
+// dd($rumahList);
+    return view('pages.admin.warga.edit', compact('warga', 'rumahList'));
+}
+
+
+
+
 
     /**
      * Update warga
      */
     public function update(Request $request, $id)
     {
+        // dd($request->all());
         $warga = Warga::findOrFail($id);
 
         // Convert format gaji
@@ -124,7 +146,7 @@ class WargaController extends Controller
             'tanggal_lahir' => 'required|date',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'hubungan' => 'required|string|max:255',
-            'id_rumah' => 'nullable|exists:rumah,id',
+            'id_rumah' => 'required|exists:rumah,id',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'foto_ktp' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'email' => 'nullable|email|max:255',
