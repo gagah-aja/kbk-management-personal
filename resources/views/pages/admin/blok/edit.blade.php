@@ -36,25 +36,26 @@
                     @method('PUT')
                     
                     <div class="mb-4">
-                        <label for="nama_blok" class="form-label">
-                            Nama Blok Baru <span class="text-danger">*</span>
-                        </label>
-                        <input type="text" 
-                               name="nama_blok" 
-                               id="nama_blok"
-                               class="form-control @error('nama_blok') is-invalid @enderror" 
-                               placeholder="Contoh: Blok A, Blok B, dll"
-                               value="{{ old('nama_blok', $blok->nama_blok) }}"
-                               required
-                               autofocus>
-                        @error('nama_blok')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                        <div class="form-hint">
-                            <i class="bi bi-info-circle"></i>
-                            Nama blok harus unik dan belum terdaftar
-                        </div>
-                    </div>
+    <label for="nama_blok" class="form-label">
+        Nama Blok Baru <span class="text-danger">*</span>
+    </label>
+    <select name="nama_blok" id="nama_blok" class="form-select @error('nama_blok') is-invalid @enderror" required autofocus>
+        <option value="">-- Pilih Blok --</option>
+        @foreach (range('A', 'Z') as $letter)
+            <option value="{{ $letter }}" {{ old('nama_blok', $blok->nama_blok) == $letter ? 'selected' : '' }}>
+                {{ $letter }}
+            </option>
+        @endforeach
+    </select>
+    @error('nama_blok')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+    <div class="form-hint">
+        <i class="bi bi-info-circle"></i>
+        Nama blok harus unik dan belum terdaftar
+    </div>
+</div>
+
 
                     <div class="d-flex gap-2 pt-3">
                         <a href="{{ route('admin.blok.index') }}" class="btn-cancel">
