@@ -183,19 +183,22 @@
                                 @enderror
                             </div>
 
-                            {{-- Pilih Rumah --}}
+                            {{-- Pilih Rumah dengan Search Bar --}}
                             <div class="col-12">
-                                <label for="id_rumah" class="form-label">Pilih Rumah</label>
-                                <select name="id_rumah" id="id_rumah" class="form-select" required>
+                                <label for="id_rumah" class="form-label">Pilih Rumah <span class="text-danger">*</span></label>
+                                <select name="id_rumah" id="id_rumah" class="form-select select2-rumah" required>
                                     <option value="">-- Pilih Rumah --</option>
                                     @foreach ($rumahList->unique('id') as $r)
                                         <option value="{{ $r->id }}" {{ old('id_rumah', $warga->id_rumah ?? null) == $r->id ? 'selected' : '' }}>
-                                            Pemilik Rumah: {{ $r->warga->nama_lengkap ?? 'Tidak ada pemilik' }} - 
-                                            Blok: {{ $r->cluster->blok->nama_blok ?? '-' }} - 
-                                            Nama Cluster: {{ $r->cluster->namaCluster->nama_cluster ?? '-' }}
+                                            {{ $r->warga->nama_lengkap ?? 'Tidak ada pemilik' }} - 
+                                            {{ $r->cluster->blok->nama_blok ?? '-' }}{{ $r->cluster->blok->no_blok ?? '' }} - 
+                                            {{ $r->cluster->namaCluster->nama_cluster ?? '-' }}
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('id_rumah')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -292,8 +295,33 @@
     </form>
 </div>
 
+{{-- Include Select2 CSS --}}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
 {{-- Script Preview Foto & Gaji --}}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
+// Initialize Select2 untuk dropdown rumah
+$(document).ready(function() {
+    $('.select2-rumah').select2({
+        theme: 'bootstrap-5',
+        placeholder: '-- Pilih rumah --',
+        allowClear: true,
+        width: '100%',
+        language: {
+            noResults: function() {
+                return "Tidak ada hasil yang ditemukan";
+            },
+            searching: function() {
+                return "Mencari...";
+            }
+        }
+    });
+});
+
 function previewFoto(event) {
     const preview = document.getElementById('preview_foto');
     if (event.target.files[0]) {
@@ -348,6 +376,38 @@ gajiInput.form.addEventListener('submit', function() {
 
 .form-card-body {
     padding: 1.5rem 1.25rem;
+}
+
+/* Custom styling untuk Select2 */
+.select2-container--bootstrap-5 .select2-selection {
+    min-height: 38px;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
+
+.select2-container--bootstrap-5 .select2-selection--single {
+    padding: 0.375rem 0.75rem;
+}
+
+.select2-container--bootstrap-5.select2-container--focus .select2-selection,
+.select2-container--bootstrap-5.select2-container--open .select2-selection {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.select2-dropdown {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
+
+.select2-search--dropdown .select2-search__field {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 0.375rem 0.75rem;
+}
+
+.select2-results__option--highlighted {
+    background-color: #667eea !important;
 }
 </style>
 @endsection
