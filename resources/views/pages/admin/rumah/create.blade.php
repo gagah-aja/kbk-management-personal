@@ -7,9 +7,6 @@
             <h2>Tambah Data Rumah</h2>
             <p>Tambahkan data rumah baru</p>
         </div>
-        {{-- <a href="{{ route('admin.rumah.index') }}" class="btn-back">
-            <i class="bi bi-arrow-left"></i> Kembali
-        </a> --}}
     </div>
 
     @if ($errors->any())
@@ -26,7 +23,7 @@
     <div class="row">
         <div class="col-12">
             <div class="form-card">
-                <form action="{{ route('admin.rumah.store') }}" method="POST" enctype="multipart/form-data">
+                <form id="formRumah" action="{{ route('admin.rumah.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     
                     <div class="row g-3">
@@ -35,20 +32,21 @@
                             <label for="nomor_rumah" class="form-label">
                                 Nomor Rumah <span class="text-danger">*</span>
                             </label>
-                            <input type="text" 
+                            <input type="number" 
                                    name="nomor_rumah" 
                                    id="nomor_rumah"
                                    class="form-control @error('nomor_rumah') is-invalid @enderror" 
-                                   placeholder="Contoh: A-01, B-123"
+                                   placeholder="Contoh: 1, 2, 101"
                                    value="{{ old('nomor_rumah') }}"
                                    required
+                                   min="1"
                                    autofocus>
                             @error('nomor_rumah')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        {{-- ✅ Status Rumah (ambil dari tabel status_rumah) --}}
+                        {{-- Status Rumah --}}
                         <div class="col-md-6">
                             <label for="id_status_rumah" class="form-label">
                                 Status Rumah <span class="text-danger">*</span>
@@ -95,7 +93,6 @@
                                     class="form-select @error('id_cluster') is-invalid @enderror" 
                                     required>
                                 <option value="">-- Pilih Cluster --</option>
-                                
                                 @foreach($clusters as $cluster)
                                     <option value="{{ $cluster->id }}" {{ old('id_cluster') == $cluster->id ? 'selected' : '' }}>
                                         {{ $cluster->namaCluster->nama_cluster ?? 'N/A' }} - 
@@ -109,10 +106,10 @@
                             @enderror
                         </div>
 
-                        {{-- Penghuni (Warga) --}}
+                        {{-- Pemilik Rumah --}}
                         <div class="col-md-6">
                             <label for="id_warga" class="form-label">
-                                Pemilik Rumah <small class="text-muted"></small>
+                                Pemilik Rumah
                             </label>
                             <select name="id_warga" 
                                     id="id_warga" 
@@ -127,10 +124,6 @@
                             @error('id_warga')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <div class="form-hint">
-                                <i class="bi bi-info-circle"></i>
-                                
-                            </div>
                         </div>
 
                         {{-- Latitude --}}
@@ -183,8 +176,6 @@
                                 <i class="bi bi-info-circle"></i>
                                 Format: JPG, JPEG, PNG. Maksimal 2MB
                             </div>
-                            
-                            {{-- Preview Gambar --}}
                             <div id="imagePreview" class="mt-3" style="display: none;">
                                 <img id="preview" src="" alt="Preview" class="img-thumbnail" style="max-height: 200px;">
                             </div>
@@ -205,6 +196,18 @@
     </div>
 </div>
 
+{{-- Toast Notifikasi --}}
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="toastNomor" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Nomor rumah minimal adalah 1!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
 <script>
 function previewImage(event) {
     const reader = new FileReader();
@@ -218,5 +221,17 @@ function previewImage(event) {
         reader.readAsDataURL(event.target.files[0]);
     }
 }
+
+// Validasi nomor rumah minimal 1 sebelum submit dengan toast
+document.getElementById('formRumah').addEventListener('submit', function(e) {
+    const nomor = parseInt(document.getElementById('nomor_rumah').value);
+    if (isNaN(nomor) || nomor < 1) {
+        e.preventDefault();
+        const toastEl = document.getElementById('toastNomor');
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+        document.getElementById('nomor_rumah').focus();
+    }
+});
 </script>
 @endsection
