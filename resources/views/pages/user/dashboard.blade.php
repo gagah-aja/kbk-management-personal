@@ -60,8 +60,8 @@
                     Mari wujudkan Lingkungan Asri, Aman, dan Nyaman.
                 </p>
 
-                <a href="#statistik" class="btn btn-outline-light btn-lg fw-bold rounded-pill shadow-sm">
-                    Pelajari Statistik Perumahan <i class="bi bi-arrow-down-short"></i>
+                <a href="{{ route('search.index') }}" class="btn btn-outline-light btn-lg fw-bold rounded-pill shadow-sm">
+                    🔍 Cari Warga KBK <i class="bi bi-arrow-right-short"></i>
                 </a>
             </div>
         </div>

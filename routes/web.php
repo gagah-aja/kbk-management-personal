@@ -30,6 +30,11 @@ use App\Http\Controllers\UserController;
 // =====================================================
 Route::get('/', [UserController::class, 'index'])->name('dashboard');
 
+// 🔍 Route Pencarian Warga/Penghuni
+Route::get('/pencarian-warga', [App\Http\Controllers\SearchController::class, 'index'])->name('search.index');
+Route::get('/api/search-warga', [App\Http\Controllers\SearchController::class, 'search'])->name('search.api');
+Route::get('/api/detail-penghuni/{id}', [App\Http\Controllers\SearchController::class, 'detail'])->name('search.detail');
+
 Route::prefix('user')->name('user.')->group(function () {
     // Tambahkan route user di sini jika ada
 });
