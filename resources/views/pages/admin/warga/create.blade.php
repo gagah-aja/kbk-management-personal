@@ -308,16 +308,27 @@
 $(document).ready(function() {
     $('.select2-rumah').select2({
         theme: 'bootstrap-5',
-        placeholder: '-- Pilih rumah --',
+        placeholder: 'Pilih rumah...',
         allowClear: true,
         width: '100%',
         language: {
             noResults: function() {
-                return "Tidak ada hasil yang ditemukan";
+                return "❌ Tidak ada hasil yang ditemukan";
             },
             searching: function() {
-                return "Mencari...";
+                return "🔄 Mencari...";
+            },
+            inputTooShort: function() {
+                return "⌨️ Ketik untuk mencari...";
             }
+        }
+    });
+    
+    // Tambahkan icon search di input search
+    $(document).on('select2:open', () => {
+        const searchField = document.querySelector('.select2-search__field');
+        if (searchField) {
+            searchField.placeholder = '🔍 Ketik nama pemilik, blok, atau cluster...';
         }
     });
 });
