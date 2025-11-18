@@ -14,17 +14,18 @@
         </a> --}}
     </div>
 
-    {{-- Notifikasi error --}}
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <strong>Terdapat kesalahan:</strong>
-            <ul class="mb-0 mt-2">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+    {{-- SweetAlert Error Validation --}}
+@if ($errors->any())
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Validasi Gagal!',
+            html: `{!! implode('<br>', $errors->all()) !!}`,
+            confirmButtonColor: '#d33'
+        });
+    </script>
+@endif
+
 
     <div class="row">
         <div class="col-12">
@@ -208,17 +209,19 @@
 </div>
 
 <script>
-function previewImage(event) {
-    const reader = new FileReader();
-    reader.onload = function() {
-        const preview = document.getElementById('preview');
-        const previewDiv = document.getElementById('imagePreview');
-        preview.src = reader.result;
-        previewDiv.style.display = 'block';
+// Validasi nomor rumah minimal 1 (SweetAlert)
+document.getElementById('formEditRumah').addEventListener('submit', function(e) {
+    const nomor = parseInt(document.getElementById('nomor_rumah').value);
+    if (isNaN(nomor) || nomor < 1) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'warning',
+            title: 'Nomor rumah tidak valid!',
+            text: 'Nomor rumah minimal adalah 1.',
+        });
+        document.getElementById('nomor_rumah').focus();
     }
-    if(event.target.files[0]) {
-        reader.readAsDataURL(event.target.files[0]);
-    }
-}
+});
 </script>
+
 @endsection

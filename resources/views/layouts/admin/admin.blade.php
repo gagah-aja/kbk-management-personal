@@ -4,11 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem RT - Dashboard Modern</title>
+
+    {{-- Icons & Bootstrap --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    {{-- SweetAlert --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    {{-- Custom CSS --}}
     <link rel="stylesheet" href="{{ asset('css/crud-minimal.css') }}">
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -21,6 +27,7 @@
             overflow-x: hidden;
         }
 
+        /* Sidebar */
         #sidebar {
             width: 280px;
             height: 100vh;
@@ -42,6 +49,7 @@
             border-radius: 10px;
         }
 
+        /* Header Sidebar */
         .sidebar-header {
             margin-bottom: 35px;
             padding-bottom: 20px;
@@ -65,6 +73,7 @@
             margin: 0;
         }
 
+        /* Nav Item */
         .nav-item { margin-bottom: 6px; }
 
         .nav-link {
@@ -108,6 +117,7 @@
             box-shadow: 0 8px 24px rgba(245, 87, 108, 0.4);
         }
 
+        /* Main Content */
         #main-content {
             margin-left: 280px;
             padding: 40px;
@@ -119,6 +129,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Mobile Toggle */
         .mobile-toggle {
             display: none;
             position: fixed;
@@ -156,14 +167,18 @@
 </head>
 
 <body>
+
+    {{-- SweetAlert Notifications --}}
     <x-alert></x-alert>
 
+    {{-- Mobile Sidebar Toggle --}}
     <div class="mobile-toggle" onclick="toggleSidebar()">
         <i class="bi bi-list"></i>
     </div>
     <div class="mobile-overlay" onclick="toggleSidebar()"></div>
 
     <div class="d-flex">
+        {{-- Sidebar --}}
         <div id="sidebar">
             <div class="sidebar-header">
                 <h5>Sistem KBK</h5>
@@ -171,6 +186,7 @@
             </div>
 
             <ul class="nav flex-column mb-auto">
+
                 <li class="nav-item">
                     <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }}">
                         <i class="bi bi-grid-fill"></i> Dashboard
@@ -231,11 +247,12 @@
                     </a>
                 </li>
 
-                {{-- 🔹 Tombol Logout dengan Konfirmasi --}}
+                {{-- Logout --}}
                 <li class="nav-item">
                     <a href="#" class="nav-link logout-btn" id="logoutButton">
                         <i class="bi bi-box-arrow-left"></i> Logout
                     </a>
+
                     <form id="logoutForm" action="{{ route('logout') }}" method="POST" class="d-none">
                         @csrf
                     </form>
@@ -243,14 +260,18 @@
             </ul>
         </div>
 
+        {{-- Main Content --}}
         <div id="main-content" class="flex-grow-1">
             @yield('content')
         </div>
     </div>
 
+    {{-- Bootstrap JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    {{-- JS --}}
     <script>
-        // 📱 Toggle Sidebar (Mobile)
+        // Mobile Sidebar Toggle
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.querySelector('.mobile-overlay');
@@ -264,8 +285,8 @@
             });
         }
 
-        // 🚪 Logout Confirmation with SweetAlert
-        document.getElementById('logoutButton').addEventListener('click', function (e) {
+        // Logout Confirmation
+        document.getElementById('logoutButton').addEventListener('click', function(e) {
             e.preventDefault();
             Swal.fire({
                 title: 'Yakin ingin keluar?',
@@ -283,5 +304,6 @@
             });
         });
     </script>
+
 </body>
 </html>

@@ -9,15 +9,16 @@
         </div>
     </div>
 
+    {{-- SweetAlert Error Validation --}}
     @if ($errors->any())
-        <div class="alert alert-danger">
-            <strong>Terdapat kesalahan:</strong>
-            <ul class="mb-0 mt-2">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal!',
+                html: `{!! implode('<br>', $errors->all()) !!}`,
+                confirmButtonColor: '#d33'
+            });
+        </script>
     @endif
 
     <div class="row">
@@ -41,9 +42,6 @@
                                    required
                                    min="1"
                                    autofocus>
-                            @error('nomor_rumah')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
                         </div>
 
                         {{-- Status Rumah --}}
@@ -53,7 +51,7 @@
                             </label>
                             <select name="id_status_rumah" 
                                     id="id_status_rumah" 
-                                    class="form-select @error('id_status_rumah') is-invalid @enderror" 
+                                    class="form-select" 
                                     required>
                                 <option value="">-- Pilih Status Rumah --</option>
                                 @foreach($status_rumah as $status)
@@ -62,9 +60,6 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @error('id_status_rumah')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
                         </div>
 
                         {{-- Alamat Lengkap --}}
@@ -75,12 +70,9 @@
                             <textarea name="alamat_lengkap" 
                                       id="alamat_lengkap" 
                                       rows="3"
-                                      class="form-control @error('alamat_lengkap') is-invalid @enderror" 
+                                      class="form-control" 
                                       placeholder="Masukkan alamat lengkap rumah"
                                       required>{{ old('alamat_lengkap') }}</textarea>
-                            @error('alamat_lengkap')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
                         </div>
 
                         {{-- Cluster --}}
@@ -90,7 +82,7 @@
                             </label>
                             <select name="id_cluster" 
                                     id="id_cluster" 
-                                    class="form-select @error('id_cluster') is-invalid @enderror" 
+                                    class="form-select" 
                                     required>
                                 <option value="">-- Pilih Cluster --</option>
                                 @foreach($clusters as $cluster)
@@ -101,9 +93,6 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @error('id_cluster')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
                         </div>
 
                         {{-- Pemilik Rumah --}}
@@ -113,7 +102,7 @@
                             </label>
                             <select name="id_warga" 
                                     id="id_warga" 
-                                    class="form-select @error('id_warga') is-invalid @enderror">
+                                    class="form-select">
                                 <option value="">-- Pilih Pemilik Rumah --</option>
                                 @foreach($warga as $w)
                                     <option value="{{ $w->id }}" {{ old('id_warga') == $w->id ? 'selected' : '' }}>
@@ -121,9 +110,6 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @error('id_warga')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
                         </div>
 
                         {{-- Latitude --}}
@@ -134,12 +120,9 @@
                             <input type="text" 
                                    name="latitude" 
                                    id="latitude"
-                                   class="form-control @error('latitude') is-invalid @enderror" 
+                                   class="form-control" 
                                    placeholder="Contoh: -6.200000"
                                    value="{{ old('latitude') }}">
-                            @error('latitude')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
                         </div>
 
                         {{-- Longitude --}}
@@ -150,12 +133,9 @@
                             <input type="text" 
                                    name="longitude" 
                                    id="longitude"
-                                   class="form-control @error('longitude') is-invalid @enderror" 
+                                   class="form-control" 
                                    placeholder="Contoh: 106.816666"
                                    value="{{ old('longitude') }}">
-                            @error('longitude')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
                         </div>
 
                         {{-- Gambar --}}
@@ -166,16 +146,10 @@
                             <input type="file" 
                                    name="gambar" 
                                    id="gambar"
-                                   class="form-control @error('gambar') is-invalid @enderror"
+                                   class="form-control"
                                    accept="image/jpeg,image/jpg,image/png"
                                    onchange="previewImage(event)">
-                            @error('gambar')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <div class="form-hint">
-                                <i class="bi bi-info-circle"></i>
-                                Format: JPG, JPEG, PNG. Maksimal 2MB
-                            </div>
+
                             <div id="imagePreview" class="mt-3" style="display: none;">
                                 <img id="preview" src="" alt="Preview" class="img-thumbnail" style="max-height: 200px;">
                             </div>
@@ -196,40 +170,29 @@
     </div>
 </div>
 
-{{-- Toast Notifikasi --}}
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-    <div id="toastNomor" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body">
-                Nomor rumah minimal adalah 1!
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-    </div>
-</div>
-
 <script>
+// Preview Gambar
 function previewImage(event) {
     const reader = new FileReader();
     reader.onload = function() {
-        const preview = document.getElementById('preview');
-        const previewDiv = document.getElementById('imagePreview');
-        preview.src = reader.result;
-        previewDiv.style.display = 'block';
+        document.getElementById('preview').src = reader.result;
+        document.getElementById('imagePreview').style.display = 'block';
     }
-    if(event.target.files[0]) {
+    if (event.target.files[0]) {
         reader.readAsDataURL(event.target.files[0]);
     }
 }
 
-// Validasi nomor rumah minimal 1 sebelum submit dengan toast
+// Validasi nomor rumah minimal 1 (SweetAlert)
 document.getElementById('formRumah').addEventListener('submit', function(e) {
     const nomor = parseInt(document.getElementById('nomor_rumah').value);
     if (isNaN(nomor) || nomor < 1) {
         e.preventDefault();
-        const toastEl = document.getElementById('toastNomor');
-        const toast = new bootstrap.Toast(toastEl);
-        toast.show();
+        Swal.fire({
+            icon: 'warning',
+            title: 'Nomor rumah tidak valid!',
+            text: 'Nomor rumah minimal adalah 1.',
+        });
         document.getElementById('nomor_rumah').focus();
     }
 });
