@@ -65,11 +65,11 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link px-3 fw-semibold text-dark" href="#pengurus">Pengurus Warga (RW/RT)</a>
+                        <a class="nav-link px-3 fw-semibold text-dark" href="#pengurus-warga">Pengurus Warga (RW/RT)</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link px-3 fw-semibold text-dark" href="#peta">Peta Lokasi</a>
+                        <a class="nav-link px-3 fw-semibold text-dark" href="#maps">Peta Lokasi</a>
                     </li>
 
                 </ul>

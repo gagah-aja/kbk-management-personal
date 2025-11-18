@@ -124,7 +124,7 @@
         </div>
 
         {{-- BLOK 3: PENGURUS RW & RT --}}
-        <h2 class="fs-4 fw-bold mb-4 text-dark border-bottom pb-2">Pengurus Warga (RW)</h2>
+        <h2 id="pengurus-warga" class="fs-4 fw-bold mb-4 text-dark border-bottom pb-2">Pengurus Warga (RW)</h2>
         <div class="row g-4 mb-5 justify-content-center">
             {{-- Ketua RW --}}
             @if ($ketua_rw && $ketua_rw->warga)
@@ -163,7 +163,7 @@
         </div>
 
         {{-- BLOK 4: PETA --}}
-        <h2 class="fs-4 fw-bold mb-4 text-dark border-bottom pb-2">Peta Lokasi Kota Baru Keandra</h2>
+        <h2 id="maps" class="fs-4 fw-bold mb-4 text-dark border-bottom pb-2">Peta Lokasi Kota Baru Keandra</h2>
         <div class="card shadow-lg border-0 rounded-3 mb-5">
             <div class="card-body p-4">
                 <p class="text-muted small mb-3">
