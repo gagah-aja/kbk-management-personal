@@ -16,10 +16,7 @@
     .hero-section::before {
         content: "";
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        inset: 0;
         background: rgba(0, 0, 0, 0.65);
         z-index: 1;
     }
@@ -31,7 +28,7 @@
     }
 
     .data-card {
-        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .data-card:hover {
@@ -45,13 +42,39 @@
         border-radius: 0.5rem;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
+
+    /* ============================= */
+    /* 🎯 FOTO RW & RT RAPI FINAL   */
+    /* ============================= */
+    .leader-photo,
+    .leader-avatar {
+        width: 110px !important;
+        height: 110px !important;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #198754;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px auto;
+        background: #e9ecef;
+    }
+
+    .leader-avatar svg {
+        width: 60px;
+        height: 60px;
+    }
 </style>
+
 
 <div class="container py-4">
 
-    {{-- 🏡 BLOK 1: HERO SECTION --}}
+    {{-- ========================= --}}
+    {{-- 🏡 BLOK 1: HERO SECTION   --}}
+    {{-- ========================= --}}
     <div class="hero-section shadow-lg mb-5"
          style="background-image: url('{{ $landingPage && $landingPage->value ? asset('storage/' . $landingPage->value) : asset('image/Graha-Keandra-1.jpg') }}');">
+
         <div class="container hero-content text-center">
             <h5 class="text-uppercase fw-light mb-2 opacity-75">Selamat Datang di Portal Resmi</h5>
             <h1 class="display-3 fw-bolder mb-3">KOTA BARU KEANDRA</h1>
@@ -66,7 +89,10 @@
         </div>
     </div>
 
+
+    {{-- ======================= --}}
     {{-- BLOK 2: DATA STATISTIK --}}
+    {{-- ======================= --}}
     <h2 id="statistik" class="fs-4 fw-bold mb-4 text-dark border-bottom pb-2 pt-3">
         Data Pokok Kota Baru Keandra
     </h2>
@@ -123,52 +149,90 @@
 
     </div>
 
-    {{-- BLOK 3: PENGURUS RW & RT --}}
-    <h2 id="pengurus-warga" class="fs-4 fw-bold mb-4 text-dark border-bottom pb-2">
-        Pengurus Warga (RW)
-    </h2>
 
-    <div class="row g-4 mb-5 justify-content-center">
+    {{-- ============================ --}}
+{{-- BLOK 3: PENGURUS RW & RT --}}
+{{-- ============================ --}}
 
-        {{-- Ketua RW --}}
-        @if ($ketua_rw && $ketua_rw->warga)
-            <div class="col-lg-4 col-md-6">
-                <div class="card leader-card border-0 rounded-3 shadow-sm text-center h-100">
-                    <div class="card-body p-4">
-                        <img src="{{ asset('storage/' . ($ketua_rw->warga->foto ?? 'default.png')) }}"
-                             alt="Ketua RW"
-                             class="rounded-circle mb-3 border border-2 border-success"
-                             style="width:80px; height:80px; object-fit:cover;">
+<h2 id="pengurus-warga" class="fs-4 fw-bold mb-4 text-dark border-bottom pb-2">
+    Pengurus Warga (RW)
+</h2>
 
-                        <p class="text-uppercase text-muted fw-semibold small mb-1">KETUA RW</p>
-                        <h4 class="fw-bold text-dark mb-0">{{ $ketua_rw->warga->nama_lengkap }}</h4>
-                        <p class="text-success fw-semibold mb-3">Bidang Kepemimpinan</p>
-                    </div>
+<div class="row g-4 mb-5 justify-content-center">
+
+    {{-- Ketua RW --}}
+    @if ($ketua_rw && $ketua_rw->warga)
+        @php
+            $foto_rw = $ketua_rw->warga->foto && file_exists(storage_path('app/public/' . $ketua_rw->warga->foto))
+                ? asset('storage/' . $ketua_rw->warga->foto)
+                : null;
+        @endphp
+
+        <div class="col-lg-4 col-md-6">
+            <div class="card leader-card border-0 rounded-3 shadow-sm text-center h-100">
+                <div class="card-body p-4">
+
+                    @if($foto_rw)
+                        <img src="{{ $foto_rw }}" alt="Ketua RW" class="leader-photo">
+                    @else
+                        <div class="leader-avatar">
+                            <svg viewBox="0 0 24 24" fill="#6c757d">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 
+                                    1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 
+                                    1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
+                    @endif
+
+                    <p class="text-uppercase text-muted fw-semibold small mb-1">KETUA RW</p>
+                    <h4 class="fw-bold text-dark mb-0">{{ $ketua_rw->warga->nama_lengkap }}</h4>
+                    <p class="text-success fw-semibold mb-3">Bidang Kepemimpinan</p>
                 </div>
             </div>
-        @endif
+        </div>
+    @endif
 
-        {{-- Ketua RT --}}
-        @foreach ($ketua_rt as $ketua_rtdata)
-            <div class="col-lg-4 col-md-6">
-                <div class="card leader-card border-0 rounded-3 shadow-sm text-center h-100">
-                    <div class="card-body p-4">
-                        <img src="{{ asset('storage/' . ($ketua_rtdata->warga->foto ?? 'default.png')) }}"
-                             alt="Ketua RT"
-                             class="rounded-circle mb-3 border border-2 border-success"
-                             style="width:80px; height:80px; object-fit:cover;">
+    {{-- Ketua RT --}}
+    @foreach ($ketua_rt as $ketua_rtdata)
+        @php
+            $foto_rt = $ketua_rtdata->warga->foto && file_exists(storage_path('app/public/' . $ketua_rtdata->warga->foto))
+                ? asset('storage/' . $ketua_rtdata->warga->foto)
+                : null;
+        @endphp
 
-                        <p class="text-uppercase text-muted fw-semibold small mb-1">
-                            KETUA RT {{ $ketua_rtdata->nomor_rt ?? '001' }}
-                        </p>
-                        <h4 class="fw-bold text-dark mb-0">{{ $ketua_rtdata->warga->nama_lengkap }}</h4>
-                    </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="card leader-card border-0 rounded-3 shadow-sm text-center h-100">
+                <div class="card-body p-4">
+
+                    @if($foto_rt)
+                        <img src="{{ $foto_rt }}" alt="Ketua RT" class="leader-photo">
+                    @else
+                        <div class="leader-avatar">
+                            <svg viewBox="0 0 24 24" fill="#6c757d">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 
+                                    1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 
+                                    1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
+                    @endif
+
+                    <p class="text-uppercase text-muted fw-semibold small mb-1">
+                        KETUA RT {{ $ketua_rtdata->nomor_rt ?? '001' }}
+                    </p>
+                    <h4 class="fw-bold text-dark mb-0">{{ $ketua_rtdata->warga->nama_lengkap }}</h4>
                 </div>
             </div>
-        @endforeach
-    </div>
+        </div>
+    @endforeach
 
-    {{-- BLOK 4: PETA --}}
+</div>
+
+
+
+
+    {{-- =================== --}}
+    {{-- BLOK 4: PETA       --}}
+    {{-- =================== --}}
     <h2 id="maps" class="fs-4 fw-bold mb-4 text-dark border-bottom pb-2">
         Peta Lokasi Kota Baru Keandra
     </h2>
@@ -178,26 +242,33 @@
             <p class="text-muted small mb-3">
                 Peta ini menampilkan perkiraan batas area Kota Baru Keandra dan lokasi fasilitas umum.
             </p>
+
             <div id="mapid"></div>
         </div>
     </div>
 
 </div>
 
-{{-- Leaflet --}}
+
+{{-- =================== --}}
+{{-- Leaflet JS         --}}
+{{-- =================== --}}
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
         const initialCoords = [-6.7025, 108.4725];
         const mymap = L.map('mapid').setView(initialCoords, 15);
 
         L.tileLayer(
-            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            {
                 attribution: 'Tiles © Esri, USGS, etc.',
                 maxZoom: 18
-            }).addTo(mymap);
+            }
+        ).addTo(mymap);
 
         const keandraBoundary = [
             [-6.7005, 108.4700],
@@ -211,7 +282,9 @@
             weight: 3,
             fillColor: '#0d6efd',
             fillOpacity: 0.15
-        }).addTo(mymap).bindPopup("<b>Perkiraan Batas Kota Baru Keandra</b>");
+        })
+        .addTo(mymap)
+        .bindPopup("<b>Perkiraan Batas Kota Baru Keandra</b>");
 
         const pointsOfInterest = [
             { lat: -6.7025, lon: 108.4725, name: "Kantor Pengelola / Pos Utama" },
@@ -220,7 +293,8 @@
         ];
 
         pointsOfInterest.forEach(point => {
-            L.marker([point.lat, point.lon]).addTo(mymap)
+            L.marker([point.lat, point.lon])
+                .addTo(mymap)
                 .bindPopup("<b>" + point.name + "</b>");
         });
 
@@ -228,36 +302,117 @@
     });
 </script>
 
-{{-- FOOTER --}}
+
+{{-- =================== --}}
+{{-- FOOTER             --}}
+{{-- =================== --}}
 <footer class="mt-5 bg-dark text-white pt-4 pb-3">
     <div class="container">
 
-        <div class="row align-items-start gy-4">
+        <div class="row gy-4">
 
-            {{-- Kolom Kiri --}}
+            {{-- Kolom kiri --}}
             <div class="col-md-6">
                 <h5 class="fw-bold mb-3">Kota Baru Keandra</h5>
                 <p class="small text-white-50 mb-0">
                     Portal informasi resmi untuk warga Kota Baru Keandra.
-                    Menyediakan layanan data dan informasi lingkungan secara transparan,
-                    aman, dan mudah diakses.
+                    Menyediakan layanan data dan informasi lingkungan secara
+                    transparan, aman, dan mudah diakses.
                 </p>
             </div>
 
-            {{-- Kolom Kanan --}}
+            {{-- Kolom kanan --}}
             <div class="col-md-6">
-                <h5 class="fw-bold mb-3">Navigasi</h5>
-                <ul class="list-unstyled small mb-0">
-                    <li class="mb-2">
-                        <a href="#statistik" class="text-white-50 text-decoration-none">Statistik</a>
-                    </li>
-                    <li class="mb-2">
-                        <a href="#pengurus-warga" class="text-white-50 text-decoration-none">Pengurus</a>
-                    </li>
-                    <li>
-                        <a href="#maps" class="text-white-50 text-decoration-none">Peta Lokasi</a>
-                    </li>
-                </ul>
+                <div class="row">
+
+                    {{-- Media Sosial --}}
+                    <div class="col-6">
+                        <h5 class="fw-bold mb-3">Media Sosial</h5>
+                        <ul class="list-unstyled small mb-0">
+
+                            <li class="mb-2 d-flex align-items-center">
+    <svg width="26" height="26" viewBox="0 0 24 24" class="me-2">
+        <defs>
+            <linearGradient id="igGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fdf497" />
+                <stop offset="25%" stop-color="#fd5949" />
+                <stop offset="50%" stop-color="#d6249f" />
+                <stop offset="100%" stop-color="#285AEB" />
+            </linearGradient>
+        </defs>
+        <path fill="url(#igGradient)" d="M7 2C4.243 2 2 4.243 2 7v10c0 
+        2.757 2.243 5 5 5h10c2.757 0 5-2.243 
+        5-5V7c0-2.757-2.243-5-5-5H7zm10 
+        2c1.654 0 3 1.346 3 
+        3v10c0 1.654-1.346 3-3 
+        3H7c-1.654 0-3-1.346-3-3V7c0-1.654 
+        1.346-3 3-3h10zm-5 3c-2.757 0-5 
+        2.243-5 5s2.243 5 5 
+        5 5-2.243 5-5-2.243-5-5-5zm0 
+        2c1.654 0 3 1.346 3 
+        3s-1.346 3-3 3-3-1.346-3-3 
+        1.346-3 3-3zm4.5-.75a1.25 1.25 0 110 
+        2.5 1.25 1.25 0 010-2.5z"/>
+    </svg>
+
+    <a class="text-white-50 text-decoration-none" target="_blank"
+       href="https://www.instagram.com">Instagram</a>
+</li>
+
+
+                            <li class="mb-2 d-flex align-items-center">
+    <svg width="26" height="26" viewBox="0 0 24 24" class="me-2">
+        <path fill="#1877F2" d="M22 12a10 10 0 10-11.5 9.9v-7H8v-3h2.5V9.5a3.5 3.5 0 013.7-3.9c1 0 2 .1 2 .1v2.3H15c-1.2 0-1.6.8-1.6 1.6V12H18l-.5 3h-3.1v7A10 10 0 0022 12"/>
+    </svg>
+
+    <a class="text-white-50 text-decoration-none" target="_blank"
+       href="https://www.facebook.com">Facebook</a>
+</li>
+
+
+                            <li class="d-flex align-items-center">
+    <svg width="26" height="26" viewBox="0 0 48 48" class="me-2">
+        <!-- Cyan shadow -->
+        <path fill="#69C9D0" d="M34.5 14.2c-2.8-1.4-5-3.7-6.4-6.5v18.2c0 5.8-4.7 10.5-10.5 10.5S7 31.7 7 25.9
+            S11.7 15.4 17.5 15.4c1 .0 2 .1 3 .4v6.7c-.9-.4-1.9-.6-3-.6c-3.6 0-6.5 2.9-6.5 6.5S13.9 35 17.5 35
+            s6.5-2.9 6.5-6.5V4h6v1.7c0 2.9 1.5 5.6 4 7.1c1.2.7 2.5 1.1 3.9 1.2v6.1c-2.1-.2-4.2-.8-6.4-1.9z" />
+
+        <!-- Magenta shadow -->
+        <path fill="#EE1D52" d="M38.4 11.9c-1.4-.1-2.7-.5-3.9-1.2c-2.5-1.5-4-4.2-4-7.1V4h-6v24.5
+            c0 3.6-2.9 6.5-6.5 6.5v6.7c5.8 0 10.5-4.7 10.5-10.5V13.8c1.4 2.8 3.6 5.1 6.4 6.5c2.1 1.1 4.3 1.7 6.4 1.9
+            v-6.1c-1.4-.1-2.7-.5-3.9-1.2z" />
+
+        <!-- Main black shape -->
+        <path fill="#010101" d="M30.7 10.4c-2.8-1.4-5-3.7-6.4-6.5V4H18v24.5c0 3.6-2.9 6.5-6.5 6.5
+            S5 32.1 5 28.5s2.9-6.5 6.5-6.5c1.1 0 2.1.2 3 .6v-6.7c-1-.3-2-.4-3-.4C5.8 15.4 1 20.2 1 25.9
+            S5.8 36.4 11.5 36.4S22 31.7 22 25.9V9c1.4 2.8 3.6 5.1 6.4 6.5c2.2 1.1 4.3 1.7 6.4 1.9v-6.1
+            c-1.4-.1-2.7-.5-3.9-1.2z" />
+    </svg>
+
+    <a class="text-white-50 text-decoration-none" target="_blank" href="https://www.tiktok.com">
+        TikTok
+    </a>
+</li>
+
+
+
+
+
+
+                        </ul>
+                    </div>
+
+                    {{-- Navigasi --}}
+                    <div class="col-6">
+                        <h5 class="fw-bold mb-3">Navigasi</h5>
+                        <ul class="list-unstyled small mb-0">
+                            <li class="mb-2"><a href="#statistik" class="text-white-50 text-decoration-none">Statistik</a></li>
+                            <li class="mb-2"><a href="#pengurus-warga" class="text-white-50 text-decoration-none">Pengurus</a></li>
+                            <li><a href="#maps" class="text-white-50 text-decoration-none">Peta Lokasi</a></li>
+                        </ul>
+                    </div>
+
+                </div>
             </div>
 
         </div>
