@@ -246,6 +246,26 @@
             .result-name {
                 font-size: 1.1rem;
             }
+            .house-wrapper {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+}
+
+.house-photo {
+    width: 180px;   /* sebelumnya 120px */
+    height: 130px;  /* sebelumnya 90px */
+    object-fit: cover;
+    border-radius: 10px;
+    border: 3px solid #667eea;
+}
+
+
+.house-data {
+    flex: 1;
+}
+
         }
     </style>
 </head>
@@ -389,34 +409,55 @@
         }
 
         function displayResults(results) {
-            emptyState.style.display = 'none';
-            noResults.style.display = 'none';
-            
-            resultsContainer.innerHTML = results.map(result => `
-                <div class="result-card" onclick="showDetail(${result.id})">
-                    <div class="d-flex">
-                        <img src="${result.foto}" alt="${result.nama_warga}" class="result-avatar me-3">
-                        <div class="flex-grow-1">
-                            <div class="result-name">${result.nama_warga}</div>
-                            <div class="result-info">
-                                <i class="bi bi-house-door"></i> ${result.alamat}
-                            </div>
-                            <div class="result-info">
-                                <i class="bi bi-geo-alt"></i> Cluster ${result.cluster} - Blok ${result.blok} (RT ${result.rt})
-                            </div>
-                            <div>
-                                <span class="result-badge ${result.tipe_penghuni === 'Pemilik' ? 'badge-pemilik' : 'badge-penyewa'}">
-                                    ${result.tipe_penghuni}
-                                </span>
-                                <span class="result-badge badge-kk">
-                                    ${result.status_penghuni}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+    emptyState.style.display = 'none';
+    noResults.style.display = 'none';
+
+    resultsContainer.innerHTML = results.map(result => `
+
+        <div class="house-wrapper">
+
+            <!-- FOTO RUMAH DI SEBELAH KIRI -->
+            <img src="${result.foto_rumah}" 
+     alt="Foto Rumah"
+     class="house-photo">
+
+
+            <!-- DATA DI SEBELAH KANAN -->
+            <div class="house-data result-card" onclick="showDetail(${result.id})">
+
+                <div style="display:flex; align-items:center; gap:10px;">
+    <img src="${result.foto}" 
+         class="result-avatar" 
+         style="width:55px; height:55px; border:2px solid #667eea;">
+    <div class="house-name">${result.nama_warga}</div>
+</div>
+
+
+                <div class="house-info">
+                    <i class="bi bi-house-door"></i> ${result.alamat}
                 </div>
-            `).join('');
-        }
+
+                <div class="house-info">
+                    <i class="bi bi-geo-alt"></i> 
+                    Cluster ${result.cluster} - Blok ${result.blok} (RT ${result.rt})
+                </div>
+
+                <div class="mt-1">
+                    <span class="result-badge ${result.tipe_penghuni === 'Pemilik' ? 'badge-pemilik' : 'badge-penyewa'}">
+                        ${result.tipe_penghuni}
+                    </span>
+                    <span class="result-badge badge-kk">
+                        ${result.status_penghuni}
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+    `).join('');
+}
+
 
         function showDetail(id) {
             const modal = new bootstrap.Modal(document.getElementById('detailModal'));
