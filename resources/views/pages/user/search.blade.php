@@ -8,7 +8,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
+
     <style>
         body {
             background: #f8f9fa;
@@ -44,7 +44,7 @@
             background: white;
             border-radius: 50px;
             padding: 0.5rem 1.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
             margin-bottom: 2rem;
@@ -76,14 +76,14 @@
             border-radius: 15px;
             padding: 1.5rem;
             margin-bottom: 1rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             cursor: pointer;
         }
 
         .result-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
         .result-avatar {
@@ -234,38 +234,51 @@
         .empty-state p {
             color: #718096;
         }
-            .search-header h1 {
-                font-size: 2rem;
-            }
-            
-            .result-avatar {
-                width: 60px;
-                height: 60px;
-            }
-            
-            .result-name {
-                font-size: 1.1rem;
-            }
-            .house-wrapper {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-    align-items: flex-start;
-}
 
-.house-photo {
-    width: 180px;   /* sebelumnya 120px */
-    height: 130px;  /* sebelumnya 90px */
-    object-fit: cover;
-    border-radius: 10px;
-    border: 3px solid #667eea;
-}
+        .search-header h1 {
+            font-size: 2rem;
+        }
 
+        .result-avatar {
+            width: 60px;
+            height: 60px;
+        }
 
-.house-data {
-    flex: 1;
-}
+        .result-name {
+            font-size: 1.1rem;
+        }
 
+        /* Wrapper untuk foto + data */
+        .house-wrapper {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            /* foto & data sejajar */
+            padding: 5px 0;
+        }
+
+        /* Foto rumah */
+        .house-photo {
+            width: 130px;
+            /* ukuran rapi */
+            height: 190px;
+            /* proporsional untuk foto horizontal */
+            object-fit: contain;
+            /* foto tidak terpotong */
+            border-radius: 10px;
+            border: 3px solid #667eea;
+            background: #f1f1f1;
+            padding: 4px;
+        }
+
+        /* Data pemilik */
+        .house-data {
+            flex: 1;
+            /* otomatis mengikuti ruang */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* biar teksnya sejajar tengah */
         }
     </style>
 </head>
@@ -286,12 +299,7 @@
         <!-- Search Box -->
         <div class="search-box">
             <i class="bi bi-search"></i>
-            <input 
-                type="text" 
-                id="searchInput" 
-                placeholder="Ketik nama warga untuk mencari..."
-                autocomplete="off"
-            >
+            <input type="text" id="searchInput" placeholder="Ketik nama warga untuk mencari..." autocomplete="off">
         </div>
 
         <!-- Loading State -->
@@ -338,7 +346,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         const searchInput = document.getElementById('searchInput');
         const resultsContainer = document.getElementById('resultsContainer');
@@ -409,67 +417,73 @@
         }
 
         function displayResults(results) {
-    emptyState.style.display = 'none';
-    noResults.style.display = 'none';
+            emptyState.style.display = 'none';
+            noResults.style.display = 'none';
 
-    resultsContainer.innerHTML = results.map(result => `
+            resultsContainer.innerHTML = results.map(result => `
 
         <div class="house-wrapper">
 
-            <!-- FOTO RUMAH DI SEBELAH KIRI -->
-            <img src="${result.foto_rumah}" 
-     alt="Foto Rumah"
-     class="house-photo">
+    <!-- FOTO RUMAH DI SEBELAH KIRI -->
+    <img 
+        style="width:200px; height:190px; object-fit:cover; object-position:center; 
+        border-radius:10px; border:3px solid #667eea; background:#f1f1f1; padding:4px;" 
+        src="${result.foto_rumah}" 
+        alt="Foto Rumah"
+        class="house-photo"
+    >
 
+    <!-- DATA DI SEBELAH KANAN -->
+    <div class="house-data result-card" onclick="showDetail(${result.id})">
 
-            <!-- DATA DI SEBELAH KANAN -->
-            <div class="house-data result-card" onclick="showDetail(${result.id})">
-
-                <div style="display:flex; align-items:center; gap:10px;">
-    <img src="${result.foto}" 
-         class="result-avatar" 
-         style="width:55px; height:55px; border:2px solid #667eea;">
-    <div class="house-name">${result.nama_warga}</div>
-</div>
-
-
-                <div class="house-info">
-                    <i class="bi bi-house-door"></i> ${result.alamat}
-                </div>
-
-                <div class="house-info">
-                    <i class="bi bi-geo-alt"></i> 
-                    Cluster ${result.cluster} - Blok ${result.blok} (RT ${result.rt})
-                </div>
-
-                <div class="mt-1">
-                    <span class="result-badge ${result.tipe_penghuni === 'Pemilik' ? 'badge-pemilik' : 'badge-penyewa'}">
-                        ${result.tipe_penghuni}
-                    </span>
-                    <span class="result-badge badge-kk">
-                        ${result.status_penghuni}
-                    </span>
-                </div>
-
-            </div>
-
+        <div style="display:flex; align-items:center; gap:10px;">
+            <img 
+                src="${result.foto}" 
+                class="result-avatar" 
+                style="width:55px; height:55px; object-fit:cover; object-position:center; border:2px solid #667eea;"
+            >
         </div>
 
+        <div class="house-name">${result.nama_warga}</div>
+
+        <div class="house-info">
+            <i class="bi bi-house-door"></i> ${result.alamat}
+        </div>
+
+        <div class="house-info">
+            <i class="bi bi-geo-alt"></i> 
+            Cluster ${result.cluster} - Blok ${result.blok} (RT ${result.rt})
+        </div>
+
+        <div class="mt-1">
+            <span class="result-badge ${result.tipe_penghuni === 'Pemilik' ? 'badge-pemilik' : 'badge-penyewa'}">
+                ${result.tipe_penghuni}
+            </span>
+            <span class="result-badge badge-kk">
+                ${result.status_penghuni}
+            </span>
+        </div>
+
+    </div> <!-- end house-data -->
+
+</div> <!-- end house-wrapper -->
+
+
     `).join('');
-}
+        }
 
 
         function showDetail(id) {
             const modal = new bootstrap.Modal(document.getElementById('detailModal'));
             const modalBody = document.getElementById('modalBody');
-            
+
             modalBody.innerHTML = `
                 <div class="text-center">
                     <div class="spinner-border text-primary" role="status"></div>
                     <p class="mt-2">Memuat detail...</p>
                 </div>
             `;
-            
+
             modal.show();
 
             fetch(`/api/detail-penghuni/${id}`)
