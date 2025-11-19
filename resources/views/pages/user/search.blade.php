@@ -328,23 +328,6 @@
         <div id="resultsContainer"></div>
     </div>
 
-    <!-- Detail Modal -->
-    <div class="modal fade" id="detailModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="bi bi-person-badge"></i> Detail Penghuni</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="modalBody">
-                    <div class="text-center">
-                        <div class="spinner-border text-primary" role="status"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -417,60 +400,102 @@
         }
 
         function displayResults(results) {
-            emptyState.style.display = 'none';
-            noResults.style.display = 'none';
+    emptyState.style.display = 'none';
+    noResults.style.display = 'none';
 
-            resultsContainer.innerHTML = results.map(result => `
+    resultsContainer.innerHTML = results.map(result => `
 
-        <div class="house-wrapper">
+    <div class="result-card" style="border-radius:20px; padding:20px;">
 
-    <!-- FOTO RUMAH DI SEBELAH KIRI -->
-    <img 
-        style="width:200px; height:190px; object-fit:cover; object-position:center; 
-        border-radius:10px; border:3px solid #667eea; background:#f1f1f1; padding:4px;" 
-        src="${result.foto_rumah}" 
-        alt="Foto Rumah"
-        class="house-photo"
-    >
+        <!-- WRAPPER FOTO RUMAH + DATA (CENTERED) -->
+        <div style="
+            display:flex; 
+            gap:25px; 
+            align-items:center;
+        ">
 
-    <!-- DATA DI SEBELAH KANAN -->
-    <div class="house-data result-card" onclick="showDetail(${result.id})">
-
-        <div style="display:flex; align-items:center; gap:10px;">
+            <!-- FOTO RUMAH BESAR & HORIZONTAL -->
             <img 
-                src="${result.foto}" 
-                class="result-avatar" 
-                style="width:55px; height:55px; object-fit:cover; object-position:center; border:2px solid #667eea;"
+                src="${result.foto_rumah}" 
+                alt="Foto Rumah"
+                style="
+                    width:260px;
+                    height:180px;
+                    object-fit:cover;
+                    object-position:center;
+                    border-radius:15px;
+                    border:4px solid #667eea;
+                    background:#f1f1f1;
+                    padding:4px;
+                "
             >
+
+            <!-- DATA PENGHUNI (DITENGAHIN) -->
+            <div style="
+                flex:1; 
+                display:flex; 
+                flex-direction:column; 
+                justify-content:center; 
+                align-items:flex-start;
+            ">
+
+                <!-- FOTO PROFIL + NAMA TENGAH -->
+                <div style="
+                    display:flex; 
+                    align-items:center; 
+                    gap:12px; 
+                    margin-bottom:10px;
+                ">
+                    <img 
+                        src="${result.foto}" 
+                        class="result-avatar"
+                        style="
+                            width:65px; 
+                            height:65px; 
+                            border-radius:50%; 
+                            border:3px solid #667eea; 
+                            object-fit:cover;
+                        "
+                    >
+                    <h4 style="
+                        margin:0; 
+                        font-size:1.3rem; 
+                        font-weight:700; 
+                        color:#2d3748;
+                    ">
+                        ${result.nama_warga}
+                    </h4>
+                </div>
+
+                <!-- ALAMAT (CENTER STYLE) -->
+                <div style="
+                    color:#718096; 
+                    font-size:1rem; 
+                    margin-bottom:6px;
+                ">
+                    <i class="bi bi-house-door"></i> ${result.alamat}
+                </div>
+
+                <!-- CLUSTER / BLOK / RT (CENTER STYLE) -->
+                <div style="
+                    color:#718096; 
+                    font-size:1rem;
+                ">
+                    <i class="bi bi-geo-alt"></i> 
+                    Cluster ${result.cluster} - Blok ${result.blok} (RT ${result.rt})
+                </div>
+
+            </div>
+
         </div>
+        <!-- END WRAPPER -->
 
-        <div class="house-name">${result.nama_warga}</div>
-
-        <div class="house-info">
-            <i class="bi bi-house-door"></i> ${result.alamat}
-        </div>
-
-        <div class="house-info">
-            <i class="bi bi-geo-alt"></i> 
-            Cluster ${result.cluster} - Blok ${result.blok} (RT ${result.rt})
-        </div>
-
-        <div class="mt-1">
-            <span class="result-badge ${result.tipe_penghuni === 'Pemilik' ? 'badge-pemilik' : 'badge-penyewa'}">
-                ${result.tipe_penghuni}
-            </span>
-            <span class="result-badge badge-kk">
-                ${result.status_penghuni}
-            </span>
-        </div>
-
-    </div> <!-- end house-data -->
-
-</div> <!-- end house-wrapper -->
-
+    </div>
 
     `).join('');
-        }
+}
+
+
 
 
         function showDetail(id) {
@@ -555,21 +580,6 @@
                             <div class="col-md-4">
                                 <div class="detail-label">🏘️ RT</div>
                                 <div class="detail-value">${data.rt}</div>
-                            </div>
-                        </div>
-
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <div class="detail-label">👥 Status Penghuni</div>
-                                <div class="detail-value">
-                                    <span class="badge bg-warning text-dark">${data.status_penghuni}</span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="detail-label">🏠 Tipe Penghuni</div>
-                                <div class="detail-value">
-                                    <span class="badge ${data.tipe_penghuni === 'Pemilik' ? 'bg-success' : 'bg-info'}">${data.tipe_penghuni}</span>
-                                </div>
                             </div>
                         </div>
 
