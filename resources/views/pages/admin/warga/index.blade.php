@@ -146,17 +146,17 @@
                                         </div>
 
                                         {{-- Foto KTP --}}
-                                        @if ($warga->foto_ktp)
-                                            <div class="detail-section">
-                                                <h6 class="detail-section-title">
-                                                    <i class="bi bi-card-image"></i> Foto KTP
-                                                </h6>
-                                                <img src="{{ asset('storage/' . $warga->foto_ktp) }}"
-                                                     alt="KTP {{ $warga->nama_lengkap }}"
-                                                     class="img-thumbnail"
-                                                     style="max-width: 300px;">
-                                            </div>
-                                        @endif
+@if ($warga->foto_ktp)
+    <div class="detail-section">
+        <h6 class="detail-section-title">
+            <i class="bi bi-card-image"></i> Foto KTP
+        </h6>
+        <img src="{{ asset('storage/' . $warga->foto_ktp) }}"
+             alt="KTP {{ $warga->nama_lengkap }}"
+             class="img-thumbnail ktp-img">
+    </div>
+@endif
+
                                     </div>
 
                                     {{-- Kolom Kanan --}}
@@ -318,6 +318,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 {{-- Styles --}}
 <style>
+/* ======================================== */
+/* ACCORDION ITEM & HEADER                  */
+/* ======================================== */
 .accordion-item {
     border: 1px solid #e2e8f0;
     border-radius: 12px;
@@ -342,6 +345,9 @@ document.addEventListener('DOMContentLoaded', () => {
     border-color: #e2e8f0;
 }
 
+/* ======================================== */
+/* AVATAR & FOTO KTP                        */
+/* ======================================== */
 .avatar-circle {
     width: 50px;
     height: 50px;
@@ -353,8 +359,29 @@ document.addEventListener('DOMContentLoaded', () => {
     justify-content: center;
     font-weight: bold;
     font-size: 1.2rem;
+    transition: transform 0.2s ease;
 }
 
+.accordion-button img,
+.detail-section img.img-thumbnail {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+/* Hover zoom effect desktop */
+@media (min-width: 769px) {
+    .accordion-button img:hover,
+    .avatar-circle:hover,
+    .detail-section img.img-thumbnail:hover {
+        transform: scale(1.1);
+    }
+}
+
+/* ======================================== */
+/* DETAIL SECTION                           */
+/* ======================================== */
 .detail-section {
     background: #f8fafc;
     padding: 1rem;
@@ -363,37 +390,121 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 
 .detail-section-title {
-    font-size: .9rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: #475569;
-    margin-bottom: .75rem;
+    margin-bottom: 0.75rem;
     border-bottom: 2px solid #e2e8f0;
-    padding-bottom: .5rem;
+    padding-bottom: 0.5rem;
 }
 
 .detail-grid {
     display: grid;
-    gap: .75rem;
+    gap: 0.75rem;
 }
 
 .detail-item .detail-label {
-    font-size: .75rem;
+    font-size: 0.75rem;
     color: #64748b;
     text-transform: uppercase;
-    margin-bottom: .25rem;
+    margin-bottom: 0.25rem;
 }
 
 .detail-item .detail-value {
-    font-size: .9rem;
+    font-size: 0.9rem;
     color: #1e293b;
 }
 
+/* ======================================== */
+/* RESPONSIVE MOBILE                        */
+/* ======================================== */
 @media (max-width: 768px) {
+
+    /* Accordion header → stack items */
     .accordion-button .d-flex {
         flex-direction: column;
         align-items: flex-start !important;
     }
+
+    .accordion-button .me-3 {
+        margin-bottom: 0.5rem !important;
+    }
+
+    .badge-number {
+        align-self: flex-start;
+        margin-top: 0.5rem;
+    }
+
+    /* Detail section 2 kolom → 1 kolom */
+    .accordion-body .row.g-3 {
+        flex-direction: column;
+    }
+
+    .col-md-6 {
+        width: 100% !important;
+    }
+
+    /* Detail section padding & font */
+    .detail-section {
+        padding: 0.75rem;
+    }
+
+    .detail-section-title {
+        font-size: 0.85rem;
+    }
+
+    .detail-item .detail-label {
+        font-size: 0.7rem;
+    }
+
+    .detail-item .detail-value {
+        font-size: 0.85rem;
+    }
+
+    /* Tombol aksi full-width */
+    .detail-section .d-flex.gap-2 {
+        flex-direction: column;
+    }
+
+    .detail-section .btn-action {
+        width: 100%;
+    }
+
+    /* Avatar lebih besar di mobile */
+    .accordion-button img,
+    .avatar-circle {
+        width: 55px;
+        height: 55px;
+        font-size: 1.1rem;
+    }
+
+    /* Foto KTP responsif dengan proporsi asli */
+    .detail-section img.img-thumbnail.ktp-img {
+        width: auto;
+        max-width: 100%;
+        height: auto;
+        aspect-ratio: 856 / 540; /* rasio KTP asli */
+        display: block;
+        object-fit: cover;
+    }
+
+    /* Form input & select full-width */
+    input.form-control,
+    select.form-select,
+    textarea.form-control {
+        width: 100%;
+    }
+
+    /* Hapus margin horizontal untuk card/detail di mobile */
+    .form-card {
+        margin-left: 0;
+        margin-right: 0;
+    }
 }
+
+
 </style>
+
+
 
 @endsection

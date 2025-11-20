@@ -365,56 +365,147 @@
     </script>
 
     {{-- Styles --}}
-    <style>
-        .form-card-header {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: #fff;
-            padding: .875rem 1.25rem;
-            font-weight: 600;
-            border-radius: 12px 12px 0 0;
-            font-size: .95rem;
-        }
+<style>
+/* ======================================== */
+/* FORM CARD & HEADER                       */
+/* ======================================== */
+.form-card-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    padding: .875rem 1.25rem;
+    font-weight: 600;
+    border-radius: 12px 12px 0 0;
+    font-size: .95rem;
+}
 
-        .form-card-body {
-            padding: 1.5rem 1.25rem;
-        }
+.form-card-body {
+    padding: 1.5rem 1.25rem;
+}
 
-        .form-hint {
-            font-size: .8rem;
-            color: #6b7280;
-            margin-top: .25rem;
-        }
+.form-hint {
+    font-size: .8rem;
+    color: #6b7280;
+    margin-top: .25rem;
+}
 
-        /* Custom styling untuk Select2 */
-        .select2-container--bootstrap-5 .select2-selection {
-            min-height: 38px;
-            border: 1px solid #dee2e6;
-            border-radius: 0.375rem;
-        }
+/* ======================================== */
+/* SELECT2 STYLING                          */
+/* ======================================== */
+.select2-container--bootstrap-5 .select2-selection {
+    min-height: 38px;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
 
-        .select2-container--bootstrap-5 .select2-selection--single {
-            padding: 0.375rem 0.75rem;
-        }
+.select2-container--bootstrap-5 .select2-selection--single {
+    padding: 0.375rem 0.75rem;
+}
 
-        .select2-container--bootstrap-5.select2-container--focus .select2-selection,
-        .select2-container--bootstrap-5.select2-container--open .select2-selection {
-            border-color: #86b7fe;
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        }
+.select2-container--bootstrap-5.select2-container--focus .select2-selection,
+.select2-container--bootstrap-5.select2-container--open .select2-selection {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
 
-        .select2-dropdown {
-            border: 1px solid #dee2e6;
-            border-radius: 0.375rem;
-        }
+.select2-dropdown {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
 
-        .select2-search--dropdown .select2-search__field {
-            border: 1px solid #dee2e6;
-            border-radius: 0.375rem;
-            padding: 0.375rem 0.75rem;
-        }
+.select2-search--dropdown .select2-search__field {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 0.375rem 0.75rem;
+}
 
-        .select2-results__option--highlighted {
-            background-color: #667eea !important;
-        }
-    </style>
+.select2-results__option--highlighted {
+    background-color: #667eea !important;
+}
+
+/* ======================================== */
+/* RESPONSIVE MOBILE FORM EDIT WARGA        */
+/* ======================================== */
+@media (max-width: 768px) {
+
+    /* Container padding lebih kecil */
+    .container-fluid {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+
+    /* Semua kolom full-width */
+    .col-lg-6, .col-md-6 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+
+    /* Form card padding lebih kecil */
+    .form-card {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-bottom: 1rem !important;
+    }
+
+    .form-card-body {
+        padding: 1rem !important;
+    }
+
+    /* Input, select, textarea full-width */
+    input.form-control,
+    select.form-select,
+    textarea.form-control {
+        width: 100% !important;
+    }
+
+    /* Tombol aksi full-width */
+    .btn-submit,
+    .btn-cancel {
+        width: 100% !important;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Foto preview full-width dan proporsional */
+    #preview_foto,
+    #preview_ktp {
+        max-width: 100% !important;
+        height: auto !important;
+        display: block !important;
+        margin-top: 0.5rem !important;
+    }
+
+    /* Select2 search input full-width */
+    .select2-container--bootstrap-5 {
+        width: 100% !important;
+    }
+
+    .select2-container--bootstrap-5 .select2-selection {
+        min-height: 38px;
+    }
+
+    /* Info box stack vertical */
+    .info-box .row > div {
+        width: 100% !important;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-box-label {
+        font-size: 0.75rem !important;
+    }
+
+    .info-box-value {
+        font-size: 0.85rem !important;
+    }
+
+    /* Label dan hint lebih kecil */
+    .form-label {
+        font-size: 0.85rem !important;
+    }
+
+    .form-hint {
+        font-size: 0.75rem !important;
+    }
+}
+</style>
+
 @endsection

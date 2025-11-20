@@ -389,7 +389,9 @@ gajiInput.form.addEventListener('submit', function() {
     padding: 1.5rem 1.25rem;
 }
 
-/* Custom styling untuk Select2 */
+/* ======================================== */
+/* SELECT2 CUSTOM STYLE                      */
+/* ======================================== */
 .select2-container--bootstrap-5 .select2-selection {
     min-height: 38px;
     border: 1px solid #dee2e6;
@@ -419,6 +421,76 @@ gajiInput.form.addEventListener('submit', function() {
 
 .select2-results__option--highlighted {
     background-color: #667eea !important;
+}
+
+/* ======================================== */
+/* FOTO & PREVIEW                            */
+/* ======================================== */
+#preview_foto,
+#preview_ktp {
+    max-width: 150px;
+    height: auto;
+    display: none;
+    border-radius: 8px;
+}
+
+/* KTP responsive dengan proporsi asli */
+.ktp-img {
+    width: auto;
+    max-width: 300px;
+    height: auto;
+    aspect-ratio: 856 / 540; /* rasio lebar:tinggi KTP */
+    display: block;
+    object-fit: cover;
+}
+
+/* ======================================== */
+/* RESPONSIVE MOBILE                         */
+/* ======================================== */
+@media (max-width: 768px) {
+    /* Kolom kiri & kanan full-width */
+    .row > .col-lg-6 {
+        width: 100%;
+        flex: 0 0 100%;
+    }
+
+    /* Form card padding lebih kecil */
+    .form-card-body {
+        padding: 1rem;
+    }
+
+    /* Label dan input lebih kecil */
+    .form-label {
+        font-size: 0.85rem;
+    }
+
+    .form-control,
+    .form-select {
+        font-size: 0.9rem;
+    }
+
+    /* Preview foto full-width */
+    #preview_foto,
+    #preview_ktp {
+        max-width: 100%;
+        height: auto;
+        margin-top: 0.5rem;
+    }
+
+    /* Tombol aksi full-width */
+    .d-flex.gap-2 {
+        flex-direction: column;
+    }
+
+    .btn-submit,
+    .btn-cancel {
+        width: 100%;
+    }
+
+    /* Select2 full-width */
+    .select2-container--bootstrap-5 {
+        width: 100% !important;
+    }
 }
 </style>
 @endsection
