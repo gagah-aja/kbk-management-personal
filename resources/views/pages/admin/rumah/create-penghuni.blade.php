@@ -17,7 +17,9 @@
                 {{-- Pilih Warga --}}
                 <div class="mb-3">
                     <label for="id_warga" class="form-label">Pilih Warga <span class="text-danger">*</span></label>
-                    <select name="id_warga" id="id_warga" class="form-select @error('id_warga') is-invalid @enderror" required>
+
+                    <select name="id_warga" id="id_warga"
+                        class="form-select form-control @error('id_warga') is-invalid @enderror" required>
                         <option value="">-- Pilih Warga --</option>
                         @foreach($warga as $w)
                             <option value="{{ $w->id }}" {{ old('id_warga') == $w->id ? 'selected' : '' }}>
@@ -25,6 +27,7 @@
                             </option>
                         @endforeach
                     </select>
+
                     @error('id_warga')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -33,12 +36,12 @@
                 {{-- Tipe Penghuni --}}
                 <div class="mb-3">
                     <label for="tipe_penghuni" class="form-label">Tipe Penghuni <span class="text-danger">*</span></label>
-                    <select name="tipe_penghuni" id="tipe_penghuni" class="form-select @error('tipe_penghuni') is-invalid @enderror" required>
+                    <select name="tipe_penghuni" id="tipe_penghuni"
+                        class="form-select @error('tipe_penghuni') is-invalid @enderror" required>
                         <option value="">-- Pilih Tipe --</option>
                         <option value="Pemilik" {{ old('tipe_penghuni') == 'Pemilik' ? 'selected' : '' }}>🏠 Pemilik</option>
                         <option value="Penyewa" {{ old('tipe_penghuni') == 'Penyewa' ? 'selected' : '' }}>🏘️ Penyewa</option>
                     </select>
-                    <small class="text-muted">Pemilik: Pemilik rumah | Penyewa: Orang yang menyewa rumah</small>
                     @error('tipe_penghuni')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -47,7 +50,8 @@
                 {{-- Status Penghuni --}}
                 <div class="mb-3">
                     <label for="status_penghuni" class="form-label">Status Penghuni <span class="text-danger">*</span></label>
-                    <select name="status_penghuni" id="status_penghuni" class="form-select @error('status_penghuni') is-invalid @enderror" required>
+                    <select name="status_penghuni" id="status_penghuni"
+                        class="form-select @error('status_penghuni') is-invalid @enderror" required>
                         <option value="">-- Pilih Status --</option>
                         <option value="Kepala Keluarga" {{ old('status_penghuni') == 'Kepala Keluarga' ? 'selected' : '' }}>Kepala Keluarga</option>
                         <option value="Istri/Suami" {{ old('status_penghuni') == 'Istri/Suami' ? 'selected' : '' }}>Istri/Suami</option>
@@ -63,9 +67,9 @@
                 {{-- Tanggal Masuk --}}
                 <div class="mb-3">
                     <label for="tanggal_masuk" class="form-label">Tanggal Masuk <span class="text-danger">*</span></label>
-                    <input type="date" name="tanggal_masuk" id="tanggal_masuk" 
-                           class="form-control @error('tanggal_masuk') is-invalid @enderror" 
-                           value="{{ old('tanggal_masuk', date('Y-m-d')) }}" required>
+                    <input type="date" name="tanggal_masuk" id="tanggal_masuk"
+                        class="form-control @error('tanggal_masuk') is-invalid @enderror"
+                        value="{{ old('tanggal_masuk', date('Y-m-d')) }}" required>
                     @error('tanggal_masuk')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -74,7 +78,9 @@
                 {{-- Keterangan --}}
                 <div class="mb-3">
                     <label for="keterangan" class="form-label">Keterangan (Opsional)</label>
-                    <textarea name="keterangan" id="keterangan" class="form-control @error('keterangan') is-invalid @enderror" rows="3" placeholder="Catatan tambahan...">{{ old('keterangan') }}</textarea>
+                    <textarea name="keterangan" id="keterangan"
+                        class="form-control @error('keterangan') is-invalid @enderror"
+                        rows="3" placeholder="Catatan tambahan...">{{ old('keterangan') }}</textarea>
                     @error('keterangan')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -95,4 +101,18 @@
     </div>
 
 </div>
+
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+
+<script>
+    new TomSelect("#id_warga", {
+        placeholder: "-- Pilih Warga --",
+        allowEmptyOption: true,
+        searchField: ["text"],
+        maxOptions: 2000,
+        closeAfterSelect: true,
+        sortField: { field: "text", direction: "asc" }
+    });
+</script>
 @endsection
