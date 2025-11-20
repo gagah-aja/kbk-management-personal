@@ -15,21 +15,29 @@
     </div>
 
     {{-- Search Box --}}
-    <div class="data-card mb-3">
-        <form action="{{ route('admin.warga.index') }}" method="GET">
-            <div class="input-group">
-                <span class="input-group-text bg-white border-end-0">
-                    <i class="bi bi-search"></i>
-                </span>
-                <input type="text" name="search" class="form-control border-start-0"
-                       placeholder="Cari nama, NIK, atau no telepon..."
-                       value="{{ $search ?? '' }}">
-                <button class="btn btn-primary" type="submit">
-                    <i class="bi bi-search"></i> Cari
-                </button>
-            </div>
-        </form>
-    </div>
+<div class="data-card mb-3">
+    <form action="{{ route('admin.warga.index') }}" method="GET">
+        <div class="input-group">
+            <span class="input-group-text bg-white border-end-0">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" name="search" class="form-control border-start-0"
+                   placeholder="Cari nama, NIK, atau no telepon..."
+                   value="{{ $search ?? '' }}">
+            
+            {{-- Tombol Cari --}}
+            <button class="btn btn-primary" type="submit">
+                <i class="bi bi-search"></i> Cari
+            </button>
+
+            {{-- Tombol Reset --}}
+            <a href="{{ route('admin.warga.index') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-x-circle"></i> Reset
+            </a>
+        </div>
+    </form>
+</div>
+
 
     {{-- Data List --}}
     <div class="data-card">

@@ -112,15 +112,22 @@
         </div>
 
         {{-- Pencarian --}}
-        <form method="GET" action="{{ route('admin.rumah.index') }}" class="mb-4">
-            <div class="input-group">
-                <input type="text" name="search" value="{{ request('search') }}" class="form-control"
-                    placeholder="Cari rumah / cluster / penghuni...">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-search"></i> Cari
-                </button>
-            </div>
-        </form>
+<form method="GET" action="{{ route('admin.rumah.index') }}" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+            placeholder="Cari rumah / cluster / penghuni...">
+        
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-search"></i> Cari
+        </button>
+
+        {{-- Tombol Reset di sebelah kanan --}}
+        <a href="{{ route('admin.rumah.index') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-x-circle"></i> Reset
+        </a>
+    </div>
+</form>
+
 
         {{-- Daftar Rumah --}}
         <div class="data-card">

@@ -16,28 +16,37 @@
     </div>
 
     {{-- Search Box --}}
-    <div class="data-card mb-3">
-        <form action="{{ route('admin.rt.index') }}" method="GET">
-            <div class="input-group">
+<div class="data-card mb-3">
+    <form action="{{ route('admin.rt.index') }}" method="GET">
+        <div class="input-group">
 
-                <span class="input-group-text bg-white border-end-0">
-                    <i class="bi bi-search"></i>
-                </span>
+            <span class="input-group-text bg-white border-end-0">
+                <i class="bi bi-search"></i>
+            </span>
 
-                <input type="text" name="search" 
-                       class="form-control border-start-0"
-                       placeholder="Cari nomor RT, RW, nama ketua, atau NIK..."
-                       value="{{ $search ?? '' }}">
+            <input type="text" name="search" 
+                   class="form-control border-start-0"
+                   placeholder="Cari nomor RT, RW, nama ketua, atau NIK..."
+                   value="{{ $search ?? '' }}">
 
-                <button class="btn btn-primary" type="submit">
-                    <i class="bi bi-search d-none d-sm-inline"></i> 
-                    <span class="d-none d-sm-inline">Cari</span>
-                    <i class="bi bi-search d-sm-none"></i>
-                </button>
+            {{-- Tombol Cari --}}
+            <button class="btn btn-primary" type="submit">
+                <i class="bi bi-search d-none d-sm-inline"></i> 
+                <span class="d-none d-sm-inline">Cari</span>
+                <i class="bi bi-search d-sm-none"></i>
+            </button>
 
-            </div>
-        </form>
-    </div>
+            {{-- Tombol Reset --}}
+            <a href="{{ route('admin.rt.index') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-x-circle d-none d-sm-inline"></i>
+                <span class="d-none d-sm-inline">Reset</span>
+                <i class="bi bi-x-circle d-sm-none"></i>
+            </a>
+
+        </div>
+    </form>
+</div>
+
 
     {{-- Tabel Data --}}
     <div class="data-card">
