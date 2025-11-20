@@ -14,7 +14,6 @@
 
     {{-- Custom CSS --}}
     <link rel="stylesheet" href="{{ asset('css/admin-layout.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('css/crud-minimal.css') }}">
 
     {{-- Additional Styles from Pages --}}
