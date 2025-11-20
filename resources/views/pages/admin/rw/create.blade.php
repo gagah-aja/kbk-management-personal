@@ -7,9 +7,6 @@
             <h2>Tambah RW</h2>
             <p>Tambahkan data Rukun Warga baru</p>
         </div>
-        {{-- <a href="{{ route('admin.rw.index') }}" class="btn-back">
-            <i class="bi bi-arrow-left"></i> Kembali
-        </a> --}}
     </div>
 
     @if ($errors->any())
@@ -34,16 +31,16 @@
             <div class="form-card">
                 <form action="{{ route('admin.rw.store') }}" method="POST">
                     @csrf
-                    
+
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="nomor_rw" class="form-label">
                                 Nomor RW <span class="text-danger">*</span>
                             </label>
-                            <input type="number" 
-                                   name="nomor_rw" 
-                                   id="nomor_rw" 
-                                   class="form-control @error('nomor_rw') is-invalid @enderror" 
+                            <input type="number"
+                                   name="nomor_rw"
+                                   id="nomor_rw"
+                                   class="form-control @error('nomor_rw') is-invalid @enderror"
                                    placeholder="Contoh: 001, 002"
                                    value="{{ old('nomor_rw') }}"
                                    min="1"
@@ -58,9 +55,10 @@
                             <label for="id_warga" class="form-label">
                                 Ketua RW <span class="text-danger">*</span>
                             </label>
-                            <select name="id_warga" 
-                                    id="id_warga" 
-                                    class="form-control @error('id_warga') is-invalid @enderror" 
+                            <!-- NOTICE: form-control DIHAPUS di class -->
+                            <select name="id_warga"
+                                    id="id_warga"
+                                    class="@error('id_warga') is-invalid @enderror"
                                     required>
                                 <option value="">-- Pilih Ketua RW --</option>
                                 @foreach($warga as $w)
@@ -94,4 +92,34 @@
         </div>
     </div>
 </div>
+
+<!-- ======= SCRIPT SELECT2 (inline supaya pasti dieksekusi) ======= -->
+<!-- jQuery (pastikan tidak duplikat jika layout sudah menyertakan jQuery) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Inisialisasi Select2
+        $('#id_warga').select2({
+            placeholder: "-- Pilih Ketua RW --",
+            allowClear: true,
+            width: '100%'
+        });
+
+        // Jika ingin menampilkan Select2 agar mirip tinggi input bootstrap, bisa aktifkan ini:
+        $('.select2-container .select2-selection--single').css({
+            'height': $('input.form-control').first().outerHeight() + 'px',
+            'padding': '.375rem .75rem',
+            'border-radius': '.375rem'
+        });
+    });
+</script>
+<!-- ============================================================== -->
+
 @endsection
