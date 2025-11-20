@@ -4,12 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Penghuni;
+use App\Models\NamaCluster;
 
 class SearchController extends Controller
 {
     public function index()
     {
-        return view('pages.user.search');
+        $clusters = NamaCluster::all(); // ambil semua cluster dari DB
+        return view('pages.user.search', compact('clusters'));
+    }
+
+    public function searchWarga()
+    {
+        $clusters = NamaCluster::all(); // ambil semua cluster dari DB
+        return view('pages.search-warga', compact('clusters'));
     }
 
     public function search(Request $request)
