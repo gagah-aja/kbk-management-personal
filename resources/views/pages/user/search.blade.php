@@ -8,151 +8,208 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
-    <!-- External CSS -->
     <link rel="stylesheet" href="{{ asset('css/search.css') }}">
-    
-    <style>
-        /* Tambahan styling untuk filter */
-        .search-filters {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        .search-filters select,
-        .search-filters input {
-            width: auto;
-        }
-
-        .result-card {
-            background: #fff;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-
-        .result-wrapper {
-            display: flex;
-            gap: 12px;
-        }
-
-        .result-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .house-photo-result {
-            width: 120px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-right: 12px;
-        }
-
-        .result-info {
-            font-size: 0.9rem;
-            color: #555;
-        }
-    </style>
 </head>
 
 <body>
     <div class="search-container">
         <!-- Back Button -->
-        <a href="{{ route('dashboard') }}" class="back-button mb-3 d-inline-block">
+        <a href="{{ route('dashboard') }}" class="back-button">
             <i class="bi bi-arrow-left-circle"></i> Kembali ke Dashboard
         </a>
 
         <!-- Header -->
-        <div class="search-header mb-3">
+        <div class="search-header">
             <h1><i class="bi bi-search"></i> Pencarian Warga</h1>
             <p>Temukan informasi penghuni Kota Baru Keandra dengan mudah</p>
         </div>
 
-        <!-- Search + Filters -->
-<div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
-    <!-- Search Box -->
-    <div class="search-box flex-grow-1">
-        <i class="bi bi-search"></i>
-        <input type="text" id="searchInput" placeholder="Ketik nama warga..." autocomplete="off">
-    </div>
+        <!-- Search Box -->
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" id="searchInput" placeholder="Ketik nama warga untuk mencari..." autocomplete="off">
+        </div>
 
-    <!-- Filters (sekarang di samping) -->
-    <div class="d-flex gap-2 flex-wrap">
-        <select id="filterCluster" class="form-select">
-            <option value="">Cluster</option>
-            @foreach($clusters as $cluster)
-                <option value="{{ $cluster->nama_cluster }}">{{ $cluster->nama_cluster }}</option>
-            @endforeach
-        </select>
+        <!-- ⭐ NEW: Filter Section -->
+        <div class="filter-section">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="filterCluster">📍 Pilih Cluster</label>
+                    <select id="filterCluster" class="form-select">
+                        <option value="">-- Semua Cluster --</option>
+                    </select>
+                </div>
 
-        <select id="filterBlok" class="form-select">
-            <option value="">Blok</option>
-            @foreach(range('A', 'Z') as $letter)
-                <option value="{{ $letter }}">{{ $letter }}</option>
-            @endforeach
-        </select>
+                <div class="filter-group">
+                    <label for="filterBlok">🧱 Pilih Blok</label>
+                    <select id="filterBlok" class="form-select" disabled>
+                        <option value="">-- Pilih Cluster Dulu --</option>
+                    </select>
+                </div>
 
-        <input type="number" id="filterNomor" class="form-control" placeholder="Nomor Rumah">
-    </div>
-</div>
+                <div class="filter-group">
+                    <label for="filterRumah">🏠 Pilih Nomor Rumah</label>
+                    <select id="filterRumah" class="form-select" disabled>
+                        <option value="">-- Pilih Blok Dulu --</option>
+                    </select>
+                </div>
+            </div>
 
+            <button class="btn-reset" onclick="resetFilters()">
+                <i class="bi bi-arrow-clockwise"></i> Reset Filter
+            </button>
+        </div>
 
         <!-- Loading State -->
-        <div id="loadingState" class="loading text-center" style="display: none;">
-            <div class="spinner-border text-primary" role="status">
+        <div id="loadingState" class="loading" style="display: none;">
+            <div class="spinner-border" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
-            <p class="mt-2">Mencari data...</p>
+            <p class="mt-3">Mencari data...</p>
         </div>
 
         <!-- Empty State -->
-        <div id="emptyState" class="empty-state text-center">
-            <i class="bi bi-person-circle" style="font-size: 3rem;"></i>
+        <div id="emptyState" class="empty-state">
+            <i class="bi bi-person-circle"></i>
             <h3>Mulai Pencarian</h3>
-            <p>Masukkan nama warga atau filter rumah yang ingin Anda cari</p>
+            <p>Gunakan pencarian atau filter untuk menemukan warga</p>
         </div>
 
         <!-- No Results -->
-        <div id="noResults" class="empty-state text-center" style="display: none;">
-            <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+        <div id="noResults" class="empty-state" style="display: none;">
+            <i class="bi bi-inbox"></i>
             <h3>Tidak Ada Hasil</h3>
-            <p>Tidak ditemukan warga atau rumah dengan kriteria tersebut</p>
+            <p>Tidak ditemukan warga dengan kriteria tersebut</p>
         </div>
 
         <!-- Results Container -->
         <div id="resultsContainer"></div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Detail Modal -->
+    <div class="modal fade" id="detailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-badge"></i> Detail Penghuni</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
         const searchInput = document.getElementById('searchInput');
         const filterCluster = document.getElementById('filterCluster');
         const filterBlok = document.getElementById('filterBlok');
-        const filterNomor = document.getElementById('filterNomor');
-
+        const filterRumah = document.getElementById('filterRumah');
         const resultsContainer = document.getElementById('resultsContainer');
         const emptyState = document.getElementById('emptyState');
         const noResults = document.getElementById('noResults');
         const loadingState = document.getElementById('loadingState');
-
         let searchTimeout;
 
+        // Load clusters on page load
+        loadClusters();
+
+        // Search input handler
+        searchInput.addEventListener('input', function() {
+            performSearch();
+        });
+
+        // Filter change handlers
+        filterCluster.addEventListener('change', function() {
+            const clusterId = this.value;
+            
+            // Reset dependent filters
+            filterBlok.innerHTML = '<option value="">-- Pilih Blok --</option>';
+            filterBlok.disabled = !clusterId;
+            filterRumah.innerHTML = '<option value="">-- Pilih Blok Dulu --</option>';
+            filterRumah.disabled = true;
+
+            if (clusterId) {
+                loadBlokByCluster(clusterId);
+            }
+
+            performSearch();
+        });
+
+        filterBlok.addEventListener('change', function() {
+            const blokId = this.value;
+            const clusterId = filterCluster.value;
+            
+            // Reset rumah filter
+            filterRumah.innerHTML = '<option value="">-- Pilih Nomor Rumah --</option>';
+            filterRumah.disabled = !blokId;
+
+            if (clusterId && blokId) {
+                loadRumahByFilter(clusterId, blokId);
+            }
+
+            performSearch();
+        });
+
+        filterRumah.addEventListener('change', function() {
+            performSearch();
+        });
+
+        // Load clusters
+        function loadClusters() {
+            fetch('/api/clusters')
+                .then(response => response.json())
+                .then(data => {
+                    filterCluster.innerHTML = '<option value="">-- Semua Cluster --</option>';
+                    data.forEach(cluster => {
+                        filterCluster.innerHTML += `<option value="${cluster.id}">${cluster.nama}</option>`;
+                    });
+                })
+                .catch(error => console.error('Error loading clusters:', error));
+        }
+
+        // Load blok by cluster
+        function loadBlokByCluster(clusterId) {
+            fetch(`/api/blok-by-cluster/${clusterId}`)
+                .then(response => response.json())
+                .then(data => {
+                    filterBlok.innerHTML = '<option value="">-- Semua Blok --</option>';
+                    data.forEach(blok => {
+                        filterBlok.innerHTML += `<option value="${blok.id}">${blok.nama}</option>`;
+                    });
+                })
+                .catch(error => console.error('Error loading blok:', error));
+        }
+
+        // Load rumah by filter
+        function loadRumahByFilter(clusterId, blokId) {
+            fetch(`/api/rumah-by-filter?cluster=${clusterId}&blok=${blokId}`)
+                .then(response => response.json())
+                .then(data => {
+                    filterRumah.innerHTML = '<option value="">-- Semua Rumah --</option>';
+                    data.forEach(rumah => {
+                        filterRumah.innerHTML += `<option value="${rumah.id}">${rumah.nomor} - ${rumah.alamat}</option>`;
+                    });
+                })
+                .catch(error => console.error('Error loading rumah:', error));
+        }
+
+        // Perform search with filters
         function performSearch() {
             clearTimeout(searchTimeout);
-
+            
             const query = searchInput.value.trim();
             const cluster = filterCluster.value;
             const blok = filterBlok.value;
-            const nomor = filterNomor.value.trim();
+            const rumah = filterRumah.value;
 
-            if (!query && !cluster && !blok && !nomor) {
+            // If no search query and no filters, show empty state
+            if (!query && !cluster && !blok && !rumah) {
                 showEmptyState();
                 return;
             }
@@ -164,28 +221,36 @@
                 if (query) params.append('q', query);
                 if (cluster) params.append('cluster', cluster);
                 if (blok) params.append('blok', blok);
-                if (nomor) params.append('nomor', nomor);
+                if (rumah) params.append('rumah', rumah);
 
                 fetch(`/api/search-warga?${params.toString()}`)
-                    .then(res => res.json())
+                    .then(response => response.json())
                     .then(data => {
                         hideLoading();
-                        if (data.length === 0) showNoResults();
-                        else displayResults(data);
+                        if (data.length === 0) {
+                            showNoResults();
+                        } else {
+                            displayResults(data);
+                        }
                     })
-                    .catch(err => {
-                        console.error(err);
+                    .catch(error => {
+                        console.error('Error:', error);
                         hideLoading();
                         showNoResults();
                     });
-            }, 400); // debounce
+            }, 500);
         }
 
-        // Event listeners
-        searchInput.addEventListener('input', performSearch);
-        filterCluster.addEventListener('change', performSearch);
-        filterBlok.addEventListener('change', performSearch);
-        filterNomor.addEventListener('input', performSearch);
+        // Reset all filters
+        function resetFilters() {
+            searchInput.value = '';
+            filterCluster.value = '';
+            filterBlok.innerHTML = '<option value="">-- Pilih Cluster Dulu --</option>';
+            filterBlok.disabled = true;
+            filterRumah.innerHTML = '<option value="">-- Pilih Blok Dulu --</option>';
+            filterRumah.disabled = true;
+            showEmptyState();
+        }
 
         function showLoading() {
             emptyState.style.display = 'none';
@@ -194,30 +259,53 @@
             loadingState.style.display = 'block';
         }
 
-        function hideLoading() { loadingState.style.display = 'none'; }
-        function showEmptyState() { resultsContainer.innerHTML = ''; noResults.style.display = 'none'; loadingState.style.display = 'none'; emptyState.style.display = 'block'; }
-        function showNoResults() { resultsContainer.innerHTML = ''; emptyState.style.display = 'none'; loadingState.style.display = 'none'; noResults.style.display = 'block'; }
+        function hideLoading() {
+            loadingState.style.display = 'none';
+        }
+
+        function showEmptyState() {
+            resultsContainer.innerHTML = '';
+            noResults.style.display = 'none';
+            loadingState.style.display = 'none';
+            emptyState.style.display = 'block';
+        }
+
+        function showNoResults() {
+            resultsContainer.innerHTML = '';
+            emptyState.style.display = 'none';
+            loadingState.style.display = 'none';
+            noResults.style.display = 'block';
+        }
 
         function displayResults(results) {
             emptyState.style.display = 'none';
             noResults.style.display = 'none';
 
-            resultsContainer.innerHTML = results.map(r => `
-                <div class="result-card">
-                    <div class="result-wrapper">
-                        <img src="${r.foto_rumah}" alt="Foto Rumah" class="house-photo-result">
-                        <div style="flex:1;">
-                            <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
-                                <img src="${r.foto}" class="result-avatar" alt="${r.nama_warga}">
-                                <h4 class="result-name">${r.nama_warga}</h4>
-                            </div>
-                            <div class="result-info"><i class="bi bi-house-door"></i> ${r.alamat}</div>
-                            <div class="result-info"><i class="bi bi-geo-alt"></i> Cluster ${r.cluster} - Blok ${r.blok} (RT ${r.rt})</div>
+            resultsContainer.innerHTML = results.map(result => `
+            <div class="result-card" onclick="showDetail(${result.id})">
+                <div class="result-wrapper">
+                    <img src="${result.foto_rumah}" alt="Foto Rumah" class="house-photo-result">
+
+                    <div style="flex:1;">
+                        <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+                            <img src="${result.foto}" class="result-avatar" alt="${result.nama_warga}">
+                            <h4 class="result-name">${result.nama_warga}</h4>
+                        </div>
+
+                        <div class="result-info">
+                            <i class="bi bi-house-door"></i> ${result.alamat}
+                        </div>
+
+                        <div class="result-info">
+                            <i class="bi bi-geo-alt"></i> 
+                            Cluster ${result.cluster} - Blok ${result.blok} (RT ${result.rt})
                         </div>
                     </div>
                 </div>
+            </div>
             `).join('');
         }
     </script>
 </body>
+
 </html>

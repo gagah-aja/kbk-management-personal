@@ -1,0 +1,97 @@
+[33m26cc0f7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdev[m[33m)[m feat(search): add cascade filter (Cluster→Blok→Rumah) with larger cards
+[33m13d3dc6[m feat(dashborad): separate the style from the main code to make it look neat v2
+[33md01c891[m feat(dashboard): separate the style from the main code to make it look neat
+[33m2d827d8[m feat(login): update the appearance of the login page
+[33m2aadc00[m feat(search): remove citizen details display on citizen search page
+[33me6836d3[m feat(refactor): separate CSS to external file and improve mobile responsiveness
+[33m5c491e7[m feat(refactor): separate CSS to external file and improve mobile responsiveness
+[33maf57b9b[m membuat efek garis bawah  di navbar ketika cursor ke teks data pokok,pengurus warga (rw/rt) dan peta lokasi
+[33m7f77115[m membuat wadah untuk foto rumah dan data penghuni nya
+[33mca0594a[m memperbagus tampilan di pencarian warga
+[33mf4768bb[m menambahkan foto rumah di pencarian warga
+[33mf782dbf[m feat(search): implement resident search with detail modal and live search functionality
+[33m6cbd172[m feat(search): implement resident search with detail modal and live search functionality
+[33m6c249a7[m membuat di Pengurus Warga (RW) jika tidak ada gambar poto nya jadi poto default
+[33m2a1404f[m feat(search): implement resident search with detail modal and live search functionality
+[33maf52f09[m memperbagus tampilan landing page
+[33m46c216f[m Merge branch 'dev' of https://github.com/PT-Grage-Media-Technology/kbk-management into dev
+[33me27e700[m membuat footer di landing page 50%
+[33mfe96600[m feat(rumah): count only active residents in the house data card
+[33md5fc5ad[m feat(dashboard): add a link so that the navbar button can go to the main display
+[33mdadece6[m membuat navbar di landing page
+[33m8c92acf[m Merge branch 'dev' of https://github.com/PT-Grage-Media-Technology/kbk-management into dev
+[33m0c583a1[m mengasih notifikasi pop up di bagian data rumah dan edit rumah nomor rumah jika angka di bawah angka 1
+[33m6d9ba76[m feat(ui): enhance house selection with searchable dropdown and search icon
+[33m12ee287[m (feat): add Select2 with search, filter, and clear option for rumah select
+[33maa31f0c[m mengubah nomor rumah menjadi number di sidebar data rumah t
+[33m64e04c2[m di sidebar blok pake nyo option a-z
+[33mbfebb4a[m mengubah alamat rumah beserta data nya menjadi pilih rumah dan data nya mengambil di data rumah
+[33m8df3c37[m Merge branch 'dev' of https://github.com/PT-Grage-Media-Technology/kbk-management into dev
+[33m05f45ba[m memperbaiki error di halaman blok saat hapus data tidak bisa menjadi bisa dan memperbaiki tampilan frontend di data rumah
+[33mb2653b9[m feat(ui): implement responsive card layout, badges, optimized action buttons, consistent empty state, and design unification across RW, RT, Cluster, Status Rumah, Nama Cluster, and Blok pages
+[33m086d6f1[m memindahkan hamburger dari pojok kiri atas ke pojok kanan atas
+[33m0222fa9[m mengganti tampilan ketika ga ada hassil search mengubah tombol tambah data dan mengganti reset
+[33m863e650[m mengubah tampilan ketika search tidak ada hasil daan memperbagus tombol reset
+[33m0472395[m mengubah tampilan ketika pencarian search ga ada pada semua menu di sidebar
+[33m7d82698[m apa saja
+[33m9137b62[m menghilangkan tombol kembai di create dan edit di semua fitur sidebar nya
+[33mb102cb2[m membuat menu setting di sidebar dan halaman nya
+[33m2f9e44c[m Merge branch 'dev' of https://github.com/PT-Grage-Media-Technology/kbk-management into dev
+[33m2afe07f[m menambahkan fitur setting di sidebar dan membuat halamann nya
+[33m06faf58[m feat(Cluster, Status Rumah, Warga): complete CRUD with search, validation, and modern card UI
+[33m3099048[m feat(Cluster, StatusRumah, Warga): complete CRUD with search, validation, and modern card UI
+[33m9857bc0[m Merge branch 'dev' of https://github.com/PT-Grage-Media-Technology/kbk-management into dev
+[33ma7b6b44[m memperbarui halaman rumah dan halaman index rumah
+[33mdfa6da0[m feat(Blok, NamaCluster, Rt, Rw): complete CRUD with search, validation, and modern card UI
+[33mcc59992[m memperbagus pagination pada status rumah dan data cluster nya
+[33m98a2bb4[m Merge branch 'dev' of https://github.com/PT-Grage-Media-Technology/kbk-management into dev
+[33meb284a4[m mengganti peghuni menjadi pemilik rumah di halaman tambah data rumah dan di bagian edit nya juga sama dan mengubah tampilan index rumah nya
+[33mbe9993f[m feat(pagination): add custom pagination design with enhanced UX and search persistence
+[33mb981461[m feat(pagination): add custom pagination design with enhanced UX and search persistence
+[33m147c4f6[m memperbaiki di bagian edit data rumah bagian penghuni  ada nama warga nya
+[33m7fe78b6[m memperbaiki tombol kembali di tambah penghuni mengarah ke daftar penghuni
+[33m2363107[m feat(warga): merge and maintain accordion UI with complete resident data display
+[33m3704469[m feat(penghuni): add pemilik/penyewa type distinction with tipe_penghuni field
+[33mc852ae1[m feat(penghuni): add pemilik/penyewa type distinction with tipe_penghuni field
+[33md9624e0[m memperbagus pagination di semua menu sidebar kecuali data cluster belum
+[33m6a6230e[m memperbagus pagination di data rw
+[33m44223a7[m memperbaiki data rumah bisa di edit dan hapus
+[33m17b0c80[m memperbagus pagination di data warga
+[33m04b2c67[m memperbagus pagination di nama cluster
+[33mec47066[m feat(penghuhni): a little improvement
+[33mb2eb2a8[m feat(rumah): move penghuni list to separate page with responsive layout
+[33mc14078f[m feat(rumah): move penghuni list to separate page with responsive layout
+[33md4d7adf[m memperbaiki middleware, dan memberi sweet alert pada view login
+[33mc51c2a5[m test
+[33m69fb9a7[m feat(rumah): add penghuni management with many-to-many relationship and date tracking
+[33m0299189[m memperbaiki error search di rumah
+[33mc4075bc[m membuat pagination dan search pada semua bagian menu kecuali di dashboard dan nama cluster
+[33m976e61d[m membuat nomor_rt dan nomor_rw number dan membuat pagination dan search di nama cluster
+[33mb2ab3ac[m menambahkan  tombol lihat maps
+[33m629bba7[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m Merge pull request #2 from PT-Grage-Media-Technology/dev
+[33m114ebde[m feat(controllers): add relation validation before delete and improve data integrity
+[33mae0fcc5[m membuat halaman status rumah dan pindahkan foto ke dalam tombol
+[33m877d874[m feat(dashboard): improve dashboard UI with stats and quick actions
+[33mc268a4b[m Merge pull request #1 from PT-Grage-Media-Technology/dev
+[33m0b04054[m feat(crud): merubah tampilan CRUD agar terlihat konsisten & merubahstruktur file blade agar bisa dibaca dengan mudah
+[33meefaf08[m memperbaiki ketika sudah menjadi rt tidak bisa menjadi rt lagi
+[33m4f62e69[m memperbaiki tampilan pada data warga
+[33m769d448[m user
+[33m10619ba[m Merge branch 'main' of https://github.com/PT-Grage-Media-Technology/kbk-management
+[33ma44ed53[m perbaikan user dan data warga
+[33m380fa43[m memperbaiki edit rumah dan merapihkan web.php nya
+[33m6edd4c8[m memperbaiki bagian isi data dari tabel ke pake tombol
+[33m3b72d6e[m Merge branch 'main' of https://github.com/PT-Grage-Media-Technology/kbk-management
+[33m333c783[m memperbaiki saat data ada tidak akan numpuk /error
+[33m01bd8c4[m Merge branch 'main' of https://github.com/PT-Grage-Media-Technology/kbk-management
+[33m0d04daa[m dashboard user
+[33m44f40bb[m membuat fitur rumah
+[33m3fd560e[m Merge branch 'main' of https://github.com/PT-Grage-Media-Technology/kbk-management
+[33m7f84684[m rumah
+[33m2179db7[m Merge branch 'main' of https://github.com/PT-Grage-Media-Technology/kbk-management
+[33m9279f4e[m membuat fitur data cluster
+[33m63fb881[m Merge branch 'main' of https://github.com/PT-Grage-Media-Technology/kbk-management
+[33ma8e6f9c[m perbaikan di warga
+[33m92fcbda[m membuat fitur data rt dan data rw
+[33m6637833[m menambahkan fitur data rw
+[33m4654314[m Merge branch 'main' of https://github.com/PT-Grage-Medi

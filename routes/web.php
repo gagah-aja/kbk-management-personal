@@ -35,6 +35,11 @@ Route::get('/pencarian-warga', [App\Http\Controllers\SearchController::class, 'i
 Route::get('/api/search-warga', [App\Http\Controllers\SearchController::class, 'search'])->name('search.api');
 Route::get('/api/detail-penghuni/{id}', [App\Http\Controllers\SearchController::class, 'detail'])->name('search.detail');
 
+// Route untuk Filter Cascade
+Route::get('/api/clusters', [App\Http\Controllers\SearchController::class, 'getClusters'])->name('search.clusters');
+Route::get('/api/blok-by-cluster/{clusterId}', [App\Http\Controllers\SearchController::class, 'getBlokByCluster'])->name('search.blok');
+Route::get('/api/rumah-by-filter', [App\Http\Controllers\SearchController::class, 'getRumahByFilter'])->name('search.rumah');
+
 Route::prefix('user')->name('user.')->group(function () {
     // Tambahkan route user di sini jika ada
 });
