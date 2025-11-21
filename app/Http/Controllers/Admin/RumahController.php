@@ -20,28 +20,28 @@ class RumahController extends Controller
     public function index(Request $request)
     {
         $query = Rumah::with([
-            'cluster.namaCluster', 
-            'cluster.rt', 
-            'cluster.blok', 
-            'warga', 
+            'cluster.namaCluster',
+            'cluster.rt',
+            'cluster.blok',
+            'warga',
             'statusRumah',
             'penghuniAktif.warga' // ⭐ Load penghuni aktif
         ]);
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('nomor_rumah', 'like', "%{$search}%")
-                  ->orWhere('alamat_lengkap', 'like', "%{$search}%")
-                  ->orWhereHas('cluster.namaCluster', function($sub) use ($search) {
-                      $sub->where('nama_cluster', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('penghuniAktif.warga', function($sub) use ($search) {
-                      $sub->where('nama_lengkap', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('statusRumah', function($sub) use ($search) {
-                      $sub->where('nama_status', 'like', "%{$search}%");
-                  });
+                    ->orWhere('alamat_lengkap', 'like', "%{$search}%")
+                    ->orWhereHas('cluster.namaCluster', function ($sub) use ($search) {
+                        $sub->where('nama_cluster', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('penghuniAktif.warga', function ($sub) use ($search) {
+                        $sub->where('nama_lengkap', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('statusRumah', function ($sub) use ($search) {
+                        $sub->where('nama_status', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -58,30 +58,30 @@ class RumahController extends Controller
     }
 
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'nomor_rumah' => 'required|integer|min:1|unique:rumah,nomor_rumah',
-        'alamat_lengkap' => 'required|string',
-        'id_status_rumah' => 'required|exists:status_rumah,id',
-        'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        'latitude' => 'nullable|numeric|between:-90,90',
-        'longitude' => 'nullable|numeric|between:-180,180',
-        'id_cluster' => 'required|exists:cluster,id',
-        'id_warga' => 'nullable|exists:warga,id',
-    ], [
-        'nomor_rumah.integer' => 'Nomor rumah tidak boleh kurang dari 1',
-        'nomor_rumah.unique' => 'Nomor rumah sudah terdaftar!',
-    ]);
+    {
+        $validated = $request->validate([
+            'nomor_rumah' => 'required|integer|min:1|unique:rumah,nomor_rumah',
+            'alamat_lengkap' => 'required|string',
+            'id_status_rumah' => 'required|exists:status_rumah,id',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
+            'id_cluster' => 'required|exists:cluster,id',
+            'id_warga' => 'nullable|exists:warga,id',
+        ], [
+            'nomor_rumah.integer' => 'Nomor rumah tidak boleh kurang dari 1',
+            'nomor_rumah.unique' => 'Nomor rumah sudah terdaftar!',
+        ]);
 
 
-    if ($request->hasFile('gambar')) {
-        $validated['gambar'] = $request->file('gambar')->store('rumah', 'public');
+        if ($request->hasFile('gambar')) {
+            $validated['gambar'] = $request->file('gambar')->store('rumah', 'public');
+        }
+
+        Rumah::create($validated);
+
+        return redirect()->route('admin.rumah.index')->with('success', 'Data rumah berhasil ditambahkan!');
     }
-
-    Rumah::create($validated);
-
-    return redirect()->route('admin.rumah.index')->with('success', 'Data rumah berhasil ditambahkan!');
-}
 
     public function edit($id)
     {
@@ -92,56 +92,56 @@ class RumahController extends Controller
         return view('pages.admin.rumah.edit', compact('rumah', 'clusters', 'warga', 'status_rumah'));
     }
 
-    
-public function update(Request $request, $id)
-{
-    $rumah = Rumah::findOrFail($id);
 
-    $validated = $request->validate([
-        'nomor_rumah' => [
-            'required',
-            'integer',
-            'min:1',
-            Rule::unique('rumah', 'nomor_rumah')->ignore($id),
-        ],
-        'alamat_lengkap' => 'required|string',
-        'id_status_rumah' => 'required|exists:status_rumah,id',
-        'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        'latitude' => 'nullable|numeric|between:-90,90',
-        'longitude' => 'nullable|numeric|between:-180,180',
-        'id_cluster' => 'required|exists:cluster,id',
-        'id_warga' => 'nullable|exists:warga,id',
+    public function update(Request $request, $id)
+    {
+        $rumah = Rumah::findOrFail($id);
 
-    ], [
-        'nomor_rumah.integer' => 'Nomor rumah tidak boleh kurang dari 1',
-        'nomor_rumah.unique' => 'Nomor rumah sudah terdaftar!',
-    ]);
+        $validated = $request->validate([
+            'nomor_rumah' => [
+                'required',
+                'integer',
+                'min:1',
+                Rule::unique('rumah', 'nomor_rumah')->ignore($id),
+            ],
+            'alamat_lengkap' => 'required|string',
+            'id_status_rumah' => 'required|exists:status_rumah,id',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
+            'id_cluster' => 'required|exists:cluster,id',
+            'id_warga' => 'nullable|exists:warga,id',
 
-    // Update data
-    $rumah->update([
-        'nomor_rumah' => $validated['nomor_rumah'],
-        'alamat_lengkap' => $validated['alamat_lengkap'],
-        'id_status_rumah' => $validated['id_status_rumah'],
-        'id_cluster' => $validated['id_cluster'],
-        'id_warga' => $validated['id_warga'] ?? null,
-        'latitude' => $validated['latitude'] ?? null,
-        'longitude' => $validated['longitude'] ?? null,
-    ]);
+        ], [
+            'nomor_rumah.integer' => 'Nomor rumah tidak boleh kurang dari 1',
+            'nomor_rumah.unique' => 'Nomor rumah sudah terdaftar!',
+        ]);
 
-    // Jika upload gambar baru
-    if ($request->hasFile('gambar')) {
-        // Hapus gambar lama
-        if ($rumah->gambar) {
-            Storage::delete('public/' . $rumah->gambar);
+        // Update data
+        $rumah->update([
+            'nomor_rumah' => $validated['nomor_rumah'],
+            'alamat_lengkap' => $validated['alamat_lengkap'],
+            'id_status_rumah' => $validated['id_status_rumah'],
+            'id_cluster' => $validated['id_cluster'],
+            'id_warga' => $validated['id_warga'] ?? null,
+            'latitude' => $validated['latitude'] ?? null,
+            'longitude' => $validated['longitude'] ?? null,
+        ]);
+
+        // Jika upload gambar baru
+        if ($request->hasFile('gambar')) {
+            // Hapus gambar lama
+            if ($rumah->gambar) {
+                Storage::delete('public/' . $rumah->gambar);
+            }
+
+            $path = $request->file('gambar')->store('rumah', 'public');
+            $rumah->update(['gambar' => $path]);
         }
 
-        $path = $request->file('gambar')->store('rumah', 'public');
-        $rumah->update(['gambar' => $path]);
+        return redirect()->route('admin.rumah.index')
+            ->with('success', 'Data rumah berhasil diperbarui');
     }
-
-    return redirect()->route('admin.rumah.index')
-        ->with('success', 'Data rumah berhasil diperbarui');
-}
 
 
     public function destroy($id)
@@ -201,7 +201,7 @@ public function update(Request $request, $id)
         $validated = $request->validate([
             'id_warga' => 'required|exists:warga,id',
             'tipe_penghuni' => 'required|in:Pemilik,Penyewa',
-            'status_penghuni' => 'required|in:Kepala Keluarga,Istri/Suami,Anak,Orang Tua,Keluarga Lainnya',
+            'status_penghuni' => 'required|in:Kepala Keluarga,Istri,Suami,Anak,Orang Tua,Keluarga Lainnya', // ✅ DIUBAH DI SINI
             'tanggal_masuk' => 'required|date',
             'keterangan' => 'nullable|string',
         ], [
@@ -242,7 +242,7 @@ public function update(Request $request, $id)
     {
         try {
             $penghuni = Penghuni::findOrFail($id_penghuni);
-            
+
             // Soft delete: set tanggal keluar dan is_active = false
             $penghuni->update([
                 'is_active' => false,
