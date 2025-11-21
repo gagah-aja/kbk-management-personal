@@ -140,7 +140,7 @@
             <div class="card data-card border-0 rounded-3 shadow-sm h-100 text-center border-bottom border-warning border-4">
                 <div class="card-body p-4">
                     <i class="bi bi-buildings-fill text-warning mb-3" style="font-size: 2.5rem;"></i>
-                    <p class="text-uppercase text-muted fw-semibold small mb-1">Jumlah Blok / RT</p>
+                    <p class="text-uppercase text-muted fw-semibold small mb-1">Jumlah RT</p>
                     <h3 class="display-6 fw-bolder text-dark mb-0">{{ $total_rt }}</h3>
                     <p class="text-secondary mb-0">RT</p>
                 </div>
@@ -155,7 +155,7 @@
 {{-- ============================ --}}
 
 <h2 id="pengurus-warga" class="fs-4 fw-bold mb-4 text-dark border-bottom pb-2">
-    Pengurus Warga (RW)
+    Pengurus Warga (RW/RT)
 </h2>
 
 <div class="row g-4 mb-5 justify-content-center">

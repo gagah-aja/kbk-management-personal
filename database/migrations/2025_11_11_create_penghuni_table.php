@@ -19,10 +19,11 @@ return new class extends Migration
             // ⭐ Kolom tipe_penghuni (BARU)
             $table->enum('tipe_penghuni', ['Pemilik', 'Penyewa'])->default('Penyewa');
             
-            // Kolom status_penghuni (sudah ada)
+            // ✅ Kolom status_penghuni (DIPISAH: Istri dan Suami)
             $table->enum('status_penghuni', [
                 'Kepala Keluarga',
-                'Istri/Suami',
+                'Istri',
+                'Suami',
                 'Anak',
                 'Orang Tua',
                 'Keluarga Lainnya'
