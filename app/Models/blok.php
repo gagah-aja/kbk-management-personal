@@ -11,4 +11,13 @@ class Blok extends Model
 
     protected $table = 'blok';
     protected $fillable = ['nama_blok'];
+
+    /**
+     * Relasi ke tabel Rumah.
+     * Satu blok bisa punya banyak rumah.
+     */
+    public function rumah()
+    {
+        return $this->hasMany(Rumah::class, 'id_blok');
+    }
 }
