@@ -16,38 +16,35 @@
     </div>
 
     {{-- Search Box --}}
-<div class="data-card mb-3">
-    <form action="{{ route('admin.cluster.index') }}" method="GET">
-        <div class="input-group">
-            <span class="input-group-text bg-white border-end-0">
-                <i class="bi bi-search"></i>
-            </span>
+    <div class="data-card mb-3">
+        <form action="{{ route('admin.cluster.index') }}" method="GET">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="bi bi-search"></i>
+                </span>
 
-            <input 
-                type="text" 
-                name="search" 
-                class="form-control border-start-0"
-                placeholder="Cari nama cluster, RT, atau blok..." 
-                value="{{ $search ?? '' }}"
-            >
+                <input 
+                    type="text" 
+                    name="search" 
+                    class="form-control border-start-0"
+                    placeholder="Cari nama cluster, RT, atau blok..." 
+                    value="{{ $search ?? '' }}"
+                >
 
-            {{-- Tombol Cari --}}
-            <button class="btn btn-primary" type="submit">
-                <i class="bi bi-search d-none d-sm-inline"></i> 
-                <span class="d-none d-sm-inline">Cari</span>
-                <i class="bi bi-search d-sm-none"></i>
-            </button>
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-search d-none d-sm-inline"></i> 
+                    <span class="d-none d-sm-inline">Cari</span>
+                    <i class="bi bi-search d-sm-none"></i>
+                </button>
 
-            {{-- Tombol Reset di sebelah tombol Cari --}}
-            <a href="{{ route('admin.cluster.index') }}" class="btn btn-outline-secondary">
-                <i class="bi bi-x-circle d-none d-sm-inline"></i>
-                <span class="d-none d-sm-inline">Reset</span>
-                <i class="bi bi-x-circle d-sm-none"></i>
-            </a>
-        </div>
-    </form>
-</div>
-
+                <a href="{{ route('admin.cluster.index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle d-none d-sm-inline"></i>
+                    <span class="d-none d-sm-inline">Reset</span>
+                    <i class="bi bi-x-circle d-sm-none"></i>
+                </a>
+            </div>
+        </form>
+    </div>
 
     {{-- Data Table --}}
     <div class="data-card">
@@ -55,7 +52,7 @@
 
             @if ($clusters->count() > 0)
 
-                {{-- Desktop Table View --}}
+                {{-- Desktop Table --}}
                 <div class="d-none d-md-block">
                     <table class="table-minimal">
                         <thead>
@@ -71,21 +68,13 @@
                         <tbody>
                             @foreach ($clusters as $index => $cluster)
                                 <tr>
-                                    <td class="text-center">
-                                        {{ $clusters->firstItem() + $index }}
-                                    </td>
+                                    <td class="text-center">{{ $clusters->firstItem() + $index }}</td>
 
-                                    <td>
-                                        {{ $cluster->namaCluster->nama_cluster ?? 'N/A' }}
-                                    </td>
+                                    <td>{{ $cluster->namaCluster->nama_cluster ?? 'N/A' }}</td>
 
-                                    <td class="text-muted">
-                                        RT {{ $cluster->rt->nomor_rt ?? 'N/A' }}
-                                    </td>
+                                    <td class="text-muted">RT {{ $cluster->rt->nomor_rt ?? 'N/A' }}</td>
 
-                                    <td class="text-muted">
-                                        {{ $cluster->blok->nama_blok ?? 'N/A' }}
-                                    </td>
+                                    <td class="text-muted">{{ $cluster->blok->nama_blok ?? 'N/A' }}</td>
 
                                     <td>
                                         <div class="btn-group-actions d-flex justify-content-center gap-2">
@@ -149,13 +138,11 @@
                             </div>
 
                             <div class="d-flex gap-2">
-                                {{-- Edit --}}
                                 <a href="{{ route('admin.cluster.edit', $cluster->id) }}" 
                                    class="btn btn-warning btn-sm flex-fill">
                                     <i class="bi bi-pencil"></i> Edit
                                 </a>
 
-                                {{-- Delete --}}
                                 <form action="{{ route('admin.cluster.destroy', $cluster->id) }}" 
                                       method="POST" class="delete-form flex-fill">
                                     @csrf
@@ -177,8 +164,7 @@
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
 
                         <div class="text-muted small">
-                            Menampilkan 
-                            {{ $clusters->firstItem() }} - {{ $clusters->lastItem() }}
+                            Menampilkan {{ $clusters->firstItem() }} - {{ $clusters->lastItem() }}
                             dari {{ $clusters->total() }} data
                         </div>
 
@@ -196,7 +182,6 @@
                     <i class="bi bi-inbox" style="font-size: 3rem; color: #6c757d;"></i>
 
                     @if ($search)
-
                         <h5 class="mt-3 fw-bold">Tidak Ada Hasil</h5>
                         <p class="text-muted">
                             Tidak ditemukan hasil untuk "<strong>{{ $search }}</strong>"
@@ -208,7 +193,6 @@
                             Reset
                         </a>
                     @else
-
                         <h5 class="mt-3 fw-bold">Belum Ada Data</h5>
                         <p class="text-muted">Mulai tambahkan data cluster pertama.</p>
 
@@ -272,13 +256,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 html: `Data cluster <strong>"${nama}"</strong> akan dihapus permanen.`,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#6b7280',
+                showDenyButton: true,
+                denyButtonText: 'Cek Rumah',
                 confirmButtonText: 'Ya, Hapus!',
                 cancelButtonText: 'Batal',
-                reverseButtons: true
+
+                confirmButtonColor: '#ef4444',
+                denyButtonColor: '#3b82f6',
+                cancelButtonColor: '#6b7280',
+
+                reverseButtons: false
             }).then((result) => {
-                if (result.isConfirmed) form.submit();
+
+                if (result.isConfirmed) {
+                    form.submit();
+                } 
+                else if (result.isDenied) {
+                    window.location.href = `/admin/rumah?search=${nama}`;
+                }
+
             });
         });
     });
@@ -287,20 +283,22 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <style>
+/* urutan tombol sweetalert */
+.swal2-actions {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 8px !important;
+}
+
+.swal2-cancel { order: 1 !important; }
+.swal2-confirm { order: 2 !important; }
+.swal2-deny { order: 3 !important; }
+
 /* Mobile Card Styling */
 @media (max-width: 767.98px) {
-    .card {
-        border-radius: 12px;
-    }
-    
-    .card-body {
-        padding: 1rem;
-    }
-    
-    .btn-sm {
-        padding: 0.5rem 0.75rem;
-        font-size: 0.875rem;
-    }
+    .card { border-radius: 12px; }
+    .card-body { padding: 1rem; }
+    .btn-sm { padding: 0.5rem 0.75rem; font-size: 0.875rem; }
 }
 </style>
 @endsection
