@@ -182,6 +182,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
     @if (session('success'))
         Swal.fire({
             icon: 'success',
@@ -197,10 +198,22 @@ document.addEventListener('DOMContentLoaded', function() {
             icon: 'error',
             title: 'Gagal!',
             text: '{{ session('error') }}',
-            confirmButtonColor: '#ef4444'
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: 'Cek Cluster',
+            cancelButtonText: 'OK',
+            confirmButtonColor: '#3b82f6', // kanan
+            cancelButtonColor: '#6b7280',   // kiri
+            reverseButtons: true // ini bikin confirm di kanan, cancel di kiri
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // redirect ke daftar cluster / rumah
+                window.location.href = `/admin/cluster?search={{ session('clusterId') ?? '' }}`;
+            }
         });
     @endif
 
+    // Konfirmasi hapus biasa
     document.querySelectorAll('.delete-form').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -225,6 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
 
 <style>
 /* Mobile Card Styling */

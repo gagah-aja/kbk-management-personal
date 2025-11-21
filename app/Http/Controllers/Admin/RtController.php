@@ -154,28 +154,34 @@ class RtController extends Controller
      * Menghapus data RT
      */
     public function destroy($id)
-    {
-        try {
-            $rt = Rt::findOrFail($id);
+{
+    try {
+        $rt = Rt::findOrFail($id);
 
-            // Cek apakah RT sedang digunakan
-            if ($rt->clusters()->count() > 0) {
-                return redirect()->route('admin.rt.index')
-                    ->with('error', 'RT tidak dapat dihapus karena masih digunakan oleh cluster.');
-            }
-
-            $rt->delete();
-
-            // Reset auto increment jika tabel kosong
-            if (Rt::count() === 0) {
-                DB::statement('ALTER TABLE rt AUTO_INCREMENT = 1;');
-            }
-
-            return redirect()->route('admin.rt.index')
-                ->with('success', 'Data RT berhasil dihapus!');
-        } catch (\Exception $e) {
-            return redirect()->route('admin.rt.index')
-                ->with('error', 'Gagal menghapus data RT: ' . $e->getMessage());
+        // Cek apakah RT sedang digunakan oleh cluster
+        if ($rt->clusters()->count() > 0) {
+            // Kembalikan response JSON agar bisa ditangani SweetAlert
+            return response()->json([
+                'status' => 'error',
+                'message' => 'RT tidak dapat dihapus karena masih digunakan oleh cluster.',
+                'clusterUrl' => route('admin.cluster.index') . '?search=' . $rt->id
+            ]);
         }
+
+        $rt->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data RT berhasil dihapus.'
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+        ]);
     }
+}
+
+
 }

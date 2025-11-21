@@ -151,28 +151,39 @@ class ClusterController extends Controller
      * Hapus Data Cluster
      */
     public function destroy($id)
-    {
-        try {
-            $cluster = Cluster::findOrFail($id);
-            
-            // Cek apakah cluster sedang digunakan oleh rumah
-            if ($cluster->rumah()->count() > 0) {
-                return redirect()->route('admin.cluster.index')
-                    ->with('error', 'Cluster tidak dapat dihapus karena masih digunakan oleh rumah.');
-            }
-            
-            $cluster->delete();
-    
-            // Reset auto increment jika tabel kosong
-            if (Cluster::count() === 0) {
-                DB::statement('ALTER TABLE cluster AUTO_INCREMENT = 1;');
-            }
-    
-            return redirect()->route('admin.cluster.index')
-                ->with('success', 'Cluster berhasil dihapus.');
-        } catch (\Exception $e) {
-            return redirect()->route('admin.cluster.index')
-                ->with('error', 'Gagal menghapus cluster: ' . $e->getMessage());
+{
+    try {
+        $cluster = Cluster::findOrFail($id);
+
+        // Cek apakah cluster sedang digunakan oleh rumah
+        if ($cluster->rumah()->count() > 0) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Cluster tidak dapat dihapus karena masih digunakan oleh rumah.',
+                'clusterId' => $cluster->id // untuk tombol Cek Rumah
+            ]);
         }
+
+        // Hapus cluster
+        $cluster->delete();
+
+        // Reset auto increment jika tabel kosong
+        if (Cluster::count() === 0) {
+            DB::statement('ALTER TABLE cluster AUTO_INCREMENT = 1;');
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Cluster berhasil dihapus.'
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Gagal menghapus cluster: ' . $e->getMessage()
+        ]);
     }
+}
+
+
 }

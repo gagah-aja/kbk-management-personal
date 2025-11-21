@@ -166,55 +166,68 @@
     </div>
 
     {{-- SweetAlert --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+<script>
+document.addEventListener('DOMContentLoaded', function() {
 
-            // Success notif
-            @if (session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: '{{ session('success') }}',
-                    showConfirmButton: false,
-                    timer: 2000
-                });
-            @endif
+    // DELETE CONFIRMATION
+    document.querySelectorAll('.delete-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
 
-            // DELETE CONFIRMATION
-            document.querySelectorAll('.delete-form').forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
+            const nama = this.querySelector('button').dataset.nama;
 
-                    const nama = this.querySelector('button').dataset.nama;
-
-                    Swal.fire({
-                        title: 'Hapus Blok?',
-                        text: `Data blok "${nama}" akan dihapus permanen.`,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        showDenyButton: true,
-                        denyButtonText: 'Cek Cluster',
-                        confirmButtonText: 'Ya, Hapus!',
-                        cancelButtonText: 'Batal',
-                        confirmButtonColor: '#ef4444',
-                        denyButtonColor: '#3b82f6',
-                        cancelButtonColor: '#6b7280',
-                        reverseButtons: true
-                    }).then(result => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        } else if (result.isDenied) {
-                            window.location.href = `/admin/cluster?search=${nama}`;
-                        }
-                    });
-
-                });
+            Swal.fire({
+                title: 'Hapus Blok?',
+                text: `Data blok "${nama}" akan dihapus permanen.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
             });
 
         });
-    </script>
+    });
+
+    // ERROR ALERT DARI SESSION (Gagal hapus)
+    @if(session('error'))
+        const blokName = '{{ session('blok_name') ?? '' }}';
+        const clusterUrl = '{{ session('cluster_redirect') }}';
+
+        Swal.fire({
+            title: 'Gagal!',
+            text: '{{ session('error') }}',
+            icon: 'error',
+            showCancelButton: true,          // Tombol kiri (OK)
+            showConfirmButton: true,         // Tombol kanan (Cek Cluster)
+            confirmButtonText: 'Cek Cluster',
+            cancelButtonText: 'OK',
+            confirmButtonColor: '#3b82f6',
+            cancelButtonColor: '#6b7280',
+            reverseButtons: false            // Jangan dibalik
+        }).then(result => {
+            if (result.isConfirmed) {
+                // Redirect ke halaman cluster dengan search nama blok
+                window.location.href = `${clusterUrl}?search=${encodeURIComponent(blokName)}`;
+            }
+            // Klik OK otomatis menutup alert
+        });
+    @endif
+
+});
+</script>
+
+
+
+
+
 
     {{-- CSS untuk mengatur urutan tombol --}}
     <style>

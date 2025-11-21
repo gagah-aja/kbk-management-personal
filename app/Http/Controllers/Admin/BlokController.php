@@ -104,8 +104,10 @@ class BlokController extends Controller
 
         if ($dipakaiRumah > 0) {
             return redirect()->route('admin.blok.index')
-                ->with('error', 'Blok tidak bisa dihapus karena masih digunakan oleh rumah melalui data cluster.')
-                ->with('cluster_redirect', route('admin.cluster.index')); // untuk tombol cek cluster
+    ->with('error', 'Blok tidak bisa dihapus karena masih digunakan oleh rumah melalui data cluster.')
+    ->with('cluster_redirect', route('admin.cluster.index'))
+    ->with('blok_name', $blok->nama_blok); // nama blok, misal "J"
+
         }
 
         // Jika aman → hapus blok

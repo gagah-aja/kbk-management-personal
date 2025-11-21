@@ -256,31 +256,52 @@ document.addEventListener('DOMContentLoaded', function () {
                 html: `Data cluster <strong>"${nama}"</strong> akan dihapus permanen.`,
                 icon: 'warning',
                 showCancelButton: true,
-                showDenyButton: true,
-                denyButtonText: 'Cek Rumah',
                 confirmButtonText: 'Ya, Hapus!',
                 cancelButtonText: 'Batal',
-
                 confirmButtonColor: '#ef4444',
-                denyButtonColor: '#3b82f6',
-                cancelButtonColor: '#6b7280',
-
-                reverseButtons: false
+                cancelButtonColor: '#6b7280'
             }).then((result) => {
-
                 if (result.isConfirmed) {
-                    form.submit();
-                } 
-                else if (result.isDenied) {
-                    window.location.href = `/admin/rumah?search=${nama}`;
+                    // Kirim request AJAX
+                    fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: new FormData(form)
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            Swal.fire('Berhasil!', data.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: data.message,
+                                icon: 'error',
+                                showCancelButton: true,
+                                confirmButtonText: 'Cek Rumah',
+                                cancelButtonText: 'OK',
+                                confirmButtonColor: '#3b82f6',
+                                cancelButtonColor: '#6b7280'
+                            }).then((r) => {
+                                if (r.isConfirmed) {
+                                    // Redirect ke daftar rumah yang menggunakan cluster
+                                    window.location.href = `/admin/rumah?search=${nama}`;
+                                }
+                            });
+                        }
+                    });
                 }
-
             });
         });
     });
 
 });
 </script>
+
 
 <style>
 /* urutan tombol sweetalert */
