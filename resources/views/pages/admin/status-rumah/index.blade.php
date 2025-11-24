@@ -9,8 +9,8 @@
             <h2>Data Status Rumah</h2>
             <p>Kelola data status rumah perumahan</p>
         </div>
-        <a href="{{ route('admin.status-rumah.create') }}" class="btn-add">
-            <i class="bi bi-plus"></i> Tambah Status
+        <a href="{{ route('admin.status-rumah.create') }}" class="btn btn-dark">
+            <i class="bi bi-plus"></i> Tambah Status Rumah
         </a>
     </div>
 
@@ -35,7 +35,7 @@
             {{-- Tombol Reset --}}
             <a href="{{ route('admin.status-rumah.index') }}" class="btn btn-outline-secondary">
                 <i class="bi bi-x-circle d-none d-sm-inline"></i>
-                <span class="d-none d-sm-inline">Reset</span>
+                <span class="d-none d-sm-inline"></span>
                 <i class="bi bi-x-circle d-sm-none"></i>
             </a>
         </div>

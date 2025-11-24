@@ -9,7 +9,7 @@
             <h2>Data RT</h2>
             <p>Kelola data Rukun Tetangga (RT)</p>
         </div>
-        <a href="{{ route('admin.rt.create') }}" class="btn-add">
+        <a href="{{ route('admin.rt.create') }}" class="btn btn-dark">
             <i class="bi bi-plus"></i> Tambah RT
         </a>
     </div>
@@ -30,7 +30,7 @@
                 </button>
                 <a href="{{ route('admin.rt.index') }}" class="btn btn-outline-secondary">
                     <i class="bi bi-x-circle d-none d-sm-inline"></i>
-                    <span class="d-none d-sm-inline">Reset</span>
+                    <span class="d-none d-sm-inline"></span>
                 </a>
             </div>
         </form>

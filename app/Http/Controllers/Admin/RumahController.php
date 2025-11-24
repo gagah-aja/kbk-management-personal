@@ -45,7 +45,7 @@ class RumahController extends Controller
             });
         }
 
-        $rumah = $query->orderBy('id', 'desc')->paginate(10);
+        $rumah = $query->orderBy('id', 'desc')->paginate(12);
         return view('pages.admin.rumah.index', compact('rumah'));
     }
 

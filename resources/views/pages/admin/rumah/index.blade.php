@@ -19,7 +19,7 @@
         <div class="input-group">
             <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Cari rumah / cluster / penghuni...">
             <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Cari</button>
-            <a href="{{ route('admin.rumah.index') }}" class="btn btn-outline-secondary"><i class="bi bi-x-circle"></i> Reset</a>
+            <a href="{{ route('admin.rumah.index') }}" class="btn btn-outline-secondary"><i class="bi bi-x-circle"></i></a>
         </div>
     </form>
 
@@ -43,7 +43,7 @@
                             {{-- Cluster --}}
                             <p class="mb-1">
                                 Cluster <strong>{{ $r->cluster->namaCluster->nama_cluster ?? '-' }}</strong><br>
-                                RT {{ $r->cluster->rt->nomor_rt ?? '-' }} •
+                                RT {{ $r->cluster->rt->nomor_rt ?? '-' }} 
                                 Blok {{ $r->cluster->blok->nama_blok ?? '-' }}
                             </p>
 

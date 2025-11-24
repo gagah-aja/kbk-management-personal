@@ -9,9 +9,9 @@
                 <h2>Data Blok</h2>
                 <p>Kelola data blok perumahan</p>
             </div>
-            <a href="{{ route('admin.blok.create') }}" class="btn-add">
-                <i class="bi bi-plus"></i> Tambah Blok
-            </a>
+            <a href="{{ route('admin.blok.create') }}" class="btn btn-dark">
+            <i class="bi bi-plus"></i> Tambah Blok  
+        </a>
         </div>
 
         {{-- Search Box --}}
@@ -33,7 +33,7 @@
 
                     <a href="{{ route('admin.blok.index') }}" class="btn btn-outline-secondary">
                         <i class="bi bi-x-circle d-none d-sm-inline"></i>
-                        <span class="d-none d-sm-inline">Reset</span>
+                        <span class="d-none d-sm-inline"></span>
                         <i class="bi bi-x-circle d-sm-none"></i>
                     </a>
                 </div>

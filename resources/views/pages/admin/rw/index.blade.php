@@ -11,7 +11,7 @@
         </div>
         
         {{-- Tombol Tambah RW --}}
-        <a href="{{ route('admin.rw.create') }}" class="btn-add">
+        <a href="{{ route('admin.rw.create') }}" class="btn btn-dark">
             <i class="bi bi-plus"></i> Tambah RW
         </a>
     </div>
@@ -38,7 +38,7 @@
             {{-- Tombol Reset --}}
             <a href="{{ route('admin.rw.index') }}" class="btn btn-outline-secondary">
                 <i class="bi bi-x-circle d-none d-sm-inline"></i>
-                <span class="d-none d-sm-inline">Reset</span>
+                <span class="d-none d-sm-inline"></span>
                 <i class="bi bi-x-circle d-sm-none"></i>
             </a>
         </div>

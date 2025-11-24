@@ -10,7 +10,7 @@
             <p>Kelola data cluster perumahan</p>
         </div>
 
-        <a href="{{ route('admin.cluster.create') }}" class="btn-add">
+        <a href="{{ route('admin.cluster.create') }}" class="btn btn-dark">
             <i class="bi bi-plus"></i> Tambah Cluster
         </a>
     </div>
@@ -39,7 +39,7 @@
 
                 <a href="{{ route('admin.cluster.index') }}" class="btn btn-outline-secondary">
                     <i class="bi bi-x-circle d-none d-sm-inline"></i>
-                    <span class="d-none d-sm-inline">Reset</span>
+                    <span class="d-none d-sm-inline"></span>
                     <i class="bi bi-x-circle d-sm-none"></i>
                 </a>
             </div>

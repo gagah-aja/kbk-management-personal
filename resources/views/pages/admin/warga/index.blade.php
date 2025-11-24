@@ -9,7 +9,7 @@
             <h2>Data Warga</h2>
             <p>Kelola data warga perumahan</p>
         </div>
-        <a href="{{ route('admin.warga.create') }}" class="btn-add">
+        <a href="{{ route('admin.warga.create') }}" class="btn btn-dark">
             <i class="bi bi-plus"></i> Tambah Warga
         </a>
     </div>
@@ -32,7 +32,7 @@
 
             {{-- Tombol Reset --}}
             <a href="{{ route('admin.warga.index') }}" class="btn btn-outline-secondary">
-                <i class="bi bi-x-circle"></i> Reset
+                <i class="bi bi-x-circle"></i>
             </a>
         </div>
     </form>
