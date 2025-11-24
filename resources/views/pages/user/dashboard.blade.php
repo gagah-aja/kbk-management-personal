@@ -161,39 +161,46 @@
 <div class="row g-4 mb-5 justify-content-center">
 
     {{-- Ketua RW --}}
-    @if ($ketua_rw && $ketua_rw->warga)
-        @php
-            $foto_rw = $ketua_rw->warga->foto && file_exists(storage_path('app/public/' . $ketua_rw->warga->foto))
-                ? asset('storage/' . $ketua_rw->warga->foto)
-                : null;
-        @endphp
+@foreach ($ketua_rw_list as $rw)
+    @php
+        $foto_rw = $rw->warga && $rw->warga->foto && file_exists(storage_path('app/public/' . $rw->warga->foto))
+            ? asset('storage/' . $rw->warga->foto)
+            : null;
+    @endphp
 
-        <div class="col-lg-4 col-md-6">
-            <div class="card leader-card border-0 rounded-3 shadow-sm text-center h-100">
-                <div class="card-body p-4">
+    <div class="col-lg-4 col-md-6">
+        <div class="card leader-card border-0 rounded-3 shadow-sm text-center h-100">
+            <div class="card-body p-4">
 
-                    @if($foto_rw)
-                        <img src="{{ $foto_rw }}" alt="Ketua RW" class="leader-photo">
-                    @else
-                        <div class="leader-avatar">
-                            <svg viewBox="0 0 24 24" fill="#6c757d">
-                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 
-                                    1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 
-                                    1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                            </svg>
-                        </div>
-                    @endif
+                @if($foto_rw)
+                    <img src="{{ $foto_rw }}" alt="Ketua RW" class="leader-photo">
+                @else
+                    <div class="leader-avatar">
+                        <svg viewBox="0 0 24 24" fill="#6c757d">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 
+                                1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 
+                                1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                    </div>
+                @endif
 
-                    <p class="text-uppercase text-muted fw-semibold small mb-1">KETUA RW</p>
-                    <h4 class="fw-bold text-dark mb-0">{{ $ketua_rw->warga->nama_lengkap }}</h4>
-                    <p class="text-success fw-semibold mb-3">Bidang Kepemimpinan</p>
-                </div>
+                <p class="text-uppercase text-muted fw-semibold small mb-1">
+                    KETUA RW {{ $rw->nomor_rw ?? '001' }}
+                </p>
+                <h4 class="fw-bold text-dark mb-0">
+                    {{ $rw->warga->nama_lengkap ?? $rw->nama_ketua }}
+                </h4>
+                <p class="text-success fw-semibold mb-3">
+                    {{ $rw->bidang ?? 'Bidang Kepemimpinan' }}
+                </p>
             </div>
         </div>
-    @endif
+    </div>
+@endforeach
+
 
     {{-- Ketua RT --}}
-    @foreach ($ketua_rt as $ketua_rtdata)
+    @foreach ($ketua_rt_list as $ketua_rtdata)
         @php
             $foto_rt = $ketua_rtdata->warga->foto && file_exists(storage_path('app/public/' . $ketua_rtdata->warga->foto))
                 ? asset('storage/' . $ketua_rtdata->warga->foto)

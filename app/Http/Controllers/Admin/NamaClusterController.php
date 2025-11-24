@@ -91,28 +91,34 @@ class NamaClusterController extends Controller
      * Hapus Nama Cluster dari database
      */
     public function destroy($id)
-    {
-        try {
-            $namaCluster = NamaCluster::findOrFail($id);
-            
-            // Cek apakah nama cluster sedang digunakan
-            if ($namaCluster->cluster()->count() > 0) {
-                return redirect()->route('admin.nama-cluster.index')
-                    ->with('error', 'Nama cluster tidak dapat dihapus karena masih digunakan.');
-            }
-            
-            $namaCluster->delete();
+{
+    try {
+        $namaCluster = NamaCluster::findOrFail($id);
 
-            // Reset auto increment jika tabel kosong
-            if (NamaCluster::count() === 0) {
-                DB::statement('ALTER TABLE nama_cluster AUTO_INCREMENT = 1;');
-            }
-
-            return redirect()->route('admin.nama-cluster.index')
-                ->with('success', 'Nama cluster berhasil dihapus.');
-        } catch (\Exception $e) {
-            return redirect()->route('admin.nama-cluster.index')
-                ->with('error', 'Gagal menghapus nama cluster: ' . $e->getMessage());
+        // Cek apakah nama cluster sedang digunakan
+        if ($namaCluster->cluster()->count() > 0) {
+            return redirect()->route('admin.nama-cluster.index')->with([
+                'error' => 'Nama cluster tidak dapat dihapus karena masih digunakan.',
+                'clusterId' => $namaCluster->id, // penting agar tombol Cek Cluster muncul
+            ]);
         }
+
+        $namaCluster->delete();
+
+        // Reset auto increment jika tabel kosong
+        if (NamaCluster::count() === 0) {
+            DB::statement('ALTER TABLE nama_cluster AUTO_INCREMENT = 1;');
+        }
+
+        return redirect()->route('admin.nama-cluster.index')
+            ->with('success', 'Nama cluster berhasil dihapus.');
+    } catch (\Exception $e) {
+        return redirect()->route('admin.nama-cluster.index')->with([
+            'error' => 'Gagal menghapus nama cluster: ' . $e->getMessage(),
+            'clusterId' => $id, // tetap kirim clusterId agar tombol muncul
+        ]);
     }
+}
+
+
 }

@@ -136,28 +136,30 @@ class RwController extends Controller
      * Menghapus data RW
      */
     public function destroy($id)
-    {
-        try {
-            $rw = Rw::findOrFail($id);
+{
+    try {
+        $rw = Rw::findOrFail($id);
 
-            // Cek apakah RW sedang digunakan oleh RT
-            if ($rw->rts()->count() > 0) {
-                return redirect()->route('admin.rw.index')
-                    ->with('error', 'RW tidak dapat dihapus karena masih memiliki RT.');
-            }
-
-            $rw->delete();
-
-            // Reset auto increment jika tabel kosong
-            if (Rw::count() === 0) {
-                DB::statement('ALTER TABLE rw AUTO_INCREMENT = 1;');
-            }
-
-            return redirect()->route('admin.rw.index')
-                ->with('success', 'Data RW berhasil dihapus!');
-        } catch (\Exception $e) {
-            return redirect()->route('admin.rw.index')
-                ->with('error', 'Gagal menghapus data RW: ' . $e->getMessage());
+        // Cek apakah RW masih memiliki RT
+        if ($rw->rts()->count() > 0) {
+            return redirect()->route('admin.rw.index')->with([
+                'error' => 'RW tidak dapat dihapus karena masih memiliki RT.',
+                'rwNomor' => $rw->nomor_rw, // dikirim ke SweetAlert
+            ]);
         }
+
+        $rw->delete();
+
+        // Reset auto increment jika tabel kosong
+        if (Rw::count() === 0) {
+            DB::statement('ALTER TABLE rw AUTO_INCREMENT = 1;');
+        }
+
+        return redirect()->route('admin.rw.index')->with('success', 'Data RW berhasil dihapus!');
+    } catch (\Exception $e) {
+        return redirect()->route('admin.rw.index')
+            ->with('error', 'Gagal menghapus data RW: ' . $e->getMessage());
     }
+}
+
 }

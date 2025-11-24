@@ -176,8 +176,8 @@
 {{-- SweetAlert --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Success Alert
+document.addEventListener('DOMContentLoaded', function () {
+
     @if (session('success'))
         Swal.fire({
             icon: 'success',
@@ -188,25 +188,49 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     @endif
 
-    // Error Alert
     @if (session('error'))
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal!',
-            text: '{{ session('error') }}',
-            confirmButtonColor: '#ef4444'
-        });
-    @endif
+const rumahStatus = '{{ session('rumahStatus') ?? '' }}';
 
-    // Delete Confirmation
+Swal.fire({
+    icon: 'error',
+    title: 'Gagal!',
+    text: '{{ session('error') }}',
+
+    showCancelButton: false,
+    showDenyButton: true,
+    showConfirmButton: true,
+
+    confirmButtonText: 'OK',
+    denyButtonText: 'Cek Rumah',
+
+    confirmButtonColor: '#6b7280',
+    denyButtonColor: '#3b82f6',
+
+    // Tombol tersusun ke bawah
+    customClass: {
+        actions: 'swal-actions-vertical'
+    }
+}).then(result => {
+    if (result.isDenied && rumahStatus) {
+        const searchParam = encodeURIComponent(rumahStatus);
+        window.location.href = `/admin/rumah?search=${searchParam}`;
+    }
+});
+@endif
+
+
+
+
+
+    // Delete confirmation
     document.querySelectorAll('.delete-form').forEach(form => {
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function (e) {
             e.preventDefault();
             const nama = this.querySelector('button').dataset.nama;
 
             Swal.fire({
-                title: 'Hapus Status Rumah?',
-                html: `Data status <strong>"${nama}"</strong> akan dihapus permanen.`,
+                title: 'Hapus Nama Cluster?',
+                html: `Data nama cluster <strong>"${nama}"</strong> akan dihapus permanen.`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444',
@@ -214,15 +238,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmButtonText: 'Ya, Hapus!',
                 cancelButtonText: 'Batal',
                 reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
+            }).then(result => {
+                if (result.isConfirmed) form.submit();
             });
         });
     });
+
 });
 </script>
+
+
 
 <style>
 /* Mobile Card Styling */

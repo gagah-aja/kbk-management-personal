@@ -85,26 +85,28 @@ class StatusRumahController extends Controller
      * Menghapus status rumah
      */
     public function destroy(StatusRumah $statusRumah)
-    {
-        try {
-            // Cek apakah status masih digunakan
-            if ($statusRumah->rumah()->count() > 0) {
-                return redirect()->route('admin.status-rumah.index')
-                    ->with('error', 'Status rumah tidak dapat dihapus karena masih digunakan oleh rumah.');
-            }
-
-            $statusRumah->delete();
-
-            // Reset auto increment jika tabel kosong
-            if (StatusRumah::count() === 0) {
-                DB::statement('ALTER TABLE status_rumah AUTO_INCREMENT = 1;');
-            }
-
+{
+    try {
+        // Jika status masih digunakan
+        if ($statusRumah->rumah()->count() > 0) {
             return redirect()->route('admin.status-rumah.index')
-                ->with('success', 'Status rumah berhasil dihapus!');
-        } catch (\Exception $e) {
-            return redirect()->route('admin.status-rumah.index')
-                ->with('error', 'Gagal menghapus status rumah: ' . $e->getMessage());
+                ->with('error', 'Status rumah tidak dapat dihapus karena masih digunakan oleh rumah.')
+                ->with('rumahStatus', $statusRumah->nama_status); // ⬅️ WAJIB
         }
+
+        $statusRumah->delete();
+
+        // Reset auto increment jika tabel kosong
+        if (StatusRumah::count() === 0) {
+            DB::statement('ALTER TABLE status_rumah AUTO_INCREMENT = 1;');
+        }
+
+        return redirect()->route('admin.status-rumah.index')
+            ->with('success', 'Status rumah berhasil dihapus!');
+    } catch (\Exception $e) {
+        return redirect()->route('admin.status-rumah.index')
+            ->with('error', 'Gagal menghapus status rumah: ' . $e->getMessage());
     }
+}
+
 }

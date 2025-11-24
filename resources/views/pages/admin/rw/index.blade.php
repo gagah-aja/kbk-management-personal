@@ -194,24 +194,26 @@ document.addEventListener('DOMContentLoaded', function() {
     @endif
 
     @if (session('error'))
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal!',
-            text: '{{ session('error') }}',
-            showCancelButton: true,
-            showConfirmButton: true,
-            confirmButtonText: 'Cek Cluster',
-            cancelButtonText: 'OK',
-            confirmButtonColor: '#3b82f6', // kanan
-            cancelButtonColor: '#6b7280',   // kiri
-            reverseButtons: true // ini bikin confirm di kanan, cancel di kiri
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // redirect ke daftar cluster / rumah
-                window.location.href = `/admin/cluster?search={{ session('clusterId') ?? '' }}`;
-            }
-        });
-    @endif
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal!',
+        text: '{{ session('error') }}',
+        showCancelButton: true,
+        showConfirmButton: true,
+        confirmButtonText: 'Cek RT',
+        cancelButtonText: 'OK',
+        confirmButtonColor: '#3b82f6',
+        cancelButtonColor: '#6b7280',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // kirim nomor RW lewat query string
+            const rwNomor = '{{ session('rwNomor') ?? '' }}'; // misal 9
+            window.location.href = `/admin/rt?search=${rwNomor}`;
+        }
+    });
+@endif
+
 
     // Konfirmasi hapus biasa
     document.querySelectorAll('.delete-form').forEach(form => {
@@ -238,6 +240,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+
 
 
 <style>
