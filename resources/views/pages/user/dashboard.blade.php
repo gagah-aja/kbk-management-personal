@@ -154,79 +154,136 @@
 {{-- BLOK 3: PENGURUS RW & RT --}}
 {{-- ============================ --}}
 
-<h2 id="pengurus-warga" class="fs-4 fw-bold mb-4 text-dark border-bottom pb-2">
-    Pengurus Warga (RW/RT)
+<h2 id="pengurus-warga"
+    class="fs-4 fw-bold mb-3 text-dark border-bottom pb-2 d-flex align-items-center gap-3 flex-wrap">
+
+    <span>Pengurus Warga (RW/RT)</span>
+
+    <div class="d-flex gap-2">
+        <button class="btn filter-btn active-btn"
+                data-target="rw"
+                style="font-size: .95rem; font-weight: 600;">
+            RW
+        </button>
+
+        <button class="btn filter-btn"
+                data-target="rt"
+                style="font-size: .95rem; font-weight: 600;">
+            RT
+        </button>
+    </div>
 </h2>
+
+<style>
+    /* Default tombol = outline abu & tanpa warna */
+    .filter-btn {
+        border: 2px solid #6c757d;
+        background: transparent;
+        color: #6c757d;
+        transition: .2s;
+        border-radius: 6px;
+        padding: 6px 14px;
+    }
+
+    /* Ketika tombol aktif RW = biru */
+    .filter-btn.active-btn[data-target="rw"] {
+        background: #0d6efd;
+        border-color: #0d6efd;
+        color: white;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, .3);
+    }
+
+    /* Ketika tombol aktif RT = hijau */
+    .filter-btn.active-btn[data-target="rt"] {
+        background: #198754;
+        border-color: #198754;
+        color: white;
+        box-shadow: 0 0 0 3px rgba(25, 135, 84, .3);
+    }
+</style>
+
+
 
 <div class="row g-4 mb-5 justify-content-center">
 
     {{-- Ketua RW --}}
-@foreach ($ketua_rw_list as $rw)
-    @php
-        $foto_rw = $rw->warga && $rw->warga->foto && file_exists(storage_path('app/public/' . $rw->warga->foto))
-            ? asset('storage/' . $rw->warga->foto)
-            : null;
-    @endphp
+    @foreach ($ketua_rw_list as $rw)
+        @php
+            $foto_rw = $rw->warga && $rw->warga->foto && 
+                       file_exists(storage_path('app/public/' . $rw->warga->foto))
+                       ? asset('storage/' . $rw->warga->foto)
+                       : null;
+        @endphp
 
-    <div class="col-lg-4 col-md-6">
-        <div class="card leader-card border-0 rounded-3 shadow-sm text-center h-100">
-            <div class="card-body p-4">
+        <div class="col-lg-4 col-md-6 item-rw">
+            <div class="card leader-card border-0 rounded-3 shadow-sm text-center h-100">
+                <div class="card-body p-4">
 
-                @if($foto_rw)
-                    <img src="{{ $foto_rw }}" alt="Ketua RW" class="leader-photo">
-                @else
-                    <div class="leader-avatar">
-                        <svg viewBox="0 0 24 24" fill="#6c757d">
-                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 
+                    {{-- Foto --}}
+                    @if($foto_rw)
+                        <img src="{{ $foto_rw }}" alt="Ketua RW" class="leader-photo">
+                    @else
+                        <div class="leader-avatar">
+                            <svg viewBox="0 0 24 24" fill="#6c757d">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 
                                 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 
                                 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                        </svg>
-                    </div>
-                @endif
+                            </svg>
+                        </div>
+                    @endif
 
-                <p class="text-uppercase text-muted fw-semibold small mb-1">
-                    KETUA RW {{ $rw->nomor_rw ?? '001' }}
-                </p>
-                <h4 class="fw-bold text-dark mb-0">
-                    {{ $rw->warga->nama_lengkap ?? $rw->nama_ketua }}
-                </h4>
-                <p class="text-success fw-semibold mb-3">
-                    {{ $rw->bidang ?? 'Bidang Kepemimpinan' }}
-                </p>
+                    {{-- Jabatan --}}
+                    <p class="text-uppercase text-muted fw-semibold small mb-1">
+                        KETUA RW {{ $rw->nomor_rw ?? '001' }}
+                    </p>
+
+                    {{-- Nama --}}
+                    <h4 class="fw-bold text-dark mb-0">
+                        {{ $rw->warga->nama_lengkap ?? $rw->nama_ketua }}
+                    </h4>
+
+                </div>
             </div>
         </div>
-    </div>
-@endforeach
+    @endforeach
 
 
     {{-- Ketua RT --}}
     @foreach ($ketua_rt_list as $ketua_rtdata)
         @php
-            $foto_rt = $ketua_rtdata->warga->foto && file_exists(storage_path('app/public/' . $ketua_rtdata->warga->foto))
-                ? asset('storage/' . $ketua_rtdata->warga->foto)
-                : null;
+            $foto_rt = $ketua_rtdata->warga->foto &&
+                       file_exists(storage_path('app/public/' . $ketua_rtdata->warga->foto))
+                       ? asset('storage/' . $ketua_rtdata->warga->foto)
+                       : null;
         @endphp
 
-        <div class="col-lg-4 col-md-6">
+        <div class="col-lg-4 col-md-6 item-rt" style="display: none;">
             <div class="card leader-card border-0 rounded-3 shadow-sm text-center h-100">
                 <div class="card-body p-4">
 
+                    {{-- Foto --}}
                     @if($foto_rt)
                         <img src="{{ $foto_rt }}" alt="Ketua RT" class="leader-photo">
                     @else
                         <div class="leader-avatar">
                             <svg viewBox="0 0 24 24" fill="#6c757d">
                                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 
-                                    1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 
-                                    1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 
+                                1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                             </svg>
                         </div>
                     @endif
 
+                    {{-- Jabatan --}}
                     <p class="text-uppercase text-muted fw-semibold small mb-1">
                         KETUA RT {{ $ketua_rtdata->nomor_rt ?? '001' }}
                     </p>
-                    <h4 class="fw-bold text-dark mb-0">{{ $ketua_rtdata->warga->nama_lengkap }}</h4>
+
+                    {{-- Nama --}}
+                    <h4 class="fw-bold text-dark mb-0">
+                        {{ $ketua_rtdata->warga->nama_lengkap }}
+                    </h4>
+
                 </div>
             </div>
         </div>
@@ -234,6 +291,43 @@
 
 </div>
 
+
+{{-- SCRIPT FILTER --}}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const buttons = document.querySelectorAll('.filter-btn');
+
+    buttons.forEach(btn => {
+
+        btn.addEventListener('click', function () {
+
+            let target = this.dataset.target;
+            let rwItems = document.querySelectorAll('.item-rw');
+            let rtItems = document.querySelectorAll('.item-rt');
+
+            // Bersihkan active
+            buttons.forEach(b => b.classList.remove('active-btn'));
+
+            // Set tombol baru jadi active
+            this.classList.add('active-btn');
+
+            // Filter card RW/RT
+            if (target === 'rw') {
+                rwItems.forEach(el => el.style.display = 'block');
+                rtItems.forEach(el => el.style.display = 'none');
+            }
+
+            if (target === 'rt') {
+                rwItems.forEach(el => el.style.display = 'none');
+                rtItems.forEach(el => el.style.display = 'block');
+            }
+        });
+
+    });
+
+});
+</script>
 
 
 
