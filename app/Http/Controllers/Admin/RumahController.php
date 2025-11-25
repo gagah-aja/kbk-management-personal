@@ -83,8 +83,17 @@ class RumahController extends Controller
             $validated['gambar'] = $request->file('gambar')->store('rumah', 'public');
         }
 
-        Rumah::create($validated);
-        return redirect()->route('admin.rumah.index')->with('success', 'Data rumah berhasil ditambahkan!');
+        $rumah = Rumah::create($validated);
+
+        // Cek apakah user ingin langsung tambah penghuni
+        if ($request->has('tambah_penghuni') && $request->tambah_penghuni == '1') {
+            return redirect()->route('admin.rumah.penghuni.create', $rumah->id)
+                ->with('success', 'Data rumah berhasil ditambahkan! Silakan tambahkan penghuni.');
+        }
+
+        // Jika tidak, kembali ke index
+        return redirect()->route('admin.rumah.index')
+            ->with('success', 'Data rumah berhasil ditambahkan!');
     }
 
     public function edit($id)
