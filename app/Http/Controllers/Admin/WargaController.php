@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Warga;
 use App\Models\Rumah;
+use App\Models\KetuaRW;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -230,4 +231,12 @@ class WargaController extends Controller
                 ->with('error', 'Gagal menghapus data warga: ' . $e->getMessage());
         }
     }
+
+    /**
+ * Menampilkan semua Ketua RW
+ */
+
+
+
+
 }

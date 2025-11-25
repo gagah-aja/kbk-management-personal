@@ -29,6 +29,10 @@ use App\Http\Controllers\UserController;
 // 🔹 ROUTE PUBLIC (Guest)
 // =====================================================
 Route::get('/', [UserController::class, 'index'])->name('dashboard');
+    Route::get('/ketua-rw', [UserController::class, 'allKetuaRW'])->name('ketua-rw.all');
+    Route::get('/ketua-rt', [UserController::class, 'allKetuaRT'])->name('rt.index');
+
+
 
 // 🔍 Route Pencarian Warga/Penghuni
 Route::get('/pencarian-warga', [App\Http\Controllers\SearchController::class, 'index'])->name('search.index');
@@ -144,6 +148,9 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/warga/{id}/edit', [WargaController::class, 'edit'])->name('warga.edit');
     Route::put('/warga/{id}', [WargaController::class, 'update'])->name('warga.update');
     Route::delete('/warga/{id}', [WargaController::class, 'destroy'])->name('warga.destroy');
+
+     // 🔹 Route baru: Halaman untuk menampilkan semua Ketua RW
+
 
     // 🧾 Status Rumah
     // =====================================================
