@@ -1,181 +1,325 @@
 @extends('layouts.admin.admin')
 
 @section('content')
-<div class="container-fluid py-4">
-
-    {{-- Header --}}
-    <div class="page-header d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <div>
-            <h2>Data Rumah</h2>
-            <p>Kelola data rumah perumahan</p>
+    <div class="container-fluid py-4">
+        {{-- Header --}}
+        <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h2>Data Rumah</h2>
+                <p>Kelola data rumah perumahan</p>
+            </div>
+            <a href="{{ route('admin.rumah.create') }}" class="btn-add">
+                <i class="bi bi-plus"></i> Tambah Rumah
+            </a>
         </div>
-        <a href="{{ route('admin.rumah.create') }}" class="btn btn-dark">
-            <i class="bi bi-plus"></i> Tambah Rumah
-        </a>
-    </div>
 
-    {{-- Pencarian --}}
-    <form method="GET" action="{{ route('admin.rumah.index') }}" class="mb-4">
-        <div class="input-group">
-            <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Cari rumah / cluster / penghuni...">
-            <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Cari</button>
-            <a href="{{ route('admin.rumah.index') }}" class="btn btn-outline-secondary"><i class="bi bi-x-circle"></i></a>
+        {{-- 🔍 Search Box --}}
+        <div class="data-card mb-3">
+            <form action="{{ route('admin.rumah.index') }}" method="GET">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" name="search" class="form-control border-start-0"
+                        placeholder="Cari nomor rumah, cluster, penghuni, atau alamat..." value="{{ $search ?? '' }}">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-search"></i> Cari
+                    </button>
+                    @if ($search)
+                        <a href="{{ route('admin.rumah.index') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Reset
+                        </a>
+                    @endif
+                </div>
+            </form>
         </div>
-    </form>
 
-    {{-- Daftar Rumah --}}
-    <div class="data-card">
-        @if ($rumah->count() > 0)
-            <div class="row g-4">
-                @foreach ($rumah as $r)
-                    <div class="col-md-4 mb-4">
-                        <div class="card-rumah p-3 h-100">
+        {{-- Data Cards --}}
+        <div class="data-card">
+            @if ($rumah->count() > 0)
+                <div class="row g-4">
+                    @foreach ($rumah as $r)
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card-rumah">
+                                <div class="card-rumah-body">
+                                    {{-- Header Card --}}
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-rumah-title mb-0">{{ $r->nomor_rumah }}</h5>
+                                        @php
+                                            $statusColor = [
+                                                'tersedia' => 'success',
+                                                'terisi' => 'primary',
+                                                'rusak' => 'danger',
+                                                'disewakan' => 'warning',
+                                            ];
+                                            $statusNama = strtolower($r->statusRumah->nama_status ?? 'unknown');
+                                        @endphp
+                                        <span class="badge-status badge-{{ $statusColor[$statusNama] ?? 'secondary' }}">
+                                            {{ ucfirst($r->statusRumah->nama_status ?? 'N/A') }}
+                                        </span>
+                                    </div>
 
-                            {{-- Pemilik Rumah --}}
-                            <div class="mb-2">
-                                <p class="text-muted mb-0"><i class="bi bi-person"></i> Pemilik Rumah</p>
-                                <h5 class="fw-bold text-primary text-capitalize">{{ $r->warga->nama_lengkap ?? 'Belum ada pemilik' }}</h5>
-                            </div>
+                                    {{-- Pemilik --}}
+                                    @if ($r->warga)
+                                        <div class="mb-2">
+                                            <small class="text-muted d-block">Pemilik</small>
+                                            <strong class="text-primary">{{ $r->warga->nama_lengkap }}</strong>
+                                        </div>
+                                    @endif
 
-                            {{-- Nomor Rumah --}}
-                            <h4 class="fw-semibold">{{ $r->nomor_rumah }}</h4>
+                                    {{-- Alamat --}}
+                                    <p class="text-muted mb-2 small">
+                                        <i class="bi bi-geo-alt"></i> {{ Str::limit($r->alamat_lengkap, 50) }}
+                                    </p>
 
-                            {{-- Cluster --}}
-                            <p class="mb-1">
-                                Cluster <strong>{{ $r->cluster->namaCluster->nama_cluster ?? '-' }}</strong><br>
-                                RT {{ $r->cluster->rt->nomor_rt ?? '-' }} 
-                                Blok {{ $r->cluster->blok->nama_blok ?? '-' }}
-                            </p>
+                                    {{-- Cluster Info --}}
+                                    <div class="mb-2">
+                                        <small class="text-muted d-block">Cluster</small>
+                                        <strong>{{ $r->cluster->namaCluster->nama_cluster ?? 'N/A' }}</strong>
+                                        <div class="text-muted small mt-1">
+                                            <span class="badge bg-success">RT {{ $r->cluster->rt->nomor_rt ?? '-' }}</span>
+                                            <span class="badge bg-info">Blok
+                                                {{ $r->cluster->blok->nama_blok ?? '-' }}</span>
+                                        </div>
+                                    </div>
 
-                            {{-- Status Rumah --}}
-                            <div class="mb-2">
-                                @if ($r->statusRumah && $r->statusRumah->id == 1)
-                                    <span class="badge bg-primary">TERISI</span>
-                                @elseif($r->statusRumah && $r->statusRumah->id == 2)
-                                    <span class="badge bg-success">TERSEDIA</span>
-                                @else
-                                    <span class="badge bg-warning">DISEWAKAN</span>
-                                @endif
-                            </div>
+                                    {{-- Penghuni Info --}}
+                                    <div class="mb-3">
+                                        <small class="text-muted d-block">Penghuni</small>
+                                        @if ($r->penghuniAktif->count() > 0)
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <strong>{{ $r->penghuniAktif->count() }} Orang</strong>
+                                                <a href="{{ route('admin.rumah.penghuni.show', $r->id) }}"
+                                                    class="btn btn-sm btn-outline-info">
+                                                    <i class="bi bi-eye"></i> Lihat
+                                                </a>
+                                            </div>
+                                        @else
+                                            <div class="text-muted small">Belum ada penghuni</div>
+                                            <a href="{{ route('admin.rumah.penghuni.create', $r->id) }}"
+                                                class="btn btn-sm btn-outline-info w-100 mt-1">
+                                                <i class="bi bi-person-plus"></i> Tambah Penghuni
+                                            </a>
+                                        @endif
+                                    </div>
 
-                            {{-- Penghuni --}}
-                            <div class="mt-2">
-                                @if ($r->penghuniAktif && $r->penghuniAktif->count() > 0)
-                                    <span class="text-dark fw-semibold">{{ $r->penghuniAktif->count() }} Orang</span>
-                                    <a href="{{ route('admin.rumah.penghuni.show', $r->id) }}" class="btn btn-outline-info btn-sm ms-2">
-                                        <i class="bi bi-eye"></i> Lihat Semua
-                                    </a>
-                                @else
-                                    <p class="text-muted mb-1">Belum ada penghuni</p>
-                                    <a href="{{ route('admin.rumah.penghuni.create', $r->id) }}" class="btn btn-outline-primary btn-sm w-100">
-                                        <i class="bi bi-person-plus"></i> Tambah Penghuni
-                                    </a>
-                                @endif
-                            </div>
+                                    {{-- Action Buttons --}}
+                                    <div class="d-flex flex-column gap-2">
+                                        @if ($r->latitude && $r->longitude)
+                                            @php $mapsUrl = "https://www.google.com/maps?q={$r->latitude},{$r->longitude}"; @endphp
+                                            <a href="{{ $mapsUrl }}" target="_blank"
+                                                class="btn btn-sm btn-outline-success">
+                                                <i class="bi bi-geo"></i> Lihat di Maps
+                                            </a>
+                                        @endif
 
-                            {{-- Tombol Aksi --}}
-                            <div class="mt-3 d-flex flex-wrap gap-2">
-                                <a href="https://www.google.com/maps?q={{ $r->latitude }},{{ $r->longitude }}" target="_blank" class="btn btn-outline-success btn-sm w-100">
-                                    <i class="bi bi-geo"></i> Lihat di Maps
-                                </a>
+                                        @if ($r->gambar)
+                                            <button type="button" class="btn btn-sm btn-outline-primary open-modal-gambar"
+                                                data-gambar="{{ asset('storage/' . $r->gambar) }}"
+                                                data-nomor="{{ $r->nomor_rumah }}">
+                                                <i class="bi bi-image"></i> Lihat Gambar
+                                            </button>
+                                        @endif
 
-                                @if ($r->gambar)
-                                    <button class="btn btn-outline-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalGambar{{ $r->id }}">
-                                        <i class="bi bi-image"></i> Buka Gambar
-                                    </button>
-                                @endif
-
-                                <div class="d-flex gap-2 w-100">
-                                    <a href="{{ route('admin.rumah.edit', $r->id) }}" class="btn btn-outline-warning btn-sm flex-fill">
-                                        <i class="bi bi-pencil"></i> Edit
-                                    </a>
-
-                                    <form action="{{ route('admin.rumah.destroy', $r->id) }}" method="POST" class="flex-fill delete-form">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" class="btn btn-outline-danger btn-sm w-100 delete-btn" data-nama="{{ $r->nomor_rumah }}">
-                                            <i class="bi bi-trash"></i> Hapus
-                                        </button>
-                                    </form>
+                                        <div class="d-flex gap-2">
+                                            <a href="{{ route('admin.rumah.edit', $r->id) }}"
+                                                class="btn-action btn-edit flex-fill">
+                                                <i class="bi bi-pencil"></i> Edit
+                                            </a>
+                                            <form action="{{ route('admin.rumah.destroy', $r->id) }}" method="POST"
+                                                class="delete-form flex-fill">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn-action btn-delete w-100"
+                                                    data-nama="Rumah {{ $r->nomor_rumah }}">
+                                                    <i class="bi bi-trash"></i> Hapus
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
-            </div>
+                    @endforeach
+                </div>
 
-            {{-- Pagination --}}
-            @if ($rumah->hasPages())
-                <div class="pagination-wrapper mt-4">
-                    {{ $rumah->appends(['search' => request('search')])->links('pagination::bootstrap-5') }}
+                {{-- ✅ Pagination dengan Custom Style --}}
+                <div class="pagination-wrapper">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div class="text-muted small">
+                            Menampilkan {{ $rumah->firstItem() }} - {{ $rumah->lastItem() }}
+                            dari {{ $rumah->total() }} data
+                        </div>
+                        <div>
+                            {{ $rumah->appends(request()->except('page'))->links('vendor.pagination.bootstrap-5') }}
+                        </div>
+                    </div>
+                </div>
+            @else
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    @if ($search)
+                        <h5>Tidak Ada Hasil</h5>
+                        <p>Tidak ditemukan hasil untuk "{{ $search }}"</p>
+                        <a href="{{ route('admin.rumah.index') }}" class="btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Kembali
+                        </a>
+                    @else
+                        <h5>Belum Ada Data</h5>
+                        <p>Mulai tambahkan data rumah pertama</p>
+                        <a href="{{ route('admin.rumah.create') }}" class="btn-add">
+                            <i class="bi bi-plus"></i> Tambah Data
+                        </a>
+                    @endif
                 </div>
             @endif
-        @else
-            <div class="empty-state text-center py-5">
-                <i class="bi bi-inbox mb-2" style="font-size:2rem;"></i>
-                @if (request('search'))
-                    <h5>Tidak Ada Hasil</h5>
-                    <p>Tidak ditemukan hasil untuk "<strong>{{ request('search') }}</strong>"</p>
-                    <a href="{{ route('admin.rumah.index') }}" class="btn btn-outline-secondary">Reset</a>
-                @else
-                    <h5>Belum Ada Data</h5>
-                    <p>Mulai tambahkan data rumah pertama</p>
-                    <a href="{{ route('admin.rumah.create') }}" class="btn btn-primary">
-                        <i class="bi bi-plus"></i> Tambah Data
-                    </a>
-                @endif
-            </div>
-        @endif
+        </div>
     </div>
-</div>
 
-{{-- SweetAlert --}}
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
+    {{-- Modal untuk Gambar --}}
+    <div class="modal fade" id="modalGambar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalGambarLabel">Gambar Rumah</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalGambarImg" src="" alt="Gambar Rumah" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
 
-    // Konfirmasi hapus
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const form = this.closest('form');
-            const namaRumah = this.dataset.nama;
+    {{-- SweetAlert --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            @endif
 
-            Swal.fire({
-                title: 'Yakin ingin menghapus?',
-                text: `Rumah nomor ${namaRumah} akan dihapus secara permanen!`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: '{{ session('error') }}',
+                    confirmButtonColor: '#ef4444'
+                });
+            @endif
+
+            // Hapus Rumah
+            document.querySelectorAll('.delete-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const nama = this.querySelector('button').dataset.nama;
+
+                    Swal.fire({
+                        title: 'Hapus Data?',
+                        html: `<strong>${nama}</strong> akan dihapus permanen.`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+
+            // Modal Gambar
+            document.querySelectorAll('.open-modal-gambar').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const gambarUrl = this.dataset.gambar;
+                    const nomorRumah = this.dataset.nomor;
+
+                    document.getElementById('modalGambarImg').src = gambarUrl;
+                    document.getElementById('modalGambarLabel').textContent = 'Gambar Rumah ' +
+                        nomorRumah;
+
+                    const modal = new bootstrap.Modal(document.getElementById('modalGambar'));
+                    modal.show();
+                });
             });
         });
-    });
+    </script>
 
-    // Notifikasi success/error
-    @if(session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: "{{ session('success') }}",
-            showConfirmButton: false,
-            timer: 2000
-        });
-    @endif
+    <style>
+        /* Card Rumah */
+        .card-rumah {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
 
-    @if(session('error'))
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal!',
-            text: "{{ session('error') }}"
-        });
-    @endif
+        .card-rumah:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        }
 
-});
-</script>
+        .card-rumah-body {
+            padding: 1.25rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-rumah-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* Badge Status */
+        .badge-status {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .badge-success {
+            background: #10b981;
+            color: #fff;
+        }
+
+        .badge-primary {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        .badge-danger {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .badge-secondary {
+            background: #6b7280;
+            color: #fff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .card-rumah-body {
+                padding: 1rem;
+            }
+        }
+    </style>
 @endsection

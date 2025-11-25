@@ -46,8 +46,6 @@ class UserController extends Controller
     ));
 }
 
-
-
     public function allKetuaRW()
 {
     // Ambil semua RW beserta relasi warga (ketua RW)
