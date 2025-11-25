@@ -13,18 +13,26 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         html,
         body {
             margin: 0;
             padding: 0;
             height: 100%;
             overflow-x: hidden;
+            width: 100%;
         }
 
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Decorative circles */
@@ -69,6 +77,16 @@
         .container-fluid {
             position: relative;
             z-index: 1;
+            width: 100%;
+            padding: 0;
+        }
+
+        .login-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px 15px;
         }
 
         .login-card {
@@ -79,11 +97,23 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
             z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
         }
 
         .login-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-header {
+            padding: 2rem 2rem 0.5rem;
+            background: transparent !important;
+        }
+
+        .card-body {
+            padding: 1.5rem 2rem 2rem;
         }
 
         .form-control {
@@ -92,12 +122,34 @@
             padding: 12px 20px 12px 45px;
             font-size: 15px;
             transition: all 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .form-control:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
             transform: translateY(-2px);
+            outline: none;
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+            padding-right: 2.5rem;
+        }
+
+        /* PERBAIKAN KHUSUS ERROR MESSAGE */
+        .invalid-feedback {
+            display: block !important;
+            width: 100%;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #dc3545;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+            line-height: 1.4;
+            padding: 0;
         }
 
         .btn-login {
@@ -110,6 +162,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            width: 100%;
         }
 
         .btn-login::before {
@@ -146,6 +199,7 @@
 
         .input-icon {
             position: relative;
+            width: 100%;
         }
 
         .input-icon i {
@@ -170,6 +224,148 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* RESPONSIVE UNTUK MOBILE */
+        @media (max-width: 576px) {
+            body::before {
+                width: 200px;
+                height: 200px;
+                top: -50px;
+                left: -50px;
+            }
+
+            body::after {
+                width: 150px;
+                height: 150px;
+                bottom: -30px;
+                right: -30px;
+            }
+
+            .login-wrapper {
+                padding: 15px 12px;
+            }
+
+            .login-card {
+                border-radius: 18px;
+                max-width: 100%;
+            }
+
+            .card-header {
+                padding: 1.5rem 1.25rem 0.5rem;
+            }
+
+            .card-body {
+                padding: 1.25rem 1.25rem 1.5rem;
+            }
+
+            .header-icon {
+                width: 60px;
+                height: 60px;
+                margin-bottom: 15px;
+            }
+
+            .header-icon i {
+                font-size: 30px !important;
+            }
+
+            .card-title {
+                font-size: 1.35rem !important;
+            }
+
+            .card-header p {
+                font-size: 0.85rem !important;
+                margin-top: 0.5rem !important;
+            }
+
+            .form-control {
+                font-size: 14px;
+                padding: 11px 15px 11px 42px;
+                border-radius: 10px;
+            }
+
+            .input-icon i {
+                left: 13px;
+                font-size: 16px;
+            }
+
+            .btn-login {
+                padding: 12px;
+                font-size: 15px;
+                border-radius: 10px;
+            }
+
+            .invalid-feedback {
+                font-size: 0.8rem;
+                line-height: 1.3;
+                margin-top: 0.4rem;
+            }
+
+            .mb-3 {
+                margin-bottom: 1rem !important;
+            }
+
+            .mb-4 {
+                margin-bottom: 1.25rem !important;
+            }
+        }
+
+        /* EXTRA SMALL DEVICES */
+        @media (max-width: 375px) {
+            .login-wrapper {
+                padding: 12px 10px;
+            }
+
+            .login-card {
+                border-radius: 16px;
+            }
+
+            .card-header {
+                padding: 1.25rem 1rem 0.5rem;
+            }
+
+            .card-body {
+                padding: 1rem 1rem 1.25rem;
+            }
+
+            .header-icon {
+                width: 55px;
+                height: 55px;
+                margin-bottom: 12px;
+            }
+
+            .header-icon i {
+                font-size: 26px !important;
+            }
+
+            .card-title {
+                font-size: 1.2rem !important;
+            }
+
+            .card-header p {
+                font-size: 0.8rem !important;
+            }
+
+            .form-control {
+                font-size: 13px;
+                padding: 10px 12px 10px 40px;
+            }
+
+            .input-icon i {
+                font-size: 15px;
+                left: 12px;
+            }
+
+            .btn-login {
+                padding: 11px;
+                font-size: 14px;
+            }
+
+            .invalid-feedback {
+                font-size: 0.75rem;
+            }
         }
     </style>
 </head>
