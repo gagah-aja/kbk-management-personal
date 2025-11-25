@@ -44,31 +44,54 @@
         }
 
         /* ============================= */
-        /* 🎯 FOTO RW & RT RAPI FINAL   */
-        /* ============================= */
-        .leader-photo,
-        .leader-avatar {
-            width: 110px !important;
-            height: 110px !important;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #198754;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px auto;
-            background: #e9ecef;
-        }
+/* 🎯 FOTO RW & RT RAPI FINAL   */
+/* ============================= */
 
-        .leader-avatar svg {
-            width: 60px;
-            height: 60px;
-        }
+/* Ketua RW */
+.item-rw .leader-photo,
+.item-rw .leader-avatar {
+    width: 110px !important;
+    height: 110px !important;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #0d6efd; /* biru RW */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px auto;
+    background: #e9ecef;
+}
 
-        /* tombol more kecil */
-        .more-btn {
-            min-width: 220px;
-        }
+.item-rw .leader-avatar svg {
+    width: 60px;
+    height: 60px;
+}
+
+/* Ketua RT */
+.item-rt .leader-photo,
+.item-rt .leader-avatar {
+    width: 110px !important;
+    height: 110px !important;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #198754; /* hijau RT */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px auto;
+    background: #e9ecef;
+}
+
+.item-rt .leader-avatar svg {
+    width: 60px;
+    height: 60px;
+}
+
+/* tombol more kecil */
+.more-btn {
+    min-width: 220px;
+}
+
     </style>
 
 
