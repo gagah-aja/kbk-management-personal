@@ -55,17 +55,23 @@
 
                                     {{-- Foto --}}
                                     <div class="me-3">
-                                        @if ($warga->foto)
-                                            <img src="{{ asset('storage/' . $warga->foto) }}"
-                                                 alt="{{ $warga->nama_lengkap }}"
-                                                 class="rounded-circle"
-                                                 style="width: 50px; height: 50px; object-fit: cover;">
-                                        @else
-                                            <div class="avatar-circle">
-                                                {{ substr($warga->nama_lengkap, 0, 1) }}
-                                            </div>
-                                        @endif
-                                    </div>
+    @if ($warga->foto && file_exists(storage_path('app/public/' . $warga->foto)))
+        <img src="{{ asset('storage/' . $warga->foto) }}"
+             alt="{{ $warga->nama_lengkap }}"
+             class="rounded-circle"
+             style="width: 50px; height: 50px; object-fit: cover;">
+    @else
+        <div class="rounded-circle d-flex align-items-center justify-content-center"
+             style="width: 50px; height: 50px; background:#e9ecef; border:2px solid #0d6efd;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="#6c757d">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4
+                1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8
+                1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+            </svg>
+        </div>
+    @endif
+</div>
+
 
                                     {{-- Info Singkat --}}
                                     <div class="flex-grow-1">
