@@ -21,13 +21,13 @@ class RtController extends Controller
         $dataRT = Rt::with(['warga', 'rw'])
             ->when($search, function ($query, $search) {
                 $query->where('nomor_rt', 'like', "%{$search}%")
-                      ->orWhereHas('warga', function ($q) use ($search) {
-                          $q->where('nama_lengkap', 'like', "%{$search}%")
+                    ->orWhereHas('warga', function ($q) use ($search) {
+                        $q->where('nama_lengkap', 'like', "%{$search}%")
                             ->orWhere('nik', 'like', "%{$search}%");
-                      })
-                      ->orWhereHas('rw', function ($q) use ($search) {
-                          $q->where('nomor_rw', 'like', "%{$search}%");
-                      });
+                    })
+                    ->orWhereHas('rw', function ($q) use ($search) {
+                        $q->where('nomor_rw', 'like', "%{$search}%");
+                    });
             })
             ->orderBy('nomor_rt', 'asc')
             ->paginate(10);
@@ -67,6 +67,15 @@ class RtController extends Controller
      */
     public function store(Request $request)
     {
+        // ✅ Validasi tambahan: Cek apakah warga sudah menjadi RW
+        $idWargaSudahRW = Rw::pluck('id_warga')->toArray();
+
+        if (in_array($request->id_warga, $idWargaSudahRW)) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['id_warga' => 'Warga ini sudah menjadi Ketua RW dan tidak bisa menjadi Ketua RT.']);
+        }
+
         $request->validate([
             'id_warga' => 'required|exists:warga,id|unique:rt,id_warga',
             'id_rw'    => 'required|exists:rw,id',
@@ -126,6 +135,17 @@ class RtController extends Controller
     {
         $rt = Rt::findOrFail($id);
 
+        // ✅ Validasi tambahan: Cek apakah warga yang dipilih sudah menjadi RW
+        $idWargaSudahRW = Rw::pluck('id_warga')->toArray();
+
+        // Jika warga yang dipilih berbeda dengan warga RT saat ini
+        // DAN warga tersebut sudah menjadi RW, maka tolak
+        if ($request->id_warga != $rt->id_warga && in_array($request->id_warga, $idWargaSudahRW)) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['id_warga' => 'Warga ini sudah menjadi Ketua RW dan tidak bisa menjadi Ketua RT.']);
+        }
+
         $request->validate([
             'id_warga' => 'required|exists:warga,id|unique:rt,id_warga,' . $rt->id,
             'id_rw'    => 'required|exists:rw,id',
@@ -154,34 +174,31 @@ class RtController extends Controller
      * Menghapus data RT
      */
     public function destroy($id)
-{
-    try {
-        $rt = Rt::findOrFail($id);
+    {
+        try {
+            $rt = Rt::findOrFail($id);
 
-        // Cek apakah RT sedang digunakan oleh cluster
-        if ($rt->clusters()->count() > 0) {
-            // Kembalikan response JSON agar bisa ditangani SweetAlert
+            // Cek apakah RT sedang digunakan oleh cluster
+            if ($rt->clusters()->count() > 0) {
+                // Kembalikan response JSON agar bisa ditangani SweetAlert
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'RT tidak dapat dihapus karena masih digunakan oleh cluster.',
+                    'clusterUrl' => route('admin.cluster.index') . '?search=' . $rt->id
+                ]);
+            }
+
+            $rt->delete();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data RT berhasil dihapus.'
+            ]);
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'RT tidak dapat dihapus karena masih digunakan oleh cluster.',
-                'clusterUrl' => route('admin.cluster.index') . '?search=' . $rt->id
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ]);
         }
-
-        $rt->delete();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data RT berhasil dihapus.'
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-        ]);
     }
-}
-
-
 }
