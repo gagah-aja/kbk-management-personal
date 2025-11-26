@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function index()
+ public function index()
 {
     // =========================
     // 🔹 Statistik
@@ -33,6 +33,13 @@ class UserController extends Controller
     $landingPage = Setting::where('key', 'landing_page')->first();
 
     // =========================
+    // 🔹 Ambil polygon map jika ada
+    // =========================
+    $mapPolygonSetting = Setting::where('key', 'map_polygon')->first();
+    $mapPolygon = $mapPolygonSetting ? $mapPolygonSetting->value : null;
+
+    // dd($mapPolygon);
+    // =========================
     // 🔹 Kirim data ke view
     // =========================
     return view('pages.user.dashboard', compact(
@@ -42,9 +49,11 @@ class UserController extends Controller
         'total_rw',
         'ketua_rw_list',
         'ketua_rt_list',
-        'landingPage'
+        'landingPage',
+        'mapPolygon' // <- kirim ke view
     ));
 }
+
 
     public function allKetuaRW()
 {
