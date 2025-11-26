@@ -257,8 +257,8 @@
                                 <div class="leader-avatar">
                                     <svg viewBox="0 0 24 24" fill="#6c757d">
                                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4
-                                        1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8
-                                        1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                                            1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8
+                                                            1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                                     </svg>
                                 </div>
                             @endif
@@ -288,8 +288,8 @@
                                 <div class="leader-avatar">
                                     <svg viewBox="0 0 24 24" fill="#6c757d">
                                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4
-                                        1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8
-                                        1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                                            1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8
+                                                            1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                                     </svg>
                                 </div>
                             @endif
@@ -359,136 +359,156 @@
             });
         </script>
 
+        {{-- =================== --}}
+        {{-- BLOK 4: PETA        --}}
+        {{-- =================== --}}
+        <h2 id="maps" class="fs-4 fw-bold mb-4 text-dark border-bottom pb-2">
+            Peta Lokasi Kota Baru Keandra
+        </h2>
+
+        <div class="card shadow-lg border-0 rounded-3 mb-5">
+            <div class="card-body p-4">
+
+                <p class="text-muted small mb-3">
+                    Peta ini menampilkan perkiraan batas area Kota Baru Keandra dan lokasi fasilitas umum.
+                </p>
+
+                <!-- MAP WRAPPER -->
+                <div class="position-relative rounded-4" style="height: 550px; overflow: hidden;">
+
+                    <!-- MAP (TANPA BLUR) -->
+                    <div id="mapid" class="rounded-4" style="height: 100%; pointer-events: none;"></div>
+
+                    <!-- OVERLAY DENGAN BACKDROP BLUR -->
+                    <div id="map-overlay"
+                        class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center rounded-4"
+                        style="cursor: pointer; 
+                       z-index: 999;
+                       background: rgba(0, 0, 0, 0.5);
+                       backdrop-filter: blur(8px);
+                       -webkit-backdrop-filter: blur(8px);
+                       transition: opacity 0.4s ease;">
+                        <h2 class="fw-bold text-white">Klik Untuk Interaksi dengan Map</h2>
+                    </div>
+
+                    <!-- CLOSE BUTTON -->
+                    <button id="map-close-btn"
+                        class="btn btn-light border position-absolute top-0 end-0 m-3 rounded-circle shadow-sm"
+                        style="z-index: 1000; display:none;">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
 
         {{-- =================== --}}
-{{-- BLOK 4: PETA        --}}
-{{-- =================== --}}
-<h2 id="maps" class="fs-4 fw-bold mb-4 text-dark border-bottom pb-2">
-    Peta Lokasi Kota Baru Keandra
-</h2>
+        {{-- Leaflet MAP SCRIPT --}}
+        {{-- =================== --}}
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-<div class="card shadow-lg border-0 rounded-3 mb-5">
-    <div class="card-body p-4">
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
 
-        <p class="text-muted small mb-3">
-            Peta ini menampilkan perkiraan batas area Kota Baru Keandra dan lokasi fasilitas umum.
-        </p>
+                /* ==================== INIT MAP ==================== */
+                const map = L.map('mapid').setView([-6.1900, 106.7980], 15);
 
-        <!-- MAP WRAPPER -->
-        <div class="position-relative rounded-4" style="height: 550px; overflow: hidden;">
-
-            <!-- MAP -->
-            <div id="mapid" class="rounded-4"
-                 style="height: 100%; filter: blur(4px); pointer-events: none; transition: .4s;">
-            </div>
-
-            <!-- OVERLAY CLICK -->
-            <div id="map-overlay"
-                 class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center
-                        bg-dark bg-opacity-50 rounded-4"
-                 style="cursor: pointer; z-index: 9999;">
-                <h2 class="fw-bold text-white">Klik Untuk Interaksi dengan Map</h2>
-            </div>
-
-            <!-- CLOSE BUTTON -->
-            <button id="map-close-btn"
-                    class="btn btn-light border position-absolute top-0 end-0 m-3 rounded-circle shadow-sm"
-                    style="z-index: 10000; display:none;">
-                <i class="bi bi-x-lg"></i>
-            </button>
-
-        </div>
-    </div>
-</div>
+                L.tileLayer(
+                    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+                        attribution: "Tiles © Esri, USGS, etc.",
+                        maxZoom: 18
+                    }
+                ).addTo(map);
 
 
-{{-- =================== --}}
-{{-- Leaflet MAP SCRIPT --}}
-{{-- =================== --}}
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+                /* ==================== POLYGON AREA ==================== */
+                const boundaryCoords = [];
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
+                @if ($mapPolygon)
+                    @foreach (json_decode($mapPolygon) as $point)
+                        boundaryCoords.push([{{ $point->lat }}, {{ $point->lng }}]);
+                    @endforeach
+                @else
+                    boundaryCoords.push(
+                        [-6.7005, 108.4700],
+                        [-6.7018, 108.4740],
+                        [-6.7045, 108.4745],
+                        [-6.7040, 108.4695]
+                    );
+                @endif
 
-    /* ==================== INIT MAP ==================== */
-    const map = L.map('mapid').setView([-6.1900, 106.7980], 15);
+                L.polygon(boundaryCoords, {
+                    color: "white",
+                    weight: 3,
+                    fillColor: "#0d6efd",
+                    fillOpacity: 0.15
+                }).addTo(map).bindPopup("<b>Perkiraan Batas Kota Baru Keandra</b>");
 
-    L.tileLayer(
-        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        { attribution: "Tiles © Esri, USGS, etc.", maxZoom: 18 }
-    ).addTo(map);
-
-
-    /* ==================== POLYGON AREA ==================== */
-    const boundaryCoords = [];
-
-    @if ($mapPolygon)
-        @foreach (json_decode($mapPolygon) as $point)
-            boundaryCoords.push([{{ $point->lat }}, {{ $point->lng }}]);
-        @endforeach
-    @else
-        boundaryCoords.push(
-            [-6.7005, 108.4700],
-            [-6.7018, 108.4740],
-            [-6.7045, 108.4745],
-            [-6.7040, 108.4695]
-        );
-    @endif
-
-    L.polygon(boundaryCoords, {
-        color: "white",
-        weight: 3,
-        fillColor: "#0d6efd",
-        fillOpacity: 0.15
-    }).addTo(map).bindPopup("<b>Perkiraan Batas Kota Baru Keandra</b>");
-
-    map.fitBounds(boundaryCoords);
+                map.fitBounds(boundaryCoords);
 
 
-    /* ==================== POI MARKERS ==================== */
-    const poiList = [
-        { lat: -6.7025, lon: 108.4725, name: "Kantor Pengelola / Pos Utama" },
-        { lat: -6.7040, lon: 108.4735, name: "Fasilitas Olahraga (Lapangan)" },
-        { lat: -6.7015, lon: 108.4710, name: "Area Komersial / Ruko" }
-    ];
+                /* ==================== POI MARKERS ==================== */
+                const poiList = [{
+                        lat: -6.7025,
+                        lon: 108.4725,
+                        name: "Kantor Pengelola / Pos Utama"
+                    },
+                    {
+                        lat: -6.7040,
+                        lon: 108.4735,
+                        name: "Fasilitas Olahraga (Lapangan)"
+                    },
+                    {
+                        lat: -6.7015,
+                        lon: 108.4710,
+                        name: "Area Komersial / Ruko"
+                    }
+                ];
 
-    poiList.forEach(item => {
-        L.marker([item.lat, item.lon]).addTo(map).bindPopup(`<b>${item.name}</b>`);
-    });
-
-
-    /* ==================== MAP INTERACTION TOGGLE ==================== */
-const overlay  = document.getElementById("map-overlay");
-const mapLayer = document.getElementById("mapid");
-const closeBtn = document.getElementById("map-close-btn");
-
-overlay.addEventListener("click", () => {
-    mapLayer.style.filter = "none";
-    mapLayer.style.pointerEvents = "auto";
-
-    // sembunyikan overlay dengan fade
-    overlay.style.opacity = "0";
-    overlay.style.pointerEvents = "none"; // biarkan klik ke peta
-    closeBtn.style.display = "block";
-});
-
-closeBtn.addEventListener("click", () => {
-    mapLayer.style.filter = "blur(4px)";
-    mapLayer.style.pointerEvents = "none";
-
-    overlay.style.opacity = "1";
-    overlay.style.pointerEvents = "auto";
-    closeBtn.style.display = "none";
-});
+                poiList.forEach(item => {
+                    L.marker([item.lat, item.lon]).addTo(map).bindPopup(`<b>${item.name}</b>`);
+                });
 
 
-});
-</script>
+                /* ==================== MAP INTERACTION TOGGLE ==================== */
+                const overlay = document.getElementById("map-overlay");
+                const mapLayer = document.getElementById("mapid");
+                const closeBtn = document.getElementById("map-close-btn");
 
-    {{-- =================== --}}
-    {{-- FOOTER             --}}
-    {{-- =================== --}}
+                overlay.addEventListener("click", () => {
+                    // Aktifkan interaksi map
+                    mapLayer.style.pointerEvents = "auto";
+
+                    // Sembunyikan overlay
+                    overlay.style.opacity = "0";
+                    overlay.style.pointerEvents = "none";
+
+                    // Tampilkan tombol close
+                    closeBtn.style.display = "block";
+                });
+
+                closeBtn.addEventListener("click", () => {
+                    // Nonaktifkan interaksi map
+                    mapLayer.style.pointerEvents = "none";
+
+                    // Tampilkan overlay
+                    overlay.style.opacity = "1";
+                    overlay.style.pointerEvents = "auto";
+
+                    // Sembunyikan tombol close
+                    closeBtn.style.display = "none";
+                });
+
+            });
+        </script>
+
+        {{-- =================== --}}
+        {{-- FOOTER             --}}
+        {{-- =================== --}}
+    </div> {{-- TUTUP container py-4 yang ada di atas --}}
+
     <footer class="mt-5 bg-dark text-white pt-4 pb-3">
         <div class="container">
 
@@ -524,66 +544,34 @@ closeBtn.addEventListener("click", () => {
                                                 <stop offset="100%" stop-color="#285AEB" />
                                             </linearGradient>
                                         </defs>
-                                        <path fill="url(#igGradient)" d="M7 2C4.243 2 2 4.243 2 7v10c0
-                    2.757 2.243 5 5 5h10c2.757 0 5-2.243
-                    5-5V7c0-2.757-2.243-5-5-5H7zm10
-                    2c1.654 0 3 1.346 3
-                    3v10c0 1.654-1.346 3-3
-                    3H7c-1.654 0-3-1.346-3-3V7c0-1.654
-                    1.346-3 3-3h10zm-5 3c-2.757 0-5
-                    2.243-5 5s2.243 5 5
-                    5 5-2.243 5-5-2.243-5-5-5zm0
-                    2c1.654 0 3 1.346 3
-                    3s-1.346 3-3 3-3-1.346-3-3
-                    1.346-3 3-3zm4.5-.75a1.25 1.25 0 110
-                    2.5 1.25 1.25 0 010-2.5z" />
+                                        <path fill="url(#igGradient)"
+                                            d="M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm10 2c1.654 0 3 1.346 3 3v10c0 1.654-1.346 3-3 3H7c-1.654 0-3-1.346-3-3V7c0-1.654 1.346-3 3-3h10zm-5 3c-2.757 0-5 2.243-5 5s2.243 5 5 5 5-2.243 5-5-2.243-5-5-5zm0 2c1.654 0 3 1.346 3 3s-1.346 3-3 3-3-1.346-3-3 1.346-3 3-3zm4.5-.75a1.25 1.25 0 110 2.5 1.25 1.25 0 010-2.5z" />
                                     </svg>
-
                                     <a class="text-white-50 text-decoration-none" target="_blank"
                                         href="https://www.instagram.com">Instagram</a>
                                 </li>
-
 
                                 <li class="mb-2 d-flex align-items-center">
                                     <svg width="26" height="26" viewBox="0 0 24 24" class="me-2">
                                         <path fill="#1877F2"
                                             d="M22 12a10 10 0 10-11.5 9.9v-7H8v-3h2.5V9.5a3.5 3.5 0 013.7-3.9c1 0 2 .1 2 .1v2.3H15c-1.2 0-1.6.8-1.6 1.6V12H18l-.5 3h-3.1v7A10 10 0 0022 12" />
                                     </svg>
-
                                     <a class="text-white-50 text-decoration-none" target="_blank"
                                         href="https://www.facebook.com">Facebook</a>
                                 </li>
 
-
                                 <li class="d-flex align-items-center">
                                     <svg width="26" height="26" viewBox="0 0 48 48" class="me-2">
-                                        <!-- Cyan shadow -->
-                                        <path fill="#69C9D0" d="M34.5 14.2c-2.8-1.4-5-3.7-6.4-6.5v18.2c0 5.8-4.7 10.5-10.5 10.5S7 31.7 7 25.9
-                        S11.7 15.4 17.5 15.4c1 .0 2 .1 3 .4v6.7c-.9-.4-1.9-.6-3-.6c-3.6 0-6.5 2.9-6.5 6.5S13.9 35 17.5 35
-                        s6.5-2.9 6.5-6.5V4h6v1.7c0 2.9 1.5 5.6 4 7.1c1.2.7 2.5 1.1 3.9 1.2v6.1c-2.1-.2-4.2-.8-6.4-1.9z" />
-
-                                        <!-- Magenta shadow -->
-                                        <path fill="#EE1D52" d="M38.4 11.9c-1.4-.1-2.7-.5-3.9-1.2c-2.5-1.5-4-4.2-4-7.1V4h-6v24.5
-                        c0 3.6-2.9 6.5-6.5 6.5v6.7c5.8 0 10.5-4.7 10.5-10.5V13.8c1.4 2.8 3.6 5.1 6.4 6.5c2.1 1.1 4.3 1.7 6.4 1.9
-                        v-6.1c-1.4-.1-2.7-.5-3.9-1.2z" />
-
-                                        <!-- Main black shape -->
-                                        <path fill="#010101" d="M30.7 10.4c-2.8-1.4-5-3.7-6.4-6.5V4H18v24.5c0 3.6-2.9 6.5-6.5 6.5
-                        S5 32.1 5 28.5s2.9-6.5 6.5-6.5c1.1 0 2.1.2 3 .6v-6.7c-1-.3-2-.4-3-.4C5.8 15.4 1 20.2 1 25.9
-                        S5.8 36.4 11.5 36.4S22 31.7 22 25.9V9c1.4 2.8 3.6 5.1 6.4 6.5c2.2 1.1 4.3 1.7 6.4 1.9v-6.1
-                        c-1.4-.1-2.7-.5-3.9-1.2z" />
+                                        <path fill="#69C9D0"
+                                            d="M34.5 14.2c-2.8-1.4-5-3.7-6.4-6.5v18.2c0 5.8-4.7 10.5-10.5 10.5S7 31.7 7 25.9 S11.7 15.4 17.5 15.4c1 .0 2 .1 3 .4v6.7c-.9-.4-1.9-.6-3-.6c-3.6 0-6.5 2.9-6.5 6.5S13.9 35 17.5 35 s6.5-2.9 6.5-6.5V4h6v1.7c0 2.9 1.5 5.6 4 7.1c1.2.7 2.5 1.1 3.9 1.2v6.1c-2.1-.2-4.2-.8-6.4-1.9z" />
+                                        <path fill="#EE1D52"
+                                            d="M38.4 11.9c-1.4-.1-2.7-.5-3.9-1.2c-2.5-1.5-4-4.2-4-7.1V4h-6v24.5 c0 3.6-2.9 6.5-6.5 6.5v6.7c5.8 0 10.5-4.7 10.5-10.5V13.8c1.4 2.8 3.6 5.1 6.4 6.5c2.1 1.1 4.3 1.7 6.4 1.9 v-6.1c-1.4-.1-2.7-.5-3.9-1.2z" />
+                                        <path fill="#010101"
+                                            d="M30.7 10.4c-2.8-1.4-5-3.7-6.4-6.5V4H18v24.5c0 3.6-2.9 6.5-6.5 6.5 S5 32.1 5 28.5s2.9-6.5 6.5-6.5c1.1 0 2.1.2 3 .6v-6.7c-1-.3-2-.4-3-.4C5.8 15.4 1 20.2 1 25.9 S5.8 36.4 11.5 36.4S22 31.7 22 25.9V9c1.4 2.8 3.6 5.1 6.4 6.5c2.2 1.1 4.3 1.7 6.4 1.9v-6.1 c-1.4-.1-2.7-.5-3.9-1.2z" />
                                     </svg>
-
                                     <a class="text-white-50 text-decoration-none" target="_blank"
-                                        href="https://www.tiktok.com">
-                                        TikTok
-                                    </a>
+                                        href="https://www.tiktok.com">TikTok</a>
                                 </li>
-
-
-
-
-
 
                             </ul>
                         </div>
