@@ -360,102 +360,130 @@
 
 
         {{-- =================== --}}
-        {{-- BLOK 4: PETA       --}}
-        {{-- =================== --}}
-        <h2 id="maps" class="fs-4 fw-bold mb-4 text-dark border-bottom pb-2">
-            Peta Lokasi Kota Baru Keandra
-        </h2>
+{{-- BLOK 4: PETA        --}}
+{{-- =================== --}}
+<h2 id="maps" class="fs-4 fw-bold mb-4 text-dark border-bottom pb-2">
+    Peta Lokasi Kota Baru Keandra
+</h2>
 
-        <div class="card shadow-lg border-0 rounded-3 mb-5">
-            <div class="card-body p-4">
-                <p class="text-muted small mb-3">
-                    Peta ini menampilkan perkiraan batas area Kota Baru Keandra dan lokasi fasilitas umum.
-                </p>
+<div class="card shadow-lg border-0 rounded-3 mb-5">
+    <div class="card-body p-4">
 
-                <div id="mapid"></div>
+        <p class="text-muted small mb-3">
+            Peta ini menampilkan perkiraan batas area Kota Baru Keandra dan lokasi fasilitas umum.
+        </p>
+
+        <!-- MAP WRAPPER -->
+        <div class="position-relative rounded-4" style="height: 550px; overflow: hidden;">
+
+            <!-- MAP -->
+            <div id="mapid" class="rounded-4"
+                 style="height: 100%; filter: blur(4px); pointer-events: none; transition: .4s;">
             </div>
+
+            <!-- OVERLAY CLICK -->
+            <div id="map-overlay"
+                 class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center
+                        bg-dark bg-opacity-50 rounded-4"
+                 style="cursor: pointer; z-index: 9999;">
+                <h2 class="fw-bold text-white">Klik Untuk Interaksi dengan Map</h2>
+            </div>
+
+            <!-- CLOSE BUTTON -->
+            <button id="map-close-btn"
+                    class="btn btn-light border position-absolute top-0 end-0 m-3 rounded-circle shadow-sm"
+                    style="z-index: 10000; display:none;">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
         </div>
-
     </div>
+</div>
 
 
-    {{-- =================== --}}
-    {{-- Leaflet JS         --}}
-    {{-- =================== --}}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+{{-- =================== --}}
+{{-- Leaflet MAP SCRIPT --}}
+{{-- =================== --}}
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+<script>
+document.addEventListener("DOMContentLoaded", () => {
 
-            const initialCoords = [-6.1900, 106.7980]; // titik tengah bisa disesuaikan
+    /* ==================== INIT MAP ==================== */
+    const map = L.map('mapid').setView([-6.1900, 106.7980], 15);
 
-            const mymap = L.map('mapid').setView(initialCoords, 15);
+    L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        { attribution: "Tiles © Esri, USGS, etc.", maxZoom: 18 }
+    ).addTo(map);
 
-            L.tileLayer(
-                'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                    attribution: 'Tiles © Esri, USGS, etc.',
-                    maxZoom: 18
-                }
-            ).addTo(mymap);
 
-            // ============================
-            // Ambil polygon dari database
-            // ============================
-            const keandraBoundary = [];
-            @if ($mapPolygon)
-                @foreach (json_decode($mapPolygon) as $point)
-                    keandraBoundary.push([{{ $point->lat }}, {{ $point->lng }}]);
-                @endforeach
-            @else
-                keandraBoundary.push([-6.7005, 108.4700]);
-                keandraBoundary.push([-6.7018, 108.4740]);
-                keandraBoundary.push([-6.7045, 108.4745]);
-                keandraBoundary.push([-6.7040, 108.4695]);
-            @endif
+    /* ==================== POLYGON AREA ==================== */
+    const boundaryCoords = [];
 
-            // Tambahkan polygon ke peta
-            L.polygon(keandraBoundary, {
-                    color: 'white',
-                    weight: 3,
-                    fillColor: '#0d6efd',
-                    fillOpacity: 0.15
-                })
-                .addTo(mymap)
-                .bindPopup("<b>Perkiraan Batas Kota Baru Keandra</b>");
+    @if ($mapPolygon)
+        @foreach (json_decode($mapPolygon) as $point)
+            boundaryCoords.push([{{ $point->lat }}, {{ $point->lng }}]);
+        @endforeach
+    @else
+        boundaryCoords.push(
+            [-6.7005, 108.4700],
+            [-6.7018, 108.4740],
+            [-6.7045, 108.4745],
+            [-6.7040, 108.4695]
+        );
+    @endif
 
-            // ============================
-            // Marker point of interest
-            // ============================
-            const pointsOfInterest = [{
-                    lat: -6.7025,
-                    lon: 108.4725,
-                    name: "Kantor Pengelola / Pos Utama"
-                },
-                {
-                    lat: -6.7040,
-                    lon: 108.4735,
-                    name: "Fasilitas Olahraga (Lapangan)"
-                },
-                {
-                    lat: -6.7015,
-                    lon: 108.4710,
-                    name: "Area Komersial / Ruko"
-                }
-            ];
+    L.polygon(boundaryCoords, {
+        color: "white",
+        weight: 3,
+        fillColor: "#0d6efd",
+        fillOpacity: 0.15
+    }).addTo(map).bindPopup("<b>Perkiraan Batas Kota Baru Keandra</b>");
 
-            pointsOfInterest.forEach(point => {
-                L.marker([point.lat, point.lon])
-                    .addTo(mymap)
-                    .bindPopup("<b>" + point.name + "</b>");
-            });
+    map.fitBounds(boundaryCoords);
 
-            // Zoom sesuai polygon
-            mymap.fitBounds(keandraBoundary);
 
-        });
-    </script>
+    /* ==================== POI MARKERS ==================== */
+    const poiList = [
+        { lat: -6.7025, lon: 108.4725, name: "Kantor Pengelola / Pos Utama" },
+        { lat: -6.7040, lon: 108.4735, name: "Fasilitas Olahraga (Lapangan)" },
+        { lat: -6.7015, lon: 108.4710, name: "Area Komersial / Ruko" }
+    ];
 
+    poiList.forEach(item => {
+        L.marker([item.lat, item.lon]).addTo(map).bindPopup(`<b>${item.name}</b>`);
+    });
+
+
+    /* ==================== MAP INTERACTION TOGGLE ==================== */
+const overlay  = document.getElementById("map-overlay");
+const mapLayer = document.getElementById("mapid");
+const closeBtn = document.getElementById("map-close-btn");
+
+overlay.addEventListener("click", () => {
+    mapLayer.style.filter = "none";
+    mapLayer.style.pointerEvents = "auto";
+
+    // sembunyikan overlay dengan fade
+    overlay.style.opacity = "0";
+    overlay.style.pointerEvents = "none"; // biarkan klik ke peta
+    closeBtn.style.display = "block";
+});
+
+closeBtn.addEventListener("click", () => {
+    mapLayer.style.filter = "blur(4px)";
+    mapLayer.style.pointerEvents = "none";
+
+    overlay.style.opacity = "1";
+    overlay.style.pointerEvents = "auto";
+    closeBtn.style.display = "none";
+});
+
+
+});
+</script>
 
     {{-- =================== --}}
     {{-- FOOTER             --}}
