@@ -100,12 +100,13 @@
         <div class="container-fluid px-4 px-lg-5">
 
             <!-- Logo -->
-            <a class="navbar-brand fw-bold text-primary fs-5 d-flex align-items-center" href="#">
+            <a class="navbar-brand fw-bold text-primary fs-5 d-flex align-items-center" href="{{ route('dashboard') }}">
                 <i class="bi bi-geo-alt-fill me-2"></i> Kota Baru Keandra
             </a>
 
             <!-- Toggle -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbarCollapse">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#mainNavbarCollapse">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -114,17 +115,19 @@
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
 
                     <li class="nav-item">
-                        <a class="nav-link px-3 fw-semibold text-dark" href="#statistik">Data Pokok</a>
+                        <a class="nav-link px-3 fw-semibold text-dark" href="{{ route('dashboard') }}#statistik">Data
+                            Pokok</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link px-3 fw-semibold text-dark" href="#pengurus-warga">
+                        <a class="nav-link px-3 fw-semibold text-dark" href="{{ route('dashboard') }}#pengurus-warga">
                             Pengurus Warga (RW/RT)
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link px-3 fw-semibold text-dark" href="#maps">Peta Lokasi</a>
+                        <a class="nav-link px-3 fw-semibold text-dark" href="{{ route('dashboard') }}#maps">Peta
+                            Lokasi</a>
                     </li>
 
                 </ul>
@@ -141,7 +144,8 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
 
-            const sections = document.querySelectorAll("section[id]");
+            const sections = document.querySelectorAll(
+                "section[id], [id='statistik'], [id='pengurus-warga'], [id='maps']");
             const navLinks = document.querySelectorAll(".nav-link");
 
             function setActiveLink() {
@@ -156,7 +160,10 @@
 
                 navLinks.forEach(link => {
                     link.classList.remove("active");
-                    if (link.getAttribute("href") === `#${current}`) {
+                    const href = link.getAttribute("href");
+
+                    // Check if link matches current section
+                    if (href && (href === `#${current}` || href.endsWith(`#${current}`))) {
                         link.classList.add("active");
                     }
                 });
@@ -168,4 +175,5 @@
     </script>
 
 </body>
+
 </html>
