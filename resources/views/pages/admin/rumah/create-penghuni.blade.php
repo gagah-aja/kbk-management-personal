@@ -16,10 +16,11 @@
 
                     {{-- Pilih Warga --}}
                     <div class="mb-3">
-                        <label for="id_warga" class="form-label">Pilih Warga <span class="text-danger">*</span></label>
-
+                        <label for="id_warga" class="form-label">
+                            Pilih Warga <span class="text-danger">*</span>
+                        </label>
                         <select name="id_warga" id="id_warga"
-                            class="form-select form-control @error('id_warga') is-invalid @enderror" required>
+                            class="form-select form-control select2-warga @error('id_warga') is-invalid @enderror" required>
                             <option value="">-- Pilih Warga --</option>
                             @foreach ($warga as $w)
                                 <option value="{{ $w->id }}" {{ old('id_warga') == $w->id ? 'selected' : '' }}>
@@ -112,20 +113,101 @@
 
     </div>
 
-    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    {{-- Include Select2 CSS --}}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
+        rel="stylesheet" />
+
+    {{-- Script --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
-        new TomSelect("#id_warga", {
-            placeholder: "-- Pilih Warga --",
-            allowEmptyOption: true,
-            searchField: ["text"],
-            maxOptions: 2000,
-            closeAfterSelect: true,
-            sortField: {
-                field: "text",
-                direction: "asc"
-            }
+        // Initialize Select2 untuk dropdown warga
+        $(document).ready(function() {
+            $('.select2-warga').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Pilih warga...',
+                allowClear: true,
+                width: '100%',
+                language: {
+                    noResults: function() {
+                        return "❌ Tidak ada hasil yang ditemukan";
+                    },
+                    searching: function() {
+                        return "🔄 Mencari...";
+                    },
+                    inputTooShort: function() {
+                        return "⌨️ Ketik untuk mencari...";
+                    }
+                }
+            });
+
+            // Tambahkan icon search di input search
+            $(document).on('select2:open', () => {
+                const searchField = document.querySelector('.select2-search__field');
+                if (searchField) {
+                    searchField.placeholder = '🔍 Ketik nama atau NIK warga...';
+                }
+            });
         });
     </script>
+
+    {{-- Style --}}
+    <style>
+        /* ======================================== */
+        /* SELECT2 CUSTOM STYLE                      */
+        /* ======================================== */
+        .select2-container--bootstrap-5 .select2-selection {
+            min-height: 38px;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+        }
+
+        .select2-container--bootstrap-5 .select2-selection--single {
+            padding: 0.375rem 0.75rem;
+        }
+
+        .select2-container--bootstrap-5.select2-container--focus .select2-selection,
+        .select2-container--bootstrap-5.select2-container--open .select2-selection {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+        .select2-dropdown {
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+        }
+
+        .select2-search--dropdown .select2-search__field {
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 0.375rem 0.75rem;
+        }
+
+        .select2-results__option--highlighted {
+            background-color: #667eea !important;
+        }
+
+        /* ======================================== */
+        /* RESPONSIVE MOBILE                         */
+        /* ======================================== */
+        @media (max-width: 768px) {
+
+            /* Select2 full-width */
+            .select2-container--bootstrap-5 {
+                width: 100% !important;
+            }
+
+            /* Tombol aksi full-width */
+            .d-flex.gap-2 {
+                flex-direction: column;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+            }
+        }
+    </style>
 @endsection
