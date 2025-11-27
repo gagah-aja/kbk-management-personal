@@ -55,97 +55,143 @@
 
                 <hr class="my-4">
 
-                {{-- Polygon Map --}}
-                <h5 class="fw-bold mb-3">Atur Wilayah Kota (Polygon Peta)</h5>
-                <p class="text-muted small">Klik & gambar polygon sesuai batas wilayah.</p>
+                {{-- ============================
+      POLYGON MAP SECTION
+============================ --}}
+<h5 class="fw-bold mb-3">Atur Wilayah Kota (Polygon Peta)</h5>
+<p class="text-muted small">Klik & gambar polygon sesuai batas wilayah.</p>
 
-                <div id="map" style="height: 450px; border-radius: 12px; overflow: hidden;"></div>
-                <textarea name="map_polygon" id="map_polygon" hidden>{{ $mapPolygon ? $mapPolygon->value : '' }}</textarea>
+<div class="position-relative">
 
-                <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-primary px-4">
-                        <i class="bi bi-save"></i> Simpan Setting
-                    </button>
-                </div>
-            </form>
-        </div>
+    {{-- MAP --}}
+    <div id="map" class="map-area blur"></div>
+
+    {{-- OVERLAY INFO --}}
+    <div id="map-overlay" class="map-overlay">
+        <span>Klik untuk interaksi dengan peta</span>
     </div>
+
+    {{-- CLOSE BUTTON --}}
+    <button id="close-map" type="button" class="close-map d-none">✖</button>
 </div>
 
-{{-- Style --}}
+<textarea name="map_polygon" id="map_polygon" hidden>{{ $mapPolygon? $mapPolygon->value : '' }}</textarea>
+
+<div class="text-center mt-4">
+    <button type="submit" class="btn btn-primary px-4">
+        <i class="bi bi-save"></i> Simpan Setting
+    </button>
+</div>
+
+{{-- ============================
+      STYLE
+============================ --}}
 <style>
-.text-gradient {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    .map-area {
+        height: 450px;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: filter .35s ease;
+    }
+
+    .map-area.blur {
+        filter: blur(4px);
+        pointer-events: none;
+    }
+
+    .map-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.15rem;
+        color: #fff;
+        border-radius: 12px;
+        z-index: 10;
+        cursor: pointer;
+        backdrop-filter: blur(2px);
+    }
+
+.close-map {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 20;
+    padding: 6px 14px;
+    background: rgba(0,0,0,1);   /* background solid hitam */
+    color: #fff;                  /* warna font putih tebal */
+    border: none;
+    border-radius: 10px;
+    font-size: 1.8rem;            /* lebih besar */
+    font-weight: 1000;            /* super tebal */
+    line-height: 1;
+    cursor: pointer;
+    text-shadow: 1px 1px 2px #000; /* shadow tipis agar lebih kontras */
+    transition: 0.3s ease;
+}
+
+.close-map:hover {
+    background: rgba(0,0,0,0.95);
+    transform: scale(1.15);
 }
 </style>
 
-{{-- Leaflet + Draw --}}
+{{-- ============================
+      LEAFLET & MAP LOGIC
+============================ --}}
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
-
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
 
 <script>
-    // Preview gambar landing page
-    function previewImage(event) {
-        const preview = document.getElementById('preview-image');
-        const container = document.getElementById('preview-container');
-        preview.src = URL.createObjectURL(event.target.files[0]);
-        container.style.display = 'block';
-    }
-
-    // ================================
-    // Leaflet Map & Polygon
-    // ================================
     const map = L.map('map').setView([-6.200, 106.816], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19
-    }).addTo(map);
+    const drawnItems = new L.FeatureGroup().addTo(map);
+    map.addControl(new L.Control.Draw({
+        draw: { polygon: true, marker: false, polyline: false, rectangle: false, circle: false },
+        edit: { featureGroup: drawnItems }
+    }));
 
-    let drawnItems = new L.FeatureGroup();
-    map.addLayer(drawnItems);
-
-    const drawControl = new L.Control.Draw({
-        draw: {
-            polygon: true,
-            marker: false,
-            circle: false,
-            polyline: false,
-            rectangle: false,
-            circlemarker: false
-        },
-        edit: {
-            featureGroup: drawnItems
-        }
-    });
-    map.addControl(drawControl);
-
-    // Tampilkan polygon dari database jika ada
     @if($mapPolygon && $mapPolygon->value)
         const savedPolygon = {!! $mapPolygon->value !!};
         const polygon = L.polygon(savedPolygon).addTo(drawnItems);
         map.fitBounds(polygon.getBounds());
     @endif
 
-    // Event saat polygon dibuat
-    map.on(L.Draw.Event.CREATED, function(e) {
-        drawnItems.clearLayers(); // hanya satu polygon
-        const layer = e.layer;
-        drawnItems.addLayer(layer);
-
-        document.getElementById('map_polygon').value = JSON.stringify(layer.getLatLngs()[0]);
+    map.on(L.Draw.Event.CREATED, e => {
+        drawnItems.clearLayers();
+        drawnItems.addLayer(e.layer);
+        map_polygon.value = JSON.stringify(e.layer.getLatLngs()[0]);
     });
 
-    // Event saat polygon diedit
-    map.on(L.Draw.Event.EDITED, function() {
-        drawnItems.eachLayer(function(layer) {
-            document.getElementById('map_polygon').value = JSON.stringify(layer.getLatLngs()[0]);
+    map.on(L.Draw.Event.EDITED, () => {
+        drawnItems.eachLayer(layer => {
+            map_polygon.value = JSON.stringify(layer.getLatLngs()[0]);
         });
     });
 
+    // Overlay and close interactions
+    const overlay = document.getElementById("map-overlay");
+    const mapDiv = document.getElementById("map");
+    const closeBtn = document.getElementById("close-map");
+
+    overlay.addEventListener("click", () => {
+        mapDiv.classList.remove("blur");
+        overlay.classList.add("d-none");
+        closeBtn.classList.remove("d-none");
+    });
+
+    closeBtn.addEventListener("click", () => {
+        mapDiv.classList.add("blur");
+        overlay.classList.remove("d-none");
+        closeBtn.classList.add("d-none");
+    });
 </script>
+
+
 @endsection
