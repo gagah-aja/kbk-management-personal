@@ -104,7 +104,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         const searchInput = document.getElementById('searchInput');
         const filterCluster = document.getElementById('filterCluster');
@@ -127,7 +127,7 @@
         // Filter change handlers
         filterCluster.addEventListener('change', function() {
             const clusterId = this.value;
-            
+
             // Reset dependent filters
             filterBlok.innerHTML = '<option value="">-- Pilih Blok --</option>';
             filterBlok.disabled = !clusterId;
@@ -144,7 +144,7 @@
         filterBlok.addEventListener('change', function() {
             const blokId = this.value;
             const clusterId = filterCluster.value;
-            
+
             // Reset rumah filter
             filterRumah.innerHTML = '<option value="">-- Pilih Nomor Rumah --</option>';
             filterRumah.disabled = !blokId;
@@ -193,7 +193,8 @@
                 .then(data => {
                     filterRumah.innerHTML = '<option value="">-- Semua Rumah --</option>';
                     data.forEach(rumah => {
-                        filterRumah.innerHTML += `<option value="${rumah.id}">${rumah.nomor} - ${rumah.alamat}</option>`;
+                        filterRumah.innerHTML +=
+                            `<option value="${rumah.id}">${rumah.nomor} - ${rumah.alamat}</option>`;
                     });
                 })
                 .catch(error => console.error('Error loading rumah:', error));
@@ -202,7 +203,7 @@
         // Perform search with filters
         function performSearch() {
             clearTimeout(searchTimeout);
-            
+
             const query = searchInput.value.trim();
             const cluster = filterCluster.value;
             const blok = filterBlok.value;
