@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\RumahController;
 use App\Http\Controllers\Admin\WargaController;
 use App\Http\Controllers\Admin\StatusRumahController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\PenghuniController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 
@@ -29,10 +30,8 @@ use App\Http\Controllers\UserController;
 // 🔹 ROUTE PUBLIC (Guest)
 // =====================================================
 Route::get('/', [UserController::class, 'index'])->name('dashboard');
-    Route::get('/ketua-rw', [UserController::class, 'allKetuaRW'])->name('ketua-rw.all');
-    Route::get('/ketua-rt', [UserController::class, 'allKetuaRT'])->name('rt.index');
-
-
+Route::get('/ketua-rw', [UserController::class, 'allKetuaRW'])->name('ketua-rw.all');
+Route::get('/ketua-rt', [UserController::class, 'allKetuaRT'])->name('rt.index');
 
 // 🔍 Route Pencarian Warga/Penghuni
 Route::get('/pencarian-warga', [App\Http\Controllers\SearchController::class, 'index'])->name('search.index');
@@ -126,17 +125,18 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::put('/rumah/{id}', [RumahController::class, 'update'])->name('rumah.update');
     Route::delete('/rumah/{id}', [RumahController::class, 'destroy'])->name('rumah.destroy');
 
-    // ⭐ Manajemen Penghuni
+    // =====================================================
+    // ⭐ Manajemen Penghuni (Menggunakan PenghuniController)
     // =====================================================
     Route::prefix('rumah/{id_rumah}/penghuni')->name('rumah.penghuni.')->group(function () {
-        Route::get('/', [RumahController::class, 'showPenghuni'])->name('show'); // Halaman list penghuni
-        Route::get('/create', [RumahController::class, 'createPenghuni'])->name('create');
-        Route::post('/', [RumahController::class, 'storePenghuni'])->name('store');
+        Route::get('/', [PenghuniController::class, 'show'])->name('show');
+        Route::get('/create', [PenghuniController::class, 'create'])->name('create');
+        Route::post('/', [PenghuniController::class, 'store'])->name('store');
     });
 
     Route::prefix('penghuni')->name('penghuni.')->group(function () {
-        Route::delete('/{id}', [RumahController::class, 'destroyPenghuni'])->name('destroy');
-        Route::delete('/{id}/force', [RumahController::class, 'forceDeletePenghuni'])->name('force-delete');
+        Route::delete('/{id}', [PenghuniController::class, 'destroy'])->name('destroy');
+        Route::patch('/{id}/restore', [PenghuniController::class, 'restore'])->name('restore');
     });
 
     // =====================================================
@@ -149,15 +149,14 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::put('/warga/{id}', [WargaController::class, 'update'])->name('warga.update');
     Route::delete('/warga/{id}', [WargaController::class, 'destroy'])->name('warga.destroy');
 
-     // 🔹 Route baru: Halaman untuk menampilkan semua Ketua RW
-
-
+    // =====================================================
     // 🧾 Status Rumah
     // =====================================================
     Route::resource('status-rumah', StatusRumahController::class)->except(['show']);
 
-    // settings
     // =====================================================
-    Route::get('/setting', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('setting.index');
-    Route::post('/setting/update', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('setting.update');
+    // ⚙️ Settings
+    // =====================================================
+    Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
+    Route::post('/setting/update', [SettingController::class, 'update'])->name('setting.update');
 });
