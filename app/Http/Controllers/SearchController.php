@@ -42,18 +42,50 @@ class SearchController extends Controller
             });
         }
 
-        // Filter berdasarkan cluster
+        // ✅ FIX: Filter berdasarkan cluster (by nama cluster, bukan id)
         if (!empty($clusterId)) {
-            $results->whereHas('rumah', function ($q) use ($clusterId) {
-                $q->where('id_cluster', $clusterId);
-            });
+            // Ambil nama cluster dari cluster yang dipilih
+            $selectedCluster = Cluster::with('namaCluster')->find($clusterId);
+
+            if ($selectedCluster && $selectedCluster->namaCluster) {
+                $namaClusterId = $selectedCluster->id_nama_cluster;
+
+                // Cari semua cluster ID dengan nama yang sama
+                $clusterIds = Cluster::where('id_nama_cluster', $namaClusterId)
+                    ->pluck('id')
+                    ->toArray();
+
+                // Filter rumah yang ada di cluster-cluster tersebut
+                $results->whereHas('rumah', function ($q) use ($clusterIds) {
+                    $q->whereIn('id_cluster', $clusterIds);
+                });
+            }
         }
 
-        // Filter berdasarkan blok
+        // ✅ FIX: Filter berdasarkan blok (cari cluster dengan nama & blok yang sama)
         if (!empty($blokId)) {
-            $results->whereHas('rumah.cluster', function ($q) use ($blokId) {
-                $q->where('id_blok', $blokId);
-            });
+            if (!empty($clusterId)) {
+                $selectedCluster = Cluster::with('namaCluster')->find($clusterId);
+
+                if ($selectedCluster && $selectedCluster->namaCluster) {
+                    $namaClusterId = $selectedCluster->id_nama_cluster;
+
+                    // Cari semua cluster ID dengan nama cluster DAN blok yang sama
+                    $clusterIds = Cluster::where('id_nama_cluster', $namaClusterId)
+                        ->where('id_blok', $blokId)
+                        ->pluck('id')
+                        ->toArray();
+
+                    $results->whereHas('rumah', function ($q) use ($clusterIds) {
+                        $q->whereIn('id_cluster', $clusterIds);
+                    });
+                }
+            } else {
+                // Jika cluster tidak dipilih, filter hanya berdasarkan blok
+                $results->whereHas('rumah.cluster', function ($q) use ($blokId) {
+                    $q->where('id_blok', $blokId);
+                });
+            }
         }
 
         // Filter berdasarkan rumah
@@ -100,7 +132,7 @@ class SearchController extends Controller
     }
 
     /**
-     * 📍 API: Get All Clusters
+     * 🔍 API: Get All Clusters
      */
     public function getClusters()
     {
