@@ -7,9 +7,6 @@
                 <h2>Tambah RT</h2>
                 <p>Tambahkan data Rukun Tetangga baru</p>
             </div>
-            {{-- <a href="{{ route('admin.rt.index') }}" class="btn-back">
-            <i class="bi bi-arrow-left"></i> Kembali
-        </a> --}}
         </div>
 
         @if ($errors->any())
@@ -109,4 +106,54 @@
             </div>
         </div>
     </div>
+
 @endsection
+
+
+{{-- ========================================================= --}}
+{{-- RESPONSIVE MOBILE CSS (TIDAK MENGUBAH TAMPILAN ASLI) --}}
+{{-- ========================================================= --}}
+<style>
+    @media (max-width: 768px) {
+
+        /* Kolom menjadi full-width */
+        .row .col-md-4,
+        .row .col-md-6,
+        .row .col-lg-6,
+        .row .col-6 {
+            width: 100% !important;
+            flex: 0 0 100% !important;
+        }
+
+        /* Form card supaya tidak mepet */
+        .form-card {
+            padding: 1rem !important;
+        }
+
+        .form-card .form-label {
+            font-size: 0.9rem !important;
+        }
+
+        .form-card .form-control,
+        .form-card .form-select {
+            font-size: 0.95rem !important;
+        }
+
+        /* Select2 fix */
+        .select2-container,
+        .select2-container--bootstrap-5 {
+            width: 100% !important;
+        }
+
+        /* Tombol dibuat stack tanpa merubah tampilan */
+        .d-flex.gap-2 {
+            flex-direction: column !important;
+            gap: 0.75rem !important;
+        }
+
+        .btn-cancel,
+        .btn-submit {
+            width: 100% !important;
+        }
+    }
+</style>

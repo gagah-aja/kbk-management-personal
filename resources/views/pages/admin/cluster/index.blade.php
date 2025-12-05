@@ -37,11 +37,11 @@
                     <i class="bi bi-search d-sm-none"></i>
                 </button>
 
-                <a href="{{ route('admin.cluster.index') }}" class="btn btn-outline-secondary">
-                    <i class="bi bi-x-circle d-none d-sm-inline"></i>
-                    <span class="d-none d-sm-inline"></span>
-                    <i class="bi bi-x-circle d-sm-none"></i>
-                </a>
+                <a href="{{ route('admin.cluster.index') }}" 
+   class="btn btn-outline-secondary btn-reset-icon">
+    <i class="bi bi-x-circle"></i>
+</a>
+
             </div>
         </form>
     </div>
@@ -321,5 +321,6 @@ document.addEventListener('DOMContentLoaded', function () {
     .card-body { padding: 1rem; }
     .btn-sm { padding: 0.5rem 0.75rem; font-size: 0.875rem; }
 }
+
 </style>
 @endsection

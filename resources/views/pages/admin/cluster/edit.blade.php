@@ -2,14 +2,26 @@
 
 @section('content')
 <div class="container-fluid py-4">
+
+    {{-- CSS Responsif untuk Mobile --}}
+    <style>
+        @media (max-width: 576px) {
+            .btn-responsive-group {
+                flex-direction: column !important;
+                width: 100%;
+            }
+            .btn-responsive-group a,
+            .btn-responsive-group button {
+                width: 100% !important;
+            }
+        }
+    </style>
+
     <div class="page-header d-flex justify-content-between align-items-center">
         <div>
             <h2>Edit Cluster</h2>
             <p>Perbarui data cluster</p>
         </div>
-        {{-- <a href="{{ route('admin.cluster.index') }}" class="btn-back">
-            <i class="bi bi-arrow-left"></i> Kembali
-        </a> --}}
     </div>
 
     @if ($errors->any())
@@ -32,6 +44,7 @@
     <div class="row">
         <div class="col-12">
             <div class="form-card">
+
                 <div class="info-box">
                     <div class="info-box-label">Data Sebelumnya</div>
                     <div class="info-box-value">
@@ -44,19 +57,21 @@
                 <form action="{{ route('admin.cluster.update', $cluster->id) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    
+
                     <div class="row g-3">
+
+                        {{-- Nama Cluster --}}
                         <div class="col-md-4">
                             <label for="id_nama_cluster" class="form-label">
                                 Nama Cluster <span class="text-danger">*</span>
                             </label>
-                            <select name="id_nama_cluster" 
-                                    id="id_nama_cluster" 
-                                    class="form-control @error('id_nama_cluster') is-invalid @enderror" 
+                            <select name="id_nama_cluster"
+                                    id="id_nama_cluster"
+                                    class="form-control @error('id_nama_cluster') is-invalid @enderror"
                                     required>
                                 <option value="">-- Pilih Nama Cluster --</option>
                                 @foreach($nama_clusters as $nc)
-                                    <option value="{{ $nc->id }}" 
+                                    <option value="{{ $nc->id }}"
                                         {{ (old('id_nama_cluster', $cluster->id_nama_cluster) == $nc->id) ? 'selected' : '' }}>
                                         {{ $nc->nama_cluster }}
                                     </option>
@@ -67,17 +82,18 @@
                             @enderror
                         </div>
 
+                        {{-- RT --}}
                         <div class="col-md-4">
                             <label for="id_rt" class="form-label">
                                 RT <span class="text-danger">*</span>
                             </label>
-                            <select name="id_rt" 
-                                    id="id_rt" 
-                                    class="form-control @error('id_rt') is-invalid @enderror" 
+                            <select name="id_rt"
+                                    id="id_rt"
+                                    class="form-control @error('id_rt') is-invalid @enderror"
                                     required>
                                 <option value="">-- Pilih RT --</option>
                                 @foreach($rts as $rt)
-                                    <option value="{{ $rt->id }}" 
+                                    <option value="{{ $rt->id }}"
                                         {{ (old('id_rt', $cluster->id_rt) == $rt->id) ? 'selected' : '' }}>
                                         RT {{ $rt->nomor_rt }}
                                     </option>
@@ -88,17 +104,18 @@
                             @enderror
                         </div>
 
+                        {{-- Blok --}}
                         <div class="col-md-4">
                             <label for="id_blok" class="form-label">
                                 Blok <span class="text-danger">*</span>
                             </label>
-                            <select name="id_blok" 
-                                    id="id_blok" 
-                                    class="form-control @error('id_blok') is-invalid @enderror" 
+                            <select name="id_blok"
+                                    id="id_blok"
+                                    class="form-control @error('id_blok') is-invalid @enderror"
                                     required>
                                 <option value="">-- Pilih Blok --</option>
                                 @foreach($bloks as $blok)
-                                    <option value="{{ $blok->id }}" 
+                                    <option value="{{ $blok->id }}"
                                         {{ (old('id_blok', $cluster->id_blok) == $blok->id) ? 'selected' : '' }}>
                                         {{ $blok->nama_blok }}
                                     </option>
@@ -108,6 +125,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
                     </div>
 
                     <div class="form-hint mt-3">
@@ -115,7 +133,8 @@
                         Field bertanda <span class="text-danger">*</span> wajib diisi
                     </div>
 
-                    <div class="d-flex gap-2 pt-4 mt-4" style="border-top: 1px solid #e5e7eb;">
+                    {{-- Tombol Responsif --}}
+                    <div class="d-flex gap-2 pt-4 mt-4 btn-responsive-group" style="border-top: 1px solid #e5e7eb;">
                         <a href="{{ route('admin.cluster.index') }}" class="btn-cancel">
                             <i class="bi bi-x"></i> Batal
                         </a>
@@ -123,7 +142,9 @@
                             <i class="bi bi-check"></i> Update Data
                         </button>
                     </div>
+
                 </form>
+
             </div>
         </div>
     </div>
